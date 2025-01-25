@@ -1,9 +1,13 @@
 {
-  "name": "bankco",
+  "name": "fintera-app",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.0.0",
+  "engines": {
+    "node": "22.x"
+  },
   "type": "module",
   "scripts": {
+    "start": "vite --port $PORT",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",

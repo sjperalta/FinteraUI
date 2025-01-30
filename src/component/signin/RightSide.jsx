@@ -5,7 +5,7 @@ import dotted from "../../assets/images/shapes/dotted.svg";
 
 function RightSide({ img }) {
   return (
-    <div className="lg:w-1/2 lg:block hidden bg-[#F6FAFF] dark:bg-darkblack-600 p-20 relative min-h-screen ">
+    <div className="lg:w-1/2 lg:block hidden bg-[#F6FAFF] dark:bg-darkblack-600 p-10 relative min-h-screen ">
       <ul>
         <li className="absolute top-10 left-8">
           <img src={square} alt="" />
@@ -26,10 +26,7 @@ function RightSide({ img }) {
             Speady, Easy and Fast
           </h3>
           <p className="text-bgray-600 dark:text-bgray-50 text-sm font-medium">
-            BankCo. help you set saving goals, earn cash back offers, Go to
-            disclaimer for more details and get paychecks up to two days early.
-            Get a <span className="text-success-300 font-bold">$20</span> bonus
-            when you receive qualifying direct deposits
+            Fintera. Ayuda a administrar tus pagos de tus financiamientos.
           </p>
         </div>
       </div>

@@ -95,7 +95,7 @@ function NotificationPopup({ active }) {
             <div class="flex items-center border-b border-bgray-200 dark:border-darkblack-400">
               <button aria-label="none" type="button" class="flex space-x-2 border-b-2 border-success-300 px-6 py-4 text-sm font-semibold capitalize text-success-300">
                 <span>All</span>
-                <span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-success-50 text-[10px] text-success-300">{notifications.length}</span>
+                <span class="inliqne-flex h-5 w-5 items-center justify-center rounded-full bg-success-50 text-[10px] text-success-300">{notifications.length}</span>
               </button>
             </div>
             {/* Notification List */}

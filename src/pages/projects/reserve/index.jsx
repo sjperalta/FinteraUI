@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API_URL } from './../../../../config'; 
-import SupportTicketEditor from "../../../component/editor/SupportTicketEditor";
+import MessageEditor from "../../../component/editor/MessageEditor";
 import AuthContext from "../../../context/AuthContext";
 import debounce from 'lodash.debounce';
 
@@ -274,7 +274,7 @@ function Reserve() {
 
                             <div className="flex flex-col gap-2">
                                 <label className="text-base text-bgray-600 dark:text-bgray-50 font-medium">Notas</label>
-                                <SupportTicketEditor />
+                                <MessageEditor />
                             </div>
 
                             <br />

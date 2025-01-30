@@ -25,7 +25,7 @@ function PaymentList({ user, token }) {
       setError(null);
 
       try {
-        const response = await fetch(`${API_URL}/api/v1/user/${user.id}/payments`, {
+        const response = await fetch(`${API_URL}/api/v1/users/${user.id}/payments`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

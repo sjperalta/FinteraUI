@@ -25,7 +25,7 @@ function PasswordChange({ token, userId }) {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`${API_URL}/api/v1/user/${userId}/change_password`, {
+      const response = await fetch(`${API_URL}/api/v1/users/${userId}/change_password`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

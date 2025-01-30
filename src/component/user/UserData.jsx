@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { API_URL } from "../../../config";
 import inbox1 from "../../assets/images/avatar/profile.png";
 
-function UserData({ userInfo, index, token}) {
+function UserData({ userInfo, index, token, onClick}) {
   const { id, full_name, phone, email, status: initialStatus, role } = userInfo;
   const [status, setStatus] = useState(initialStatus); // Use local state for status
 
@@ -54,7 +54,7 @@ function UserData({ userInfo, index, token}) {
   };
 
   return (
-    <tr className={index % 2 === 0 ? "bg-white dark:bg-darkblack-600" : ""}>
+    <tr className={index % 2 === 0 ? "bg-white dark:bg-darkblack-600" : ""} onClick={onClick}>
       <td className="whitespace-nowrap py-4 text-sm text-gray-500 w-[400px] lg:w-auto">
         <div className="flex items-center gap-5">
           <div className="w-[64px] h-[64px]">

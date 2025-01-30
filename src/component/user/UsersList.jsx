@@ -3,7 +3,7 @@ import UserData from "./UserData";
 import AuthContext from "../../context/AuthContext";
 import { API_URL } from "./../../../config";
 
-function UsersList({ searchTerm, role }) {
+function UsersList({ searchTerm, role, onUserSelect }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -15,6 +15,10 @@ function UsersList({ searchTerm, role }) {
 
   const { token } = useContext(AuthContext);
 
+  const handleUserClick = (user) => {
+    onUserSelect(user);
+  };
+
   useEffect(() => {
     const fetchUsers = async () => {
       setLoading(true);
@@ -23,7 +27,7 @@ function UsersList({ searchTerm, role }) {
       // Build query params
       const params = new URLSearchParams();
       if (searchTerm) params.append("search_term", searchTerm);
-      if (role) params.append("role", role);
+      if (role) params.append("search_term", role);
 
       // Pagination params
       params.append("page", currentPage);
@@ -102,7 +106,7 @@ function UsersList({ searchTerm, role }) {
       <table className="w-full">
         <tbody>
           {users?.map((user, index) => (
-            <UserData key={user.id} userInfo={user} index={index} token={token} />
+            <UserData key={user.id} userInfo={user} index={index} token={token} onClick={() => handleUserClick(user)} />
           ))}
         </tbody>
       </table>

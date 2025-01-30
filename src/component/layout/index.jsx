@@ -12,13 +12,19 @@ import AuthContext from "../../context/AuthContext";
 export const ThemeContext = createContext(null);
 
 function Layout({ bg, overlay, children }) {
-  const { user } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   const [sidebar, setSidebar] = useState(true);
   const [theme, setTheme] = useState(
     localStorage.getItem("theme") === "" || localStorage.getItem("theme")
       ? localStorage.getItem("theme")
       : ""
   );
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/signin");
+  };
+  
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>
       <div
@@ -30,9 +36,9 @@ function Layout({ bg, overlay, children }) {
         }}
       >
         <div className="relative flex w-full">
-          {user ?<Sidebar handleActive={() => setSidebar(!sidebar)} user={user} /> : <div>Sidebar render ...</div>}
+          {user ?<Sidebar handleActive={() => setSidebar(!sidebar)} user={user}  handleLogout={handleLogout} /> : <div>Sidebar render ...</div>}
           {overlay ? overlay : <Overlay />}
-          <SidebarV2 />
+          {user ? <SidebarV2 user={user} handleLogout={handleLogout} /> : <div>Sidebar render ...</div>}
           <div
             className={`body-wrapper flex-1 overflow-x-hidden ${
               bg ? bg : "dark:bg-darkblack-500"

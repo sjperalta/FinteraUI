@@ -1,16 +1,16 @@
-import user from "../../assets/images/avatar/user-1.png";
+import userImg from "../../assets/images/avatar/user-1.png";
 import groupImg1 from "../../assets/images/avatar/group-img-1.png";
 import groupImg2 from "../../assets/images/avatar/group-img-2.png";
 import groupImg3 from "../../assets/images/avatar/group-img.png";
 import hr from "../../assets/images/avatar/hr.png";
 
-function RightSidebar() {
+function RightSidebar({ user }) {
   return (
     <aside className="2xl:w-[382px] w-full bg-white dark:bg-darkblack-600 rounded-lg px-12 pb-7">
       <header className="flex flex-col items-center text-center -mt-8 pb-7">
-        <img src={user} className="rounded-lg" alt="" />
+        <img src={userImg} className="rounded-lg" alt="" />
         <h3 className="text-xl font-bold text-bgray-700 dark:text-white mt-4">
-          Sergio Peralta
+          {user.full_name}
         </h3>
         <p className="text-base font-medium text-bgray-500 dark:text-white">
           Milla Mar • Coral 
@@ -88,7 +88,7 @@ function RightSidebar() {
             Correo
           </span>
           <span className="text-sm font-semibold text-bgray-900 dark:text-white">
-            serpel.js@gmail.com
+            {user.email}
           </span>
         </li>
         <li className="flex justify-between">
@@ -96,12 +96,12 @@ function RightSidebar() {
             Telefono
           </span>
           <span className="text-sm font-semibold text-bgray-900 dark:text-white">
-            +504 31848112
+           {user.phone}
           </span>
         </li>
         <li className="flex justify-between">
           <span className="font-medium text-gray-500 text-sm dark:text-white">
-            Saldo Pendiente
+            Balance
           </span>
           <span className="text-sm font-semibold text-bgray-900 dark:text-white">
             365,600.00 HNL
@@ -197,38 +197,91 @@ function RightSidebar() {
               </svg>
             </button>
           </li>
-        </ul>
-      </div>
-      <div className="pt-6">
-        <h4 className="font-medium text-gray-500 text-sm dark:text-white mb-4">
-          Vendedor Asignado
-        </h4>
-        <div className="flex gap-x-4">
-          <div>
-            <img src={hr} alt="" />
-          </div>
-          <div>
-            <h5 className="text-base font-semibold text-bgray-900 dark:text-white">
-              Angie Mendoza
-            </h5>
-            <span className="text-sm font-medium text-success-300">
-              Vendedor
-              <br/>
-              <span className="text-bgray-500 dark:text-bgray-50">
-                22 Contractos
+          <li className="bg-[#E4FDED] dark:bg-darkblack-500 py-3 px-2 pr-4 flex justify-between items-center rounded-lg">
+            <div className="flex items-center gap-x-3">
+              <span className="bg-white dark:bg-darkblack-600 w-10 h-10 rounded-lg inline-flex justify-center items-center">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 22 22"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12.8334 2.74951V6.41618C12.8334 6.65929 12.93 6.89245 13.1019 7.06436C13.2738 7.23627 13.5069 7.33285 13.75 7.33285H17.4167"
+                    stroke="#22C55E"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M15.5834 19.2495H6.41671C5.93048 19.2495 5.46416 19.0564 5.12034 18.7125C4.77653 18.3687 4.58337 17.9024 4.58337 17.4162V4.58285C4.58337 4.09661 4.77653 3.6303 5.12034 3.28648C5.46416 2.94267 5.93048 2.74951 6.41671 2.74951H12.8334L17.4167 7.33285V17.4162C17.4167 17.9024 17.2236 18.3687 16.8797 18.7125C16.5359 19.0564 16.0696 19.2495 15.5834 19.2495Z"
+                    stroke="#22C55E"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M8.25 8.24951H9.16667"
+                    stroke="#22C55E"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M8.25 11.916H13.75"
+                    stroke="#22C55E"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M8.25 15.583H13.75"
+                    stroke="#22C55E"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
               </span>
-            </span>
-          </div>
-        </div>
-      </div>
-      <div className="flex justify-center mt-8">
-        <button
-          aria-label="none"
-          data-target="#multi-step-modal"
-          className="bg-success-300 hover:bg-success-400 transition duration-300 ease-in-out modal-open py-3 px-7 text-white rounded-lg font-medium"
-        >
-          Reasignar Vendedor
-        </button>
+              <div className="flex flex-col">
+                <h5 className="font-semibold text-bgray-900 dark:text-white  text-sm">
+                  Estado de Cuenta.pdf
+                </h5>
+                <span className="text-xs text-bgray-500">50 Kb</span>
+              </div>
+            </div>
+            <button aria-label="none">
+              <svg
+                className="stroke-bgray-900 dark:stroke-bgray-50"
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M17.5 12.4995V15.8328C17.5 16.2749 17.3244 16.6988 17.0118 17.0114C16.6993 17.3239 16.2754 17.4995 15.8333 17.4995H4.16667C3.72464 17.4995 3.30072 17.3239 2.98816 17.0114C2.67559 16.6988 2.5 16.2749 2.5 15.8328V12.4995"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M5.83337 8.33301L10 12.4997L14.1667 8.33301"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M10 12.4995V2.49951"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+          </li>
+        </ul>
       </div>
     </aside>
   );

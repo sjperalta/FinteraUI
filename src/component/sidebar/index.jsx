@@ -6,7 +6,7 @@ import profileImg from "../../assets/images/avatar/profile-xs.png";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 
-function Sidebar({ handleActive, user }) {
+function Sidebar({ handleActive, user, handleLogout }) {
   const [activeDashboard, setActiveDashboard] = useState(false);
   const { pathname: location } = useLocation();
 
@@ -100,7 +100,7 @@ function Sidebar({ handleActive, user }) {
               {(isAdmin || isSeller || isUser) && (
                 <li
                   className={`item py-[11px] text-bgray-900 dark:text-white ${
-                    location === "/balance" ? "nav-active" : ""
+                    location.includes("/balance/user") ? "nav-active" : ""
                   }`}
                 >
                   <Link to={`/balance/user/${user.id}`}>
@@ -350,9 +350,7 @@ function Sidebar({ handleActive, user }) {
 
           {/* Others */}
           <div className="item-wrapper mb-5">
-            <h4 className="border-b border-bgray-200 text-sm font-medium leading-7 text-bgray-700 dark:border-darkblack-400 dark:text-bgray-50">
-              Others
-            </h4>
+            <h4 className="border-b border-bgray-200 text-sm font-medium leading-7 text-bgray-700 dark:border-darkblack-400 dark:text-bgray-50"></h4>
             <ul className="mt-2.5">
               {/* Signin: All roles can see or you can hide if already signed in */}
               <li
@@ -384,7 +382,7 @@ function Sidebar({ handleActive, user }) {
                       />
                     </svg>
                     <span className="item-text text-lg font-medium leading-none">
-                      Signin
+                      Iniciar Session
                     </span>
                   </div>
                 </Link>
@@ -392,7 +390,7 @@ function Sidebar({ handleActive, user }) {
 
               {/* Logout */}
               <li className={`item py-[11px] text-bgray-900 dark:text-white`}>
-                <Link to="#">
+                <Link to="/#" onClick={handleLogout}>
                   <div className="flex items-center space-x-2.5">
                     <svg
                       width="21"
@@ -421,7 +419,7 @@ function Sidebar({ handleActive, user }) {
                       />
                     </svg>
                     <span className="item-text text-lg font-medium leading-none">
-                      Logout
+                      Salir
                     </span>
                   </div>
                 </Link>

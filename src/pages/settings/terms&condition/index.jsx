@@ -7,77 +7,116 @@ function TermsAndCondition() {
         </h3>
         <article className="mb-8">
           <h4 className="text-bgray-800 dark:text-white text-lg font-bold mb-2">
-            1. Definitions
+            Last Updated: 1 Jan 2025
           </h4>
           <p className="text-[#9AA2B1] dark:text-white text-base">
-            What you do own when you buy an are the keys to a non-fungible –
-            perhaps unique – token. That token is yours to trade or hold or
-            display in Decentraland. But the digital file associated with an NFT
-            is just as easy to copy and paste and download as any other – the
-            Finally, players lose their NFTs sometimes according to the rules
-            and regulations of the NFT game.
+            Welcome to Fintera. By using our platform, you agree to the following Terms and Conditions. Please read them carefully before accessing or using our services.
           </p>
         </article>
         <article className="mb-8">
           <h4 className="text-bgray-800 dark:text-white text-lg font-bold mb-2">
-            2. Acceptance
+            1. Acceptance
           </h4>
           <p className="text-[#9AA2B1] dark:text-white text-base">
-            Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet
-            sint. Velit officia consequat duis enim velit mollit. Exercitation
-            veniam consequat sunt nostrud amet.Capacity. You confirm that you
-            have the legal capacity to receive and hold and make use of the NFT
-            under French jurisdiction and any other relevant
-            jurisdiction.Acceptance. By participating in the Sale, You accept
-            and agree to these Terms and Conditions without any condition or
-            restriction. If You do not agree to this Contract, You shall not
-            participate in the Sale made by the Company Exercitation veniam
-            consequat sunt nostrud amet.Capacity. You confirm that you have the
-            legal capacity to receive and hold find to end.Contract, You shall
-            not participate in the Sale made by the Company Exercitation venia
+          By registering for an account or using Fintera, you acknowledge that you have read, understood, and agreed to be bound by these Terms and Conditions. If you do not agree to these terms, you must not use our platform.
           </p>
         </article>
-        <blockquote className="px-7 py-5 bg-bgray-100 dark:bg-darkblack-500 rounded-lg mb-8 text-lg text-bgray-800 dark:text-white">
-          In reality, the most important aspect of a great dashboard is the part
-          that gets the least amount of attention: The underlying data. More
-          than any other aspect, the data will make or break a dashboard.Within
-          this definition, successful administration appears to rest on three
-          basic skills, which we will call technical, and conceptual.
-        </blockquote>
         <article className="mb-8">
           <h4 className="text-bgray-800 dark:text-white text-lg font-bold mb-2">
-            3. The Sale
+            2. Description of Services
           </h4>
           <p className="text-base text-[#9AA2B1] dark:text-white mb-6">
-            The Company offers featuring the Betonyou universe. The holders of
-            one or more NFTs will be able to win cryptos while playing video
-            games. In the future, the Company plans to develop its own games and
-            Metaverse around the Betonyou universe (“Project”).
-          </p>
-          <p className="text-base text-[#9AA2B1] dark:text-white">
-            To release the NFTs and fund the project, the Company offers NFTs
-            from a dedicated website("Sale"). The web address of this website
-            will be given at the time of the mint. The NFT acquisition does not
-            confer any rights on the Company or in the future development.
+            Fintera provides financial services, including but not limited to the management of financial transactions, investment tools, and property management. The platform is intended for personal and professional financial use only.
           </p>
         </article>
         <article>
           <h4 className="text-bgray-800 dark:text-white text-lg font-bold mb-2">
-            4. Purchaser’s obligations
+            3. Account Registration
           </h4>
           <p className="text-base text-[#9AA2B1] dark:text-white mb-6">
-            To the fullest extent permitted by applicable law, You undertake to
-            indemnify, defend and hold harmless the Company from and against all
-            claims, demands, actions, damages, losses, costs and expenses
-            (including attorneys’ fees) that arise from or relate to (i) your
-            Subscription or use of the NFTs; (ii) your responsibilities or
-            obligations under this Contract; and (iii) your breach of this
-            Contract.
+            - To access certain features, you must create an account and provide accurate and complete information.
           </p>
-          <p className="text-base text-[#9AA2B1] dark:text-white">
-            Company undertakes to act with the care normally expected from a
-            professional in his field and to comply with the best practice in
-            force. The best endeavor obligation only binds the Company.
+          <p className="text-base text-[#9AA2B1] dark:text-white mb-6">
+            - You are responsible for maintaining the confidentiality of your account credentials and for all activities under your account.
+          </p>
+        </article>
+        <article>
+          <h4 className="text-bgray-800 dark:text-white text-lg font-bold mb-2">
+            4. Use of the Platform
+          </h4>
+          <p className="text-base text-[#9AA2B1] dark:text-white mb-6">
+            You agree to use the platform only for lawful purposes and in compliance with all applicable laws and regulations. Any misuse of the platform, including fraudulent activities, is strictly prohibited and may result in account termination.
+          </p>
+        </article>
+        <article>
+          <h4 className="text-bgray-800 dark:text-white text-lg font-bold mb-2">
+            5. Fees and Payments
+          </h4>
+          <p className="text-base text-[#9AA2B1] dark:text-white mb-6">
+            Fintera may charge fees for certain services. By using these services, you agree to pay all applicable fees as disclosed at the time of your transaction.
+          </p>
+        </article>
+        <article>
+          <h4 className="text-bgray-800 dark:text-white text-lg font-bold mb-2">
+            6. Notifications and Communications
+          </h4>
+          <p className="text-base text-[#9AA2B1] dark:text-white mb-6">
+          By creating an account on Fintera, you consent to receive email notifications regarding system operations, including but not limited to:
+          </p>
+          <p className="text-base text-[#9AA2B1] dark:text-white mb-6">
+          -	Confirmation of transactions.
+          </p>
+          <p className="text-base text-[#9AA2B1] dark:text-white mb-6">
+          -	Updates on your account status.
+          </p>
+          <p className="text-base text-[#9AA2B1] dark:text-white mb-6">
+          -	Alerts for unusual activity.
+          </p>
+          <p className="text-base text-[#9AA2B1] dark:text-white mb-6">
+          -	Important announcements related to the platform.
+          </p>
+        </article>
+        <article>
+          <h4 className="text-bgray-800 dark:text-white text-lg font-bold mb-2">
+            7. Privacy Policy
+          </h4>
+          <p className="text-base text-[#9AA2B1] dark:text-white mb-6">
+            Your use of the platform is subject to our Privacy Policy, which explains how we collect, use, and protect your personal information. By using the platform, you consent to our data practices as outlined in the Privacy Policy.
+          </p>
+        </article>
+        <article>
+          <h4 className="text-bgray-800 dark:text-white text-lg font-bold mb-2">
+           8. Limitation of Liability
+          </h4>
+          <p className="text-base text-[#9AA2B1] dark:text-white mb-6">
+          Fintera is not liable for any direct, indirect, incidental, or consequential damages arising from your use of the platform. This includes, but is not limited to, financial losses, loss of data, or system failures.
+          </p>
+        </article>
+        <article>
+          <h4 className="text-bgray-800 dark:text-white text-lg font-bold mb-2">
+           9. Account Suspension and Termination
+          </h4>
+          <p className="text-base text-[#9AA2B1] dark:text-white mb-6">
+           Fintera reserves the right to suspend or terminate your account at its sole discretion if it believes you have violated these Terms and Conditions or engaged in unlawful activities.
+          </p>
+        </article>
+        <article>
+          <h4 className="text-bgray-800 dark:text-white text-lg font-bold mb-2">
+           10. Amendments
+          </h4>
+          <p className="text-base text-[#9AA2B1] dark:text-white mb-6">
+           We may modify these Terms and Conditions at any time. Any changes will be posted on the platform, and continued use of the services constitutes acceptance of the updated terms.
+          </p>
+        </article>
+        <article>
+          <h4 className="text-bgray-800 dark:text-white text-lg font-bold mb-2">
+           11. Contact Information
+          </h4>
+          <p className="text-base text-[#9AA2B1] dark:text-white mb-6">
+          For any questions or concerns about these Terms and Conditions, please contact us at:
+          Email: support@securexapp.com
+          Phone: 31848112
+          Address: [Insert Address]
           </p>
         </article>
       </div>

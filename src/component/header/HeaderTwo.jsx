@@ -181,7 +181,7 @@ function HeaderTwo({ handleSidebar }) {
                         <Link to="/settings/user/1">
                           <div className="rounded-lg p-[14px] text-bgray-600 hover:bg-bgray-100 hover:text-bgray-900">
                             <span className="text-sm font-semibold">
-                              Settings
+                              Configuración
                             </span>
                           </div>
                         </Link>
@@ -189,7 +189,7 @@ function HeaderTwo({ handleSidebar }) {
                       <li className="w-full">
                         <Link to="/users">
                           <div className="rounded-lg p-[14px] text-bgray-600 hover:bg-bgray-100 hover:text-bgray-900">
-                            <span className="text-sm font-semibold">Users</span>
+                            <span className="text-sm font-semibold">Usuarios</span>
                           </div>
                         </Link>
                       </li>

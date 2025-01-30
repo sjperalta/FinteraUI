@@ -27,7 +27,7 @@ function UsersList({ searchTerm, role, onUserSelect }) {
       // Build query params
       const params = new URLSearchParams();
       if (searchTerm) params.append("search_term", searchTerm);
-      if (role) params.append("role", role);
+      if (role) params.append("search_term", role);
 
       // Pagination params
       params.append("page", currentPage);

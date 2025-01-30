@@ -71,7 +71,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/projects/:id/lots",
-        element: <LotsList />,
+        element: (
+          <ProtectedRoute>
+            <LotsList />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/audits",
@@ -120,10 +124,6 @@ const router = createBrowserRouter([
             element: <TermsAndCondition />,
           },
         ],
-      },
-      {
-        path: "/history",
-        element: <History />,
       },
       {
         path: "/users",

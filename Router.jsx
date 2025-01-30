@@ -47,7 +47,7 @@ const router = createBrowserRouter([
         path: "/projects",
         element: (
           <ProtectedRoute>
-            <Projects />,
+            <Projects />
           </ProtectedRoute>
         ),
       },
@@ -55,16 +55,15 @@ const router = createBrowserRouter([
         path: "/projects/create",
         element: (
           <ProtectedRoute>
-            <CreateProject />,
+            <CreateProject />
           </ProtectedRoute>
         ),
-        element: <CreateProject />,
       },
       {
         path: "/projects/:id/lots",
         element: (
           <ProtectedRoute>
-            <LotsList />,
+            <LotsList />
           </ProtectedRoute>
         ),
       },
@@ -72,7 +71,7 @@ const router = createBrowserRouter([
         path: "/projects/:id/lots/:lot_id/contracts/create",
         element: (
           <ProtectedRoute>
-            <Reserve />,
+            <Reserve />
           </ProtectedRoute>
         ),
       },
@@ -80,7 +79,7 @@ const router = createBrowserRouter([
         path: "/audits",
         element: (
           <ProtectedRoute>
-            <Audits />,
+            <Audits />
           </ProtectedRoute>
         ),
       },
@@ -117,14 +116,10 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "/history",
-        element: <History />,
-      },
-      {
         path: "/users",
         element: (
           <ProtectedRoute>
-            <Users />,
+            <Users />
           </ProtectedRoute>
         ),
       },

@@ -1,16 +1,11 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import ProtectedRoute from "./component/protectedRoute";
 import Home from "./pages/home";
-import HomeTwo from "./pages/homeTwo";
-import Statistics from "./pages/statistics";
-import Analytics from "./pages/analytics";
 import Contracts from "./pages/contract";
 import Transaction from "./pages/transaction";
-import MyWallet from "./pages/myWallet";
 import Projects from "./pages/projects";
 import Users from "./pages/users";
-import Calender from "./pages/calender";
 import History from "./pages/audits";
-import Support from "./pages/supportTicket";
 import Settings from "./pages/settings";
 import SignIn from "./pages/signin";
 import SignUp from "./pages/signup";
@@ -20,7 +15,6 @@ import Layout from "./component/layout";
 import PersonalInfo from "./pages/settings/personal-info";
 import Security from "./pages/settings/security";
 import TermsAndCondition from "./pages/settings/terms&condition";
-import HomeFive from "./pages/homeFive";
 import CreateProject from "./pages/projects/create";
 import LotsList from "./pages/projects/lots";
 import Reserve from "./pages/projects/reserve";
@@ -37,39 +31,43 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Home />,
-      },
-      {
-        path: "/home-2",
-        element: <HomeTwo />,
-      },
-      {
-        path: "/home-3",
-        element: <Statistics />,
-      },
-      {
-        path: "/home-4",
-        element: <Analytics />,
-      },
-      {
-        path: "/statistics",
-        element: <Statistics />,
+        element: (
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/contracts",
-        element: <Contracts />,
+        element: (
+          <ProtectedRoute>
+            <Contracts />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/transaction",
-        element: <Transaction />,
+        element: (
+          <ProtectedRoute>
+            <Transaction />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/projects",
-        element: <Projects />,
+        element: (
+          <ProtectedRoute>
+            <Projects />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/projects/create",
-        element: <CreateProject />,
+        element: (
+          <ProtectedRoute>
+            <CreateProject />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/projects/:id/lots",
@@ -77,15 +75,19 @@ const router = createBrowserRouter([
       },
       {
         path: "/audits",
-        element: <Audits />,
+        element: (
+          <ProtectedRoute>
+            <Audits />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/projects/:id/lots/:lot_id/contracts/create",
-        element: <Reserve />,
-      },
-      {
-        path: "/calender",
-        element: <Calender />,
+        element: (
+          <ProtectedRoute>
+            <Reserve />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/balance/user/:userId",
@@ -120,24 +122,24 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "/my-wallet",
-        element: <MyWallet />,
-      },
-      {
         path: "/history",
         element: <History />,
       },
       {
-        path: "/support-ticket",
-        element: <Support />,
-      },
-      {
         path: "/users",
-        element: <Users />,
+        element: (
+          <ProtectedRoute>
+            <Users />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/users/create",
-        element: <CreateUser />,
+        element: (
+          <ProtectedRoute>
+            <CreateUser />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
@@ -153,10 +155,6 @@ const router = createBrowserRouter([
   {
     path: "/coming-soon",
     element: <ComingSoon />,
-  },
-  {
-    path: "/home-5",
-    element: <HomeFive />,
   },
   {
     path: "/404",

@@ -35,7 +35,7 @@ function Summary() {
       try {
         // Use userId or user.id as appropriate
         const response = await fetch(
-          `${API_URL}/api/v1/user/${userId || user.id}/summary`,
+          `${API_URL}/api/v1/users/${userId || user.id}/summary`,
           {
             headers: {
               "Content-Type": "application/json",

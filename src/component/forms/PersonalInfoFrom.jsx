@@ -26,7 +26,7 @@ function PersonalInfoForm({ userId }) {
 
     const fetchUser = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/v1/user/${userId}`, {
+        const response = await fetch(`${API_URL}/api/v1/users/${userId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -73,7 +73,7 @@ function PersonalInfoForm({ userId }) {
     }
 
     try {
-      const response = await fetch(`${API_URL}/api/v1/user/${userId}`, {
+      const response = await fetch(`${API_URL}/api/v1/users/${userId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

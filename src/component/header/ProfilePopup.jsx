@@ -52,7 +52,7 @@ function ProfilePopup({ active, user, handleLogout }) {
                     </div>
                     <div className="flex-1">
                       <span className="text-sm font-semibold text-bgray-900 dark:text-white">
-                        My Profile
+                        Mi Perfil
                       </span>
                     </div>
                   </div>
@@ -80,7 +80,7 @@ function ProfilePopup({ active, user, handleLogout }) {
                       </span>
                     </div>
                     <div className="flex-1">
-                      <span className="text-sm font-semibold">Log Out</span>
+                      <span className="text-sm font-semibold">Salir</span>
                     </div>
                   </div>
                 </Link>
@@ -93,14 +93,14 @@ function ProfilePopup({ active, user, handleLogout }) {
               <li className="w-full">
                 <Link to={`/settings/user/${user.id}`}>
                   <div className="rounded-lg p-[14px] text-bgray-600 hover:bg-bgray-100 hover:text-bgray-900 dark:text-bgray-50 dark:hover:bg-darkblack-500">
-                    <span className="text-sm font-semibold">Settings</span>
+                    <span className="text-sm font-semibold">Configuración</span>
                   </div>
                 </Link>
               </li>
               <li className="w-full">
                 <Link to="/users">
                   <div className="rounded-lg p-[14px] text-bgray-600 hover:bg-bgray-100 hover:text-bgray-900 dark:text-bgray-50 dark:hover:bg-darkblack-500">
-                    <span className="text-sm font-semibold">Users</span>
+                    <span className="text-sm font-semibold">Usuarios</span>
                   </div>
                 </Link>
               </li>

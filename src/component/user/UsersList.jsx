@@ -3,7 +3,7 @@ import UserData from "./UserData";
 import AuthContext from "../../context/AuthContext";
 import { API_URL } from "./../../../config";
 
-function UsersList({ searchTerm, role }) {
+function UsersList({ searchTerm, role, onUserSelect }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,6 +14,10 @@ function UsersList({ searchTerm, role }) {
   const [totalPages, setTotalPages] = useState(1);
 
   const { token } = useContext(AuthContext);
+
+  const handleUserClick = (user) => {
+    onUserSelect(user);
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -102,7 +106,7 @@ function UsersList({ searchTerm, role }) {
       <table className="w-full">
         <tbody>
           {users?.map((user, index) => (
-            <UserData key={user.id} userInfo={user} index={index} token={token} />
+            <UserData key={user.id} userInfo={user} index={index} token={token} onClick={() => handleUserClick(user)} />
           ))}
         </tbody>
       </table>

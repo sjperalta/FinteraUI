@@ -2,8 +2,11 @@ import { Link, useLocation } from "react-router-dom";
 import logo from "../../assets/images/logo/logo-short.svg";
 import logoW from "../../assets/images/logo/logo-short-white.svg";
 
-function SidebarV2() {
+function SidebarV2({user, handleLogout }) {
   const { pathname: location } = useLocation();
+  const isAdmin = user.role === "admin";
+  const isSeller = user.role === "seller";
+  const isUser = user.role === "user";
 
   return (
     <aside className="relative hidden w-[96px] bg-white  dark:bg-darkblack-600 sm:block">
@@ -104,6 +107,30 @@ function SidebarV2() {
                       </li>
                     </ul>
                   </li>
+                   {/* Balance: All roles */}
+                  {(isAdmin || isSeller || isUser) && (
+                    <li
+                      className={`text-md inline-block py-1.5 font-medium text-bgray-600 hover:text-bgray-800 ${
+                        location.includes("/balance/user") ? "nav-active" : ""
+                      } `}
+                    >
+                      <Link to={`/balance/user/${user.id}`}>
+                        <div className="flex items-center space-x-2.5">
+                          <svg
+                            viewBox="0 0 16 16"
+                            fill="currentColor"
+                            width="24"
+                            height="24"
+                          >
+                            <path
+                              fill="currentColor"
+                              d="M2 14h14v2H0V0h2zm2.5-1a1.5 1.5 0 11.131-2.994l1.612-2.687a1.5 1.5 0 112.514 0l1.612 2.687a1.42 1.42 0 01.23-.002l2.662-4.658a1.5 1.5 0 111.14.651l-2.662 4.658a1.5 1.5 0 11-2.496.026L7.631 7.994a1.42 1.42 0 01-.262 0l-1.612 2.687A1.5 1.5 0 014.5 13z"
+                            />
+                          </svg>
+                        </div>
+                      </Link>
+                    </li>
+                  )}
                   <li className="item px-[43px] py-[11px]">
                     <Link
                       to="/transaction"
@@ -156,38 +183,9 @@ function SidebarV2() {
                   </li>
                   <li className="item px-[43px] py-[11px]">
                     <Link
-                      to="/statistics"
+                      to="/contracts"
                       className={`${
-                        location === "/statistics" ? "nav-active" : ""
-                      }`}
-                    >
-                      <span className="item-ico">
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 20 20"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M18 11C18 15.9706 13.9706 20 9 20C4.02944 20 0 15.9706 0 11C0 6.02944 4.02944 2 9 2C13.9706 2 18 6.02944 18 11Z"
-                            fill="#1A202C"
-                            className="path-1"
-                          />
-                          <path
-                            d="M19.8025 8.01277C19.0104 4.08419 15.9158 0.989557 11.9872 0.197453C10.9045 -0.0208635 10 0.89543 10 2V8C10 9.10457 10.8954 10 12 10H18C19.1046 10 20.0209 9.09555 19.8025 8.01277Z"
-                            fill="#22C55E"
-                            className="path-2"
-                          />
-                        </svg>
-                      </span>
-                    </Link>
-                  </li>
-                  <li className="item px-[43px] py-[11px]">
-                    <Link
-                      to="/analytics"
-                      className={`${
-                        location === "/analytics" ? "nav-active" : ""
+                        location === "/contracts" ? "nav-active" : ""
                       }`}
                     >
                       <span className="item-ico">
@@ -216,74 +214,7 @@ function SidebarV2() {
                         </svg>
                       </span>
                     </Link>
-                  </li>
-                  <li className="item px-[43px] py-[11px]">
-                    <Link
-                      to="/my-wallet"
-                      className={`${
-                        location === "/my-wallet" ? "nav-active" : ""
-                      }`}
-                    >
-                      <span className="item-ico">
-                        <svg
-                          width="20"
-                          height="18"
-                          viewBox="0 0 20 18"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M20 4C20 1.79086 18.2091 0 16 0H4C1.79086 0 0 1.79086 0 4V14C0 16.2091 1.79086 18 4 18H16C18.2091 18 20 16.2091 20 14V4Z"
-                            fill="#1A202C"
-                            className="path-1"
-                          />
-                          <path
-                            d="M6 9C6 7.34315 4.65685 6 3 6H0V12H3C4.65685 12 6 10.6569 6 9Z"
-                            fill="#22C55E"
-                            className="path-2"
-                          />
-                        </svg>
-                      </span>
-                    </Link>
-                  </li>
-                  <li className="item px-[43px] py-[11px]">
-                    <Link
-                      to="/messages"
-                      className={`${
-                        location === "/messages" ? "nav-active" : ""
-                      }`}
-                    >
-                      <span className="item-ico">
-                        <svg
-                          width="16"
-                          height="18"
-                          viewBox="0 0 16 18"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M8 18C9.38503 18 10.5633 17.1652 11 16H5C5.43668 17.1652 6.61497 18 8 18Z"
-                            fill="#22C55E"
-                            className="path-2"
-                          />
-                          <path
-                            fillRule="evenodd"
-                            clipRule="evenodd"
-                            d="M9.6896 0.754028C9.27403 0.291157 8.67102 0 8 0C6.74634 0 5.73005 1.01629 5.73005 2.26995V2.37366C3.58766 3.10719 2.0016 4.85063 1.76046 6.97519L1.31328 10.9153C1.23274 11.6249 0.933441 12.3016 0.447786 12.8721C-0.649243 14.1609 0.394434 16 2.22281 16H13.7772C15.6056 16 16.6492 14.1609 15.5522 12.8721C15.0666 12.3016 14.7673 11.6249 14.6867 10.9153L14.2395 6.97519C14.2333 6.92024 14.2262 6.86556 14.2181 6.81113C13.8341 6.93379 13.4248 7 13 7C10.7909 7 9 5.20914 9 3C9 2.16744 9.25436 1.3943 9.6896 0.754028Z"
-                            fill="#1A202C"
-                            className="path-1"
-                          />
-                          <circle
-                            cx="13"
-                            cy="3"
-                            r="3"
-                            fill="#22C55E"
-                            className="path-2"
-                          />
-                        </svg>
-                      </span>
-                    </Link>
-                  </li>
+                  </li>            
                   <li className="item px-[43px] py-[11px]">
                     <Link
                       to="/projects"
@@ -361,60 +292,9 @@ function SidebarV2() {
                   </li>
                   <li className="item px-[43px] py-[11px]">
                     <Link
-                      to="/calender"
+                      to="/audits"
                       className={`${
-                        location === "/calender" ? "nav-active" : ""
-                      }`}
-                    >
-                      <span className="item-ico">
-                        <svg
-                          width="18"
-                          height="21"
-                          viewBox="0 0 18 21"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M0 6.5C0 4.29086 1.79086 2.5 4 2.5H14C16.2091 2.5 18 4.29086 18 6.5V8V17C18 19.2091 16.2091 21 14 21H4C1.79086 21 0 19.2091 0 17V8V6.5Z"
-                            fill="#1A202C"
-                            className="path-1"
-                          />
-                          <path
-                            d="M14 2.5H4C1.79086 2.5 0 4.29086 0 6.5V8H18V6.5C18 4.29086 16.2091 2.5 14 2.5Z"
-                            fill="#22C55E"
-                            className="path-2"
-                          />
-                          <path
-                            fillRule="evenodd"
-                            clipRule="evenodd"
-                            d="M5 0.25C5.41421 0.25 5.75 0.585786 5.75 1V4C5.75 4.41421 5.41421 4.75 5 4.75C4.58579 4.75 4.25 4.41421 4.25 4V1C4.25 0.585786 4.58579 0.25 5 0.25ZM13 0.25C13.4142 0.25 13.75 0.585786 13.75 1V4C13.75 4.41421 13.4142 4.75 13 4.75C12.5858 4.75 12.25 4.41421 12.25 4V1C12.25 0.585786 12.5858 0.25 13 0.25Z"
-                            fill="#1A202C"
-                            className="path-2"
-                          />
-                          <circle cx="9" cy="14" r="1" fill="#22C55E" />
-                          <circle
-                            cx="13"
-                            cy="14"
-                            r="1"
-                            fill="#22C55E"
-                            className="path-2"
-                          />
-                          <circle
-                            cx="5"
-                            cy="14"
-                            r="1"
-                            fill="#22C55E"
-                            className="path-2"
-                          />
-                        </svg>
-                      </span>
-                    </Link>
-                  </li>
-                  <li className="item px-[43px] py-[11px]">
-                    <Link
-                      to="/history"
-                      className={`${
-                        location === "/history" ? "nav-active" : ""
+                        location === "/audits" ? "nav-active" : ""
                       }`}
                     >
                       <span className="item-ico">
@@ -453,51 +333,37 @@ function SidebarV2() {
                       </span>
                     </Link>
                   </li>
-                </ul>
-              </div>
-              <div className="item-wrapper mb-5">
-                <ul className="mt-2.5 flex flex-col items-center justify-center">
                   <li className="item px-[43px] py-[11px]">
                     <Link
-                      to="/support-ticket"
+                      to="/notifications"
                       className={`${
-                        location === "/support-ticket" ? "nav-active" : ""
+                        location === "/notifications" ? "nav-active" : ""
                       }`}
                     >
                       <span className="item-ico">
                         <svg
-                          width="20"
+                          width="16"
                           height="18"
-                          viewBox="0 0 20 18"
+                          viewBox="0 0 16 18"
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
                         >
                           <path
-                            d="M5 2V11C5 12.1046 5.89543 13 7 13H18C19.1046 13 20 12.1046 20 11V2C20 0.895431 19.1046 0 18 0H7C5.89543 0 5 0.89543 5 2Z"
+                            d="M8 18C9.38503 18 10.5633 17.1652 11 16H5C5.43668 17.1652 6.61497 18 8 18Z"
+                            fill="#22C55E"
+                            className="path-2"
+                          />
+                          <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M9.6896 0.754028C9.27403 0.291157 8.67102 0 8 0C6.74634 0 5.73005 1.01629 5.73005 2.26995V2.37366C3.58766 3.10719 2.0016 4.85063 1.76046 6.97519L1.31328 10.9153C1.23274 11.6249 0.933441 12.3016 0.447786 12.8721C-0.649243 14.1609 0.394434 16 2.22281 16H13.7772C15.6056 16 16.6492 14.1609 15.5522 12.8721C15.0666 12.3016 14.7673 11.6249 14.6867 10.9153L14.2395 6.97519C14.2333 6.92024 14.2262 6.86556 14.2181 6.81113C13.8341 6.93379 13.4248 7 13 7C10.7909 7 9 5.20914 9 3C9 2.16744 9.25436 1.3943 9.6896 0.754028Z"
                             fill="#1A202C"
                             className="path-1"
                           />
-                          <path
-                            d="M0 15C0 13.8954 0.895431 13 2 13H2.17157C2.70201 13 3.21071 13.2107 3.58579 13.5858C4.36683 14.3668 5.63317 14.3668 6.41421 13.5858C6.78929 13.2107 7.29799 13 7.82843 13H8C9.10457 13 10 13.8954 10 15V16C10 17.1046 9.10457 18 8 18H2C0.89543 18 0 17.1046 0 16V15Z"
-                            fill="#22C55E"
-                            className="path-2"
-                          />
-                          <path
-                            d="M7.5 9.5C7.5 10.8807 6.38071 12 5 12C3.61929 12 2.5 10.8807 2.5 9.5C2.5 8.11929 3.61929 7 5 7C6.38071 7 7.5 8.11929 7.5 9.5Z"
-                            fill="#22C55E"
-                            className="path-2"
-                          />
-                          <path
-                            fillRule="evenodd"
-                            clipRule="evenodd"
-                            d="M8.25 4.5C8.25 4.08579 8.58579 3.75 9 3.75L16 3.75C16.4142 3.75 16.75 4.08579 16.75 4.5C16.75 4.91421 16.4142 5.25 16 5.25L9 5.25C8.58579 5.25 8.25 4.91421 8.25 4.5Z"
-                            fill="#22C55E"
-                            className="path-2"
-                          />
-                          <path
-                            fillRule="evenodd"
-                            clipRule="evenodd"
-                            d="M11.25 8.5C11.25 8.08579 11.5858 7.75 12 7.75L16 7.75C16.4142 7.75 16.75 8.08579 16.75 8.5C16.75 8.91421 16.4142 9.25 16 9.25L12 9.25C11.5858 9.25 11.25 8.91421 11.25 8.5Z"
+                          <circle
+                            cx="13"
+                            cy="3"
+                            r="3"
                             fill="#22C55E"
                             className="path-2"
                           />
@@ -505,11 +371,15 @@ function SidebarV2() {
                       </span>
                     </Link>
                   </li>
+                </ul>
+              </div>
+              <div className="item-wrapper mb-5">
+                <ul className="mt-2.5 flex flex-col items-center justify-center">
                   <li className="item px-[43px] py-[11px]">
                     <Link
-                      to="/settings"
+                      to={`/settings/user/${user.id}`}
                       className={`${
-                        location.includes("settings") ? "nav-active" : ""
+                        location.includes("settings/user") ? "nav-active" : ""
                       }`}
                     >
                       <span className="item-ico">
@@ -568,7 +438,7 @@ function SidebarV2() {
                       </span>
                     </Link>
                   </li>
-                  <li className="item px-[43px] py-[11px]">
+                  {/* <li className="item px-[43px] py-[11px]">
                     <Link
                       to="/signup"
                       className={`${
@@ -601,9 +471,9 @@ function SidebarV2() {
                         </svg>
                       </span>
                     </Link>
-                  </li>
+                  </li> */}
                   <li className="item px-[43px] py-[11px]">
-                    <Link to="#">
+                    <Link to="/#" onClick={handleLogout}>
                       <span className="item-ico">
                         <svg
                           width="21"
@@ -638,52 +508,6 @@ function SidebarV2() {
                     </Link>
                   </li>
                 </ul>
-              </div>
-            </div>
-            <div className="upgrade-wrapper">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white bg-success-300">
-                <span>
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M14 12.75C14 11.7835 13.1046 11 12 11C10.8954 11 10 11.7835 10 12.75C10 13.7165 10.8954 14.5 12 14.5C13.1046 14.5 14 15.2835 14 16.25C14 17.2165 13.1046 18 12 18C10.8954 18 10 17.2165 10 16.25"
-                      stroke="white"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                    />
-                    <path
-                      d="M12 9.5V11"
-                      stroke="white"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M12 18V19.5"
-                      stroke="white"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M5.63246 11.1026C6.44914 8.65258 8.74197 7 11.3246 7H12.6754C15.258 7 17.5509 8.65258 18.3675 11.1026L19.3675 14.1026C20.6626 17.9878 17.7708 22 13.6754 22H10.3246C6.22921 22 3.33739 17.9878 4.63246 14.1026L5.63246 11.1026Z"
-                      stroke="white"
-                      strokeWidth="1.5"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M14.0859 7L9.91411 7L8.51303 5.39296C7.13959 3.81763 8.74185 1.46298 10.7471 2.10985L11.6748 2.40914C11.8861 2.47728 12.1139 2.47728 12.3252 2.40914L13.2529 2.10985C15.2582 1.46298 16.8604 3.81763 15.487 5.39296L14.0859 7Z"
-                      stroke="white"
-                      strokeWidth="1.5"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </span>
               </div>
             </div>
           </div>

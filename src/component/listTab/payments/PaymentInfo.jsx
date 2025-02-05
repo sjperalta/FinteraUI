@@ -78,6 +78,58 @@ function PaymentInfo({
     }
   };
 
+  const handleDownloadReceipt = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/v1/payments/${payment_id}/download_receipt`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error('Error downloading receipt');
+      }
+  
+      const blob = await response.blob();
+  
+      // Determine file extension based on blob MIME type.
+      let extension = "";
+      switch (blob.type) {
+        case "application/pdf":
+          extension = ".pdf";
+          break;
+        case "image/jpeg":
+          extension = ".jpg";
+          break;
+        case "image/png":
+          extension = ".png";
+          break;
+        case "application/msword":
+          extension = ".doc";
+          break;
+        case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+          extension = ".docx";
+          break;
+        // Add other MIME types as needed.
+        default:
+          // Optionally, you could try to extract a filename from response headers here
+          extension = "";
+      }
+  
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `comprobante-pago-${payment_id}${extension}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      alert(`Error: ${error.message}`);
+      console.error(error);
+    }
+  };
+
   return (
     <tr className="border-b border-bgray-300 dark:border-darkblack-400">
       {/* Description */}
@@ -134,7 +186,16 @@ function PaymentInfo({
               onClick={handleUploadReceipt}
               className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded"
             >
-              Subir Comprobante
+              Subir
+            </button>
+          )}
+          {/* Approve Button */}
+          {userRole === "admin" && (status?.toLowerCase() === "paid" || status?.toLowerCase() === "submitted") && (
+            <button
+              onClick={handleDownloadReceipt}
+              className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded"
+            >
+              Descargar
             </button>
           )}
           {/* Approve Button */}
@@ -161,7 +222,7 @@ PaymentInfo.propTypes = {
   payment_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   userRole: PropTypes.string.isRequired,
   refreshPayments: PropTypes.func.isRequired,
-  currency: PropTypes.string.isRequired,
+  currency: PropTypes.string.isRequired
 };
 
 export default PaymentInfo;

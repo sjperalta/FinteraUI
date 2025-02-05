@@ -7,7 +7,7 @@ const truncateText = (text, maxLength) => {
   return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
 };
 
-function Project({ project }) {
+function Project({ project, user }) {
   const {
     id,
     available,
@@ -18,51 +18,8 @@ function Project({ project }) {
     price_per_square_foot,
   } = project;
 
-  const [isOptionsOpen, setIsOptionsOpen] = useState(false);
-
-  const toggleOptions = () => {
-    setIsOptionsOpen((prev) => !prev);
-  };
-
   return (
     <div className="bg-white dark:bg-darkblack-600 rounded-lg p-6 relative">
-      {/* Options Button */}
-      <button
-        className="absolute right-6 top-6 focus:outline-none"
-        aria-label="Opciones del proyecto"
-        onClick={toggleOptions}
-      >
-        <svg
-          width="24"
-          height="25"
-          className="stroke-bgray-50"
-          viewBox="0 0 24 25"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          {/* SVG Paths */}
-        </svg>
-      </button>
-
-      {/* Options Dropdown */}
-      {isOptionsOpen && (
-        <div className="absolute right-6 top-14 bg-white dark:bg-darkblack-500 border border-bgray-300 dark:border-darkblack-400 rounded-md shadow-lg z-10">
-          <Link
-            to={`/projects/${id}/edit`}
-            className="block px-4 py-2 text-sm text-bgray-700 dark:text-white hover:bg-bgray-100 dark:hover:bg-darkblack-400"
-            onClick={() => setIsOptionsOpen(false)}
-          >
-            Editar
-          </Link>
-          <Link
-            to={`/projects/${id}/delete`}
-            className="block px-4 py-2 text-sm text-red-600 hover:bg-red-100"
-            onClick={() => setIsOptionsOpen(false)}
-          >
-            Eliminar
-          </Link>
-        </div>
-      )}
 
       {/* Project Information */}
       <div className="flex space-x-5">
@@ -89,23 +46,28 @@ function Project({ project }) {
       {/* Action Links */}
       <div className="flex items-center gap-5">
         <Link
-          to={`/projects/${id}/edit`}
-          className="text-sm font-medium text-success-300"
-        >
-          Editar
-        </Link>
-        <Link
           to={`/projects/${id}/lots`}
           className="text-sm font-medium text-success-300"
         >
-          Ver Lotes
+          Reservas
         </Link>
-        <Link
-          to={`/projects/${id}/reports`}
-          className="text-sm font-medium text-success-300"
-        >
-          Reportes
-        </Link>
+        {/* Only render Editar and Eliminar if user is admin */}
+        {user && user.role === "admin" && (
+          <>
+            <Link
+              to={`/projects/${id}/edit`}
+              className="text-sm font-medium text-success-300"
+            >
+              Editar
+            </Link>
+            <Link
+              to={`/projects/${id}/delete`}
+              className="text-sm font-medium text-success-300"
+            >
+              Eliminar
+            </Link>
+          </>
+        )}
       </div>
     </div>
   );

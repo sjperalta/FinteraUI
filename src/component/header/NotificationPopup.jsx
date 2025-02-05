@@ -1,63 +1,8 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import { getToken } from "../../../auth"; // Example: adjust to your auth logic
-import { API_URL } from "../../../config"; // Example: adjust to your config
 
-function NotificationPopup({ active }) {
-  const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  // Fetch notifications whenever the popup becomes active
-  useEffect(() => {
-    if (active) {
-      fetchNotifications();
-    }
-  }, [active]);
-
-  // API call: GET /api/v1/notifications
-  const fetchNotifications = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(`${API_URL}/api/v1/notifications`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`, // if needed
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to fetch notifications");
-      }
-      const data = await res.json();
-      // Assuming data.notifications is an array
-      setNotifications(data.notifications || []);
-    } catch (err) {
-      console.error("Error fetching notifications:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // API call: POST /api/v1/notifications/mark_all_as_read
-  const handleMarkAllAsRead = async () => {
-    try {
-      const res = await fetch(`${API_URL}/api/v1/notifications/mark_all_as_read`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-          "Content-Type": "application/json",
-        },
-      });
-      if (!res.ok) {
-        throw new Error("Failed to mark all as read");
-      }
-      // After success, re-fetch the notifications to update the UI
-      fetchNotifications();
-    } catch (err) {
-      console.error("Error marking all as read:", err);
-    }
-  };
+function NotificationPopup({ active, loading, notifications, onMarkAllAsRead }) {
 
   return (
     <div className="notification-popup-wrapper text-left overflow-y-hidden">
@@ -72,21 +17,26 @@ function NotificationPopup({ active }) {
         <div className="relative w-full pb-[75px] pt-[66px] overflow-y-hidden">
           {/* Header */}
           <div className="absolute left-0 top-0 flex h-[66px] w-full items-center justify-between px-8">
+            
             <h3 className="text-xl font-bold text-bgray-900 dark:text-white">
               Notificaciones
             </h3>
             {/* Optional: an icon or close button */}
             <span>
               <svg
+                className="stroke-darkblack-300"
                 width="24"
                 height="24"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                {/* your icon path */}
-                <path /* ... */ />
-                <path /* ... */ />
+              <path
+                d="M6 6L18 18M6 18L18 6L6 18Z"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
               </svg>
             </span>
           </div>
@@ -142,7 +92,7 @@ function NotificationPopup({ active }) {
           {/* Footer Action - Mark all as read */}
           <div className="absolute bottom-0 left-0 flex h-[75px] w-full items-center justify-between px-8">
             <div>
-              <button onClick={handleMarkAllAsRead}>
+              <button onClick={onMarkAllAsRead}>
                 <div className="flex items-center space-x-2">
                   <span>
                     <svg

@@ -424,33 +424,21 @@ function Sidebar({ handleActive, user, handleLogout }) {
                   </div>
                 </Link>
               </li>
-
-              {/* Landing Page */}
-              <li>
-                <Link
-                  to="/home-5"
-                  className={`text-md inline-block py-1.5 font-medium text-bgray-600 transition-all hover:text-bgray-800 dark:text-bgray-50 hover:dark:text-success-300 ${
-                    location === "/home-5" ? "nav-active" : ""
-                  }`}
-                >
-                  Landing Page
-                </Link>
-              </li>
             </ul>
           </div>
         </div>
         {/* Footer */}
         <div className="copy-write-text">
-          <p className="text-sm text-[#969BA0]">© 2023 All Rights Reserved</p>
+          <p className="text-sm text-[#969BA0]">© 2025 All Rights Reserved</p>
           <p className="text-sm font-medium text-bgray-700">
-            Made by
+            Hecho por
             <a
-              href="#"
+              href="http://www.securexapp.com"
               target="_blank"
               rel="noreferrer"
               className="border-b font-semibold hover:text-blue-600 ml-1"
             >
-              Grintsys
+              SecureX
             </a>
           </p>
         </div>

@@ -111,7 +111,7 @@ function RightSidebar({ user, onClose }) {
           <span className="font-medium text-gray-500 text-sm dark:text-white">Balance</span>
           <span className="text-sm font-semibold text-bgray-900 dark:text-white">
             {summary
-              ? `${Number(summary.balance).toLocaleString()} ${summary.currency}`
+              ? `${(Number(summary.balance) || 0).toLocaleString()} ${summary.currency}`
               : summaryError || "Loading..."}
           </span>
         </li>

@@ -125,7 +125,7 @@ function Projects() {
         onSearchChange={handleSearchChange}
         onFilterChange={handleSortChange}
         searchPlaceholder="Buscar Proyectos..."
-        filterPlaceholder="Ordernar..."
+        filterPlaceholder="Ordenar..."
         minSearchLength={3}
       />
 

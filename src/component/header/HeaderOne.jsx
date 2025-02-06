@@ -25,6 +25,7 @@ function HeaderOne({ handleSidebar }) {
   const navigate = useNavigate();
 
   // Notifications state
+  const [loading, setLoading] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
   // Extract user, logout from AuthContext
@@ -44,6 +45,8 @@ function HeaderOne({ handleSidebar }) {
   }, [user]);
 
   const fetchNotifications = async () => {
+    console.log("Loading Notifications");
+    setLoading(true);
     try {
       const res = await fetch(`${API_URL}/api/v1/notifications`, {
         headers: {
@@ -61,6 +64,27 @@ function HeaderOne({ handleSidebar }) {
       setNotifications(data.notifications || []);
     } catch (error) {
       console.error("Error fetching notifications:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/v1/notifications/mark_all_as_read`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (!res.ok) {
+        throw new Error("Failed to mark all as read");
+      }
+      // After success, re-fetch the notifications to update the UI
+      fetchNotifications();
+    } catch (err) {
+      console.error("Error marking all as read:", err);
     }
   };
 
@@ -133,16 +157,17 @@ function HeaderOne({ handleSidebar }) {
               <ToggleBtn
                 name="notification"
                 clickHandler={handlePopup}
+                active={notifications?.length > 0}
                 icon={
                   <svg class="stroke-bgray-900 dark:stroke-white" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 12V7C2 4.79086 3.79086 3 6 3H18C20.2091 3 22 4.79086 22 7V17C22 19.2091 20.2091 21 18 21H8M6 8L9.7812 10.5208C11.1248 11.4165 12.8752 11.4165 14.2188 10.5208L18 8M2 15H8M2 18H8" stroke-width="1.5" stroke-linecap="round"></path></svg>
                 }
               >
                 {/* Pass the notifications + active state to NotificationPopup */}
                 <NotificationPopup
+                  loading={loading}
                   active={popup?.notification}
                   notifications={notifications}
-                  // Example: You could pass a markAllAsRead function here if desired
-                  // onMarkAllAsRead={handleMarkAllAsRead}
+                  onMarkAllAsRead={handleMarkAllAsRead}
                 />
               </ToggleBtn>
             </div>

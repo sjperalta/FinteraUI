@@ -173,12 +173,12 @@ function LeftSide() {
 
         {apiError && <p className="text-red-500 text-sm mt-4 text-center">{apiError}</p>}
 
-        <p className="text-center text-bgray-900 dark:text-bgray-50 text-base font-medium pt-7">
+        {/* <p className="text-center text-bgray-900 dark:text-bgray-50 text-base font-medium pt-7">
           No tienes cuenta?{" "}
           <Link to="/signup" className="font-semibold underline">
             Crear Cuenta
           </Link>
-        </p>
+        </p> */}
       </div>
     </div>
   );

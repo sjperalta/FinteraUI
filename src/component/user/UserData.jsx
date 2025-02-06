@@ -54,7 +54,7 @@ function UserData({ userInfo, index, token, onClick}) {
   };
 
   return (
-    <tr className={index % 2 === 0 ? "bg-white dark:bg-darkblack-600" : ""} onClick={onClick}>
+    <tr className={index % 2 === 0 ? "bg-white dark:bg-darkblack-600 hover:bg-success-50" : "hover:bg-success-50"} onClick={onClick}>
       <td className="whitespace-nowrap py-4 text-sm text-gray-500 w-[400px] lg:w-auto">
         <div className="flex items-center gap-5">
           <div className="w-[64px] h-[64px]">

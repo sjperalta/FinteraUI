@@ -1,8 +1,8 @@
 import ProtoTypes from "prop-types";
-function ToggleBtn({ clickHandler, name, icon, active, children }) {
+function ActionBtn({ clickHandler, name, icon, children }) {
   return (
     <div
-      className="relative  h-[52px] w-[52px]  rounded-[12px] border border-success-300 dark:border-darkblack-400 cursor-pointer"
+      className="relative  h-[52px] w-[52px]  rounded-[12px] border border-blue-500 dark:border-darkblack-500 cursor-pointer hover:bg-blue-500"
       style={{ position: "relative" }}
     >
       <button
@@ -13,11 +13,6 @@ function ToggleBtn({ clickHandler, name, icon, active, children }) {
         className="w-full h-full flex items-center justify-center absolute"
         style={{ zIndex: 9 }}
       >
-        <span
-          className={`absolute -right-[5px] -top-[2px] h-3.5 w-3.5 rounded-full border-2 border-white  dark:border-none  ${
-            active ? "bg-blue-500" : "bg-bgray-300 dark:bg-bgray-600"
-          }`}
-        ></span>
         {icon}
         {children}
       </button>
@@ -25,12 +20,11 @@ function ToggleBtn({ clickHandler, name, icon, active, children }) {
   );
 }
 
-ToggleBtn.propTypes = {
+ActionBtn.propTypes = {
   clickHandler: ProtoTypes.func,
   name: ProtoTypes.string,
   icon: ProtoTypes.node,
-  active: ProtoTypes.bool,
   children: ProtoTypes.node,
 };
 
-export default ToggleBtn;
+export default ActionBtn;

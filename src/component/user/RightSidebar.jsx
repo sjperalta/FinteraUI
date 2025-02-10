@@ -3,13 +3,14 @@ import { API_URL } from "../../../config";
 import AuthContext from "../../context/AuthContext";
 import userImg from "../../assets/images/avatar/user-1.png";
 
-function RightSidebar({ user, onClose }) {
+function RightSidebar({ user, onClose, currentUser }) {
   const [summary, setSummary] = useState(null);
   const [summaryError, setSummaryError] = useState("");
   const { token } = useContext(AuthContext);
 
   useEffect(() => {
     if (!user || !user.id) return;
+    if (user?.role === "admin" || user?.role === "seller") return;
 
     const fetchSummary = async () => {
       try {
@@ -107,6 +108,7 @@ function RightSidebar({ user, onClose }) {
           <span className="font-medium text-gray-500 text-sm dark:text-white">Teléfono</span>
           <span className="text-sm font-semibold text-bgray-900 dark:text-white">{user.phone}</span>
         </li>
+        {user?.role === "user" ?
         <li className="flex justify-between">
           <span className="font-medium text-gray-500 text-sm dark:text-white">Balance</span>
           <span className="text-sm font-semibold text-bgray-900 dark:text-white">
@@ -115,9 +117,12 @@ function RightSidebar({ user, onClose }) {
               : summaryError || "Loading..."}
           </span>
         </li>
+        : ""
+        }
       </ul>
 
       {/* File Download Section */}
+      {user?.role === "user" ?
       <div className="py-6 border-b border-bgray-200 dark:border-darkblack-400">
         <h4 className="font-medium text-gray-500 text-sm dark:text-white mb-3">Files</h4>
         <ul className="space-y-2.5">
@@ -144,7 +149,7 @@ function RightSidebar({ user, onClose }) {
                 <h5 className="font-semibold text-bgray-900 dark:text-white text-sm">
                   Estado de Cuenta.pdf
                 </h5>
-                <span className="text-xs text-bgray-500">Download user balance report</span>
+                <span className="text-xs text-bgray-500">Descargar</span>
               </div>
             </div>
             {/* Download Button */}
@@ -180,6 +185,8 @@ function RightSidebar({ user, onClose }) {
           </li>
         </ul>
       </div>
+      : ""
+      }
     </aside>
   );
 }

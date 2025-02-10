@@ -140,10 +140,10 @@ function TotalWidgetCard({ title, amount, groth, memberImg, totalEarnImg, curren
                 />
               </svg>
             </span>
-            {groth.startsWith("+") && (<span className="text-sm font-medium text-success-300">{groth}</span>)}
-            {groth.startsWith("-") && (<span className="text-sm font-medium text-red-400">{groth}</span>)}
+            {groth >= 0 && (<span className="text-sm font-medium text-success-300">{groth}%</span>)}
+            {groth < 0 && (<span className="text-sm font-medium text-red-400">{groth}%</span>)}
             <span className="text-sm font-medium text-bgray-700 dark:text-bgray-50">
-              Desde mayo
+              Aumento
             </span>
           </div>
         </div>

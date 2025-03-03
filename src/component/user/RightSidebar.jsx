@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { API_URL } from "../../../config";
 import AuthContext from "../../context/AuthContext";
 import userImg from "../../assets/images/avatar/user-1.png";
+import { Link } from "react-router-dom";
 
 function RightSidebar({ user, onClose, currentUser }) {
   const [summary, setSummary] = useState(null);
@@ -116,6 +117,26 @@ function RightSidebar({ user, onClose, currentUser }) {
               ? `${(Number(summary.balance) || 0).toLocaleString()} ${summary.currency}`
               : summaryError || "Loading..."}
           </span>
+        </li>
+        : ""
+        }
+        {user?.role === "user" ?
+        <li>
+          <Link to={`/balance/user/${user.id}`}>
+            <div className="">
+              <svg
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                width="24"
+                height="24"
+              >
+                <path
+                  fill="currentColor"
+                  d="M2 14h14v2H0V0h2zm2.5-1a1.5 1.5 0 11.131-2.994l1.612-2.687a1.5 1.5 0 112.514 0l1.612 2.687a1.42 1.42 0 01.23-.002l2.662-4.658a1.5 1.5 0 111.14.651l-2.662 4.658a1.5 1.5 0 11-2.496.026L7.631 7.994a1.42 1.42 0 01-.262 0l-1.612 2.687A1.5 1.5 0 014.5 13z"
+                />
+              </svg>
+            </div>
+          </Link>
         </li>
         : ""
         }

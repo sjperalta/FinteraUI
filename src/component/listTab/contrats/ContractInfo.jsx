@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import { API_URL } from "../../../../config";
 import { getToken } from "../../../../auth";
 import { formatStatus } from "../../../utils/formatStatus";
+import ReportSelect from "../../forms/ReportSelect";
 
 /**
  * Translates the financing type to Spanish.
@@ -19,7 +20,7 @@ const translateFinancingType = (type) => {
         default:
             return "N/A";
     }
-};
+}
 
 function ContractInfo({
     customer_name,
@@ -94,6 +95,34 @@ function ContractInfo({
         }
     };
 
+      // REJECT endpoint: /api/v1/projects/:project_id/lots/:lot_id/contracts/:id/cancel
+      const handleCancel = async () => {
+        if (!contract_id) {
+            alert("No contract_id available to reject.");
+            return;
+        }
+        try {
+            const response = await fetch(
+                `${API_URL}/api/v1/projects/${project_id}/lots/${lot_id}/contracts/${contract_id}/cancel`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            if (!response.ok) {
+                throw new Error("Error releasing the contract.");
+            }
+            alert("Contrato liberado exitosamente.");
+            refreshContracts({});
+        } catch (error) {
+            alert(`Error: ${error.message}`);
+            console.error(error);
+        }
+    };
+
     return (
         <tr className="border-b border-bgray-300 dark:border-darkblack-400">
             {/* Customer Name */}
@@ -133,15 +162,21 @@ function ContractInfo({
 
             {/* Status */}
             <td className="px-6 py-5 xl:w-[165px] xl:px-0">
-                <div className="flex w-full items-center">
+            <div className="flex w-full items-center">
                 <span
-                    className={`block rounded-md bg-success-50 px-4 py-1.5 text-sm font-semibold leading-[22px] ${
-                    status?.toLowerCase() === "pending" ||  status?.toLowerCase() === "approved" ? "bg-blue-100" : "bg-red-100"
-                    }  dark:bg-darkblack-500`}
+                className={`block rounded-md px-4 py-1.5 text-sm font-semibold leading-[22px] ${
+                    status?.toLowerCase() === "submitted"
+                    ? "bg-blue-100 text-blue-600"
+                    : status?.toLowerCase() === "rejected"
+                    ? "bg-red-100 text-red-600"
+                    : status?.toLowerCase() === "approved"
+                    ? "bg-green-100 text-green-600"
+                    : "bg-gray-100 text-gray-600"
+                } dark:bg-darkblack-500`}
                 >
-                    {formatStatus(status?.toLowerCase())}
+                {formatStatus(status?.toLowerCase())}
                 </span>
-                </div>
+            </div>
             </td>
 
             {/* Created At */}
@@ -159,10 +194,10 @@ function ContractInfo({
             </td>
 
             {/* Action Buttons */}
-            <td className="px-6 py-5 xl:w-[165px] xl:px-0">
+            <td className="px-6 py-5 xl:w-[165px] xl:px-2">
                 <div className="flex items-center gap-4">
                     {/* APPROVE button for admin */}
-                    {userRole === "admin" && status?.toLowerCase() === "pending" && (
+                    {userRole === "admin" && status?.toLowerCase() === "submitted" && (
                         <button
                             onClick={handleApprove}
                             className="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded"
@@ -170,9 +205,10 @@ function ContractInfo({
                             Aprobar
                         </button>
                     )}
-
                     {/* REJECT button for admin */}
-                    {userRole === "admin" && status?.toLowerCase() === "approved" && (
+                    {userRole === "admin" && 
+                        (status?.toLowerCase() === "pending" ||
+                        status?.toLowerCase() === "submitted") && (
                         <button
                             onClick={handleReject}
                             className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded"
@@ -180,6 +216,23 @@ function ContractInfo({
                             Rechazar
                         </button>
                     )}
+                    {/* REJECT button for admin */}
+                    {userRole === "admin" && 
+                        status?.toLowerCase() === "rejected" && (
+                        <button
+                            onClick={handleCancel}
+                            className="bg-yellow-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded"
+                        >
+                            Liberar
+                        </button>
+                    )}
+                </div>
+            </td>
+            <td className="px-6 py-5 xl:w-[165px] xl:px-4">
+                <div className="flex items-center gap-3">               
+                    <div className="mb-3 flex items-center justify-between">
+                        <ReportSelect contract_id={contract_id} financing_type={financing_type} />
+                    </div>
                 </div>
             </td>
         </tr>

@@ -15,7 +15,7 @@ function Project({ project, user }) {
     project_type,
     total_lots,
     total_area,
-    price_per_square_foot,
+    price_per_square_vara,
   } = project;
 
   return (
@@ -40,7 +40,7 @@ function Project({ project, user }) {
       <p className="pt-5 pb-8 text-lg text-bgray-600 dark:text-bgray-50">
         {name} tiene un área total de {total_area} v², posee {available}/
         {total_lots} lotes disponibles, con un precio por vara de{" "}
-        {price_per_square_foot} LPS.
+        {price_per_square_vara} LPS.
       </p>
 
       {/* Action Links */}
@@ -81,7 +81,7 @@ Project.propTypes = {
     project_type: PropTypes.string.isRequired,
     total_lots: PropTypes.number.isRequired,
     total_area: PropTypes.string.isRequired,
-    price_per_square_foot: PropTypes.string.isRequired,
+    price_per_square_vara: PropTypes.string.isRequired,
   }).isRequired,
 };
 

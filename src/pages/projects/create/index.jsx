@@ -8,7 +8,7 @@ function CreateProject() {
   const [description, setDescription] = useState("");
   const [address, setAddress] = useState("");
   const [lotCount, setLotCount] = useState(0);
-  const [pricePerSquareFoot, setPricePerSquareFoot] = useState(0);
+  const [pricePerSquareVara, setPricePerSquareVara] = useState(0);
   const [interestRate, setInterestRate] = useState(0);
   const [commissionRate, setCommissionRate] = useState(0); // New state for commission rate
   const [loading, setLoading] = useState(false);
@@ -31,7 +31,7 @@ function CreateProject() {
           description,
           address,
           lot_count: lotCount,
-          price_per_square_foot: pricePerSquareFoot,
+          price_per_square_vara: pricePerSquareVara,
           interest_rate: interestRate,
           commission_rate: commissionRate, // Include the commission rate
         }),
@@ -127,8 +127,8 @@ function CreateProject() {
             </label>
             <input
               type="number"
-              value={pricePerSquareFoot}
-              onChange={(e) => setPricePerSquareFoot(e.target.value)}
+              value={pricePerSquareVara}
+              onChange={(e) => setPricePerSquareVara(e.target.value)}
               required
               className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
               placeholder="Ingrese el precio por vara cuadrada"

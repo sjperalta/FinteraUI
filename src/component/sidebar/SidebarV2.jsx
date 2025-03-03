@@ -108,7 +108,7 @@ function SidebarV2({user, handleLogout }) {
                     </ul>
                   </li>
                    {/* Balance: All roles */}
-                  {(isAdmin || isSeller || isUser) && (
+                  {(isUser) && (
                     <li
                       className={`text-md inline-block py-1.5 font-medium text-bgray-600 hover:text-bgray-800 ${
                         location.includes("/balance/user") ? "nav-active" : ""

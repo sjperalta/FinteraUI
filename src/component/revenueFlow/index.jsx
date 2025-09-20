@@ -1,10 +1,18 @@
 import BarChart from "../chart/BarChart";
 import DateFilter from "../forms/DateFilter";
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 import { ThemeContext } from "../layout";
 
 function RevenueFlow() {
-  const { theme } = useContext(ThemeContext);
+  const ctx = useContext(ThemeContext);
+  const warnedRef = useRef(false);
+  if (ctx == null && !warnedRef.current) {
+    // Warn once if ThemeContext is unexpectedly missing
+    // eslint-disable-next-line no-console
+    console.warn("ThemeContext is not provided; falling back to default theme.");
+    warnedRef.current = true;
+  }
+  const theme = ctx?.theme ?? "";
 
   let month = [
     "Jan",

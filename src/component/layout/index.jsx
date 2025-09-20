@@ -9,7 +9,7 @@ import { createContext } from "react";
 import { Outlet } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
 
-export const ThemeContext = createContext(null);
+export const ThemeContext = createContext({ theme: "", setTheme: () => {} });
 
 function Layout({ bg, overlay, children }) {
   const { user, logout } = useContext(AuthContext);

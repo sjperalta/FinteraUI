@@ -25,12 +25,12 @@ const _sentryDsn = import.meta.env.VITE_SENTRY_DSN;
 if (_sentryDsn) {
   Sentry.init({
     dsn: _sentryDsn,
-    environment: import.meta.env.MODE,
+    environment: import.meta.env.MODE ?? "development",
     // Set a release if available (useful for grouping and source maps)
     release:
       import.meta.env.VITE_APP_VERSION ?? undefined,
     // Keep traces disabled unless you intentionally enable performance monitoring
-    tracesSampleRate: 0.0,
+    tracesSampleRate: 0.3,
     integrations: [Sentry.browserTracingIntegration()],
   });
 }

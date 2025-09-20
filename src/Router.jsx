@@ -12,6 +12,7 @@ import SignUp from "./pages/signup";
 import ComingSoon from "./pages/commingSoon";
 import Error from "./pages/error";
 import Layout from "./component/layout";
+import RouteErrorElement from "./component/error/RouteErrorElement";
 import PersonalInfo from "./pages/settings/personal-info";
 import Security from "./pages/settings/security";
 import TermsAndCondition from "./pages/settings/terms&condition";
@@ -28,6 +29,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     Component: Layout,
+    errorElement: <RouteErrorElement />,
     children: [
       {
         index: true,

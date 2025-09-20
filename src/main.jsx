@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import * as Sentry from "@sentry/browser";
 import App from "./App.jsx";
 import "./assets/css/style.css";
 import "./assets/css/font-awesome-all.min.css";
@@ -16,6 +17,8 @@ import { registerSW } from "virtual:pwa-register";
 if (import.meta.env.MODE === "production") {
   registerSW();
 }
+
+Sentry.init({ dsn: import.meta.env.VITE_SENTRY_DSN });
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

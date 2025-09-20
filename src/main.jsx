@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import * as Sentry from "@sentry/browser";
+import * as Sentry from "@sentry/react";
+import ErrorBoundary from "./component/error/ErrorBoundary.jsx";
 import App from "./App.jsx";
 import "./assets/css/style.css";
 import "./assets/css/font-awesome-all.min.css";
@@ -18,12 +19,28 @@ if (import.meta.env.MODE === "production") {
   registerSW();
 }
 
-Sentry.init({ dsn: import.meta.env.VITE_SENTRY_DSN });
+// Initialize Sentry only when a DSN is provided to avoid noisy errors in
+// non-production or local environments.
+const _sentryDsn = import.meta.env.VITE_SENTRY_DSN;
+if (_sentryDsn) {
+  Sentry.init({
+    dsn: _sentryDsn,
+    environment: import.meta.env.MODE,
+    // Set a release if available (useful for grouping and source maps)
+    release:
+      import.meta.env.VITE_APP_VERSION ?? undefined,
+    // Keep traces disabled unless you intentionally enable performance monitoring
+    tracesSampleRate: 0.0,
+    integrations: [Sentry.browserTracingIntegration()],
+  });
+}
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
       <AuthProvider>
-        <App />
+        <ErrorBoundary fallback={<div>Something went wrong.</div>}>
+          <App />
+        </ErrorBoundary>
       </AuthProvider>
   </React.StrictMode>
 );

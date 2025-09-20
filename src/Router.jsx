@@ -160,7 +160,11 @@ const router = createBrowserRouter([
     path: "/404",
     element: <Error />,
   },
-]);
+], {
+  future: {
+    v7_startTransition: true,
+  },
+});
 
 function Router() {
   return <RouterProvider router={router} />;

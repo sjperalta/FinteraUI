@@ -158,7 +158,7 @@ function TotalWidgetCard({ title, amount, groth, memberImg, totalEarnImg, curren
 TotalWidgetCard.propTypes = {
   title: ProtoTypes.string,
   amount: ProtoTypes.string,
-  groth: ProtoTypes.string,
+  groth: ProtoTypes.number,
   memberImg: ProtoTypes.string,
   totalEarnImg: ProtoTypes.string,
 };

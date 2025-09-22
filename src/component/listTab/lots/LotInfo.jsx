@@ -22,8 +22,10 @@ function LotInfo({
   project_id,
   lot_id,
   contract_id,
-  userRole,    // e.g., 'admin' or 'seller' or 'user'
-  refreshLots, // Function to refresh lots in parent component
+  userRole,
+  refreshLots,
+  measurement_unit,   // new optional
+  area,               // new optional
 }) {
   const token = getToken();
 
@@ -102,8 +104,13 @@ function LotInfo({
       {/* Dimensiones */}
       <td className="px-6 py-5 xl:px-0">
         <p className="text-base font-medium text-bgray-900 dark:text-white">
-          {dimensions}
+          {dimensions}{measurement_unit ? ` (${measurement_unit})` : ""}
         </p>
+        {area !== undefined && (
+          <p className="text-xs text-bgray-600 dark:text-bgray-50">
+            Área: {area} {measurement_unit || 'm2'}
+          </p>
+        )}
       </td>
 
       {/* Balance */}
@@ -164,6 +171,15 @@ function LotInfo({
               Rechazar
             </button>
           )}
+          {/* UPDATE button for admin - navigates to lot edit page */}
+          {userRole === "admin" && (
+            <Link
+              to={`/projects/${project_id}/lots/${lot_id}/edit`}
+              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded"
+            >
+              Editar
+            </Link>
+          )}
         </div>
       </td>
     </tr>
@@ -174,7 +190,7 @@ LotInfo.propTypes = {
   project_name: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   dimensions: PropTypes.string.isRequired,
-  balance: PropTypes.string.isRequired,
+  balance: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   reserved_by: PropTypes.string.isRequired,
   status: PropTypes.string.isRequired,
 
@@ -188,6 +204,10 @@ LotInfo.propTypes = {
 
   // Function to refresh lots in parent component
   refreshLots: PropTypes.func.isRequired,
+
+  // New optional fields for measurement unit and area
+  measurement_unit: PropTypes.string,
+  area: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 };
 
 export default LotInfo;

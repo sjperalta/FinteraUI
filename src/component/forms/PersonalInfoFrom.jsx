@@ -3,6 +3,31 @@ import { API_URL } from "./../../../config"; // Update the path as needed
 import { getToken } from "./../../../auth"; // Update the path as needed
 import PropTypes from "prop-types";
 
+// helper formatters (minimal, preserve digits and insert dashes)
+function formatCedula(raw) {
+  const d = String(raw || "").replace(/\D/g, "");
+  const g1 = d.slice(0, 4);
+  const g2 = d.slice(4, 8);
+  const g3 = d.slice(8, 13);
+  let out = g1;
+  if (g2) out += `-${g2}`;
+  if (g3) out += `-${g3}`;
+  return out;
+}
+
+function formatRTN(raw) {
+  const d = String(raw || "").replace(/\D/g, "");
+  const g1 = d.slice(0, 4);
+  const g2 = d.slice(4, 8);
+  const g3 = d.slice(8, 13);
+  const g4 = d.slice(13, 14);
+  let out = g1;
+  if (g2) out += `-${g2}`;
+  if (g3) out += `-${g3}`;
+  if (g4) out += `-${g4}`;
+  return out;
+}
+
 function PersonalInfoForm({ userId }) {
   const [user, setUser] = useState({
     full_name: "",
@@ -10,6 +35,7 @@ function PersonalInfoForm({ userId }) {
     email: "",
     identity: "",
     rtn: "",
+    address: "",
   });
 
   const [loading, setLoading] = useState(true);
@@ -43,8 +69,9 @@ function PersonalInfoForm({ userId }) {
           full_name: data.full_name || "",
           phone: data.phone || "",
           email: data.email || "",
-          identity: data.identity || "",
-          rtn: data.rtn || "",
+          identity: formatCedula(data.identity || ""),
+          rtn: formatRTN(data.rtn || ""),
+          address: data.address || "",
         });
       } catch (err) {
         setError(err.message);
@@ -58,9 +85,12 @@ function PersonalInfoForm({ userId }) {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    let v = value;
+    if (name === "identity") v = formatCedula(value);
+    if (name === "rtn") v = formatRTN(value);
     setUser((prevUser) => ({
       ...prevUser,
-      [name]: value,
+      [name]: v,
     }));
   };
 
@@ -79,6 +109,8 @@ function PersonalInfoForm({ userId }) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
+        // send sanitized payload: server expects identity/rtn without formatting sometimes,
+        // but send as-is (formatted) unless you want raw digits. Adjust if needed.
         body: JSON.stringify(user),
       });
 
@@ -127,7 +159,7 @@ function PersonalInfoForm({ userId }) {
                 htmlFor="phone"
                 className="text-base text-bgray-600 dark:text-bgray-50 font-medium"
               >
-                Phone Number (Optional)
+                Numero Telefonico (Opcional)
               </label>
               <input
                 type="text"
@@ -137,6 +169,23 @@ function PersonalInfoForm({ userId }) {
                 className="bg-bgray-50 dark:bg-darkblack-500 dark:text-white p-4 rounded-lg h-14 border-0 focus:border focus:border-success-300 focus:ring-0"
               />
             </div>
+
+            <div className="flex flex-col gap-2">
+              <label
+                htmlFor="address"
+                className="text-base text-bgray-600 dark:text-bgray-50 font-medium"
+              >
+                Dirección (opcional)
+              </label>
+              <input
+                type="text"
+                name="address"
+                value={user.address}
+                onChange={handleInputChange}
+                className="bg-bgray-50 dark:bg-darkblack-500 dark:text-white p-4 rounded-lg h-14 border-0 focus:border focus:border-success-300 focus:ring-0"
+              />
+            </div>
+
             <div className="flex flex-col gap-2">
               <label
                 htmlFor="email"
@@ -149,7 +198,8 @@ function PersonalInfoForm({ userId }) {
                 name="email"
                 value={user.email}
                 onChange={handleInputChange}
-                className="bg-bgray-50 dark:bg-darkblack-500 dark:text-white p-4 rounded-lg h-14 border-0 focus:border focus:border-success-300 focus:ring-0"
+                readOnly
+                className="bg-bgray-100 dark:bg-darkblack-500 dark:text-white p-4 rounded-lg h-14 border-0 focus:border focus:border-success-300 focus:ring-0"
               />
             </div>
           </div>

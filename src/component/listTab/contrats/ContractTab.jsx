@@ -126,16 +126,20 @@ function ContractTab({ contracts, userRole, pageSize, refreshContracts }) {
           {contracts?.map((contract) => (
             <ContractInfo
               key={contract.id}
-              customer_name={contract.customer_name}
+              applicant_name={contract.applicant_name}
               created_by={contract.created_by}
               lot_name={contract.lot_name}
               balance={contract.balance}
               financing_type={contract.financing_type}
+              down_payment={contract.down_payment}
+              amount={contract.amount}
+              payment_term={contract.payment_term}
               reserve_amount={contract.reserve_amount}
               status={contract.status}
               created_at={contract.created_at}
               project_id={contract.project_id}
               lot_id={contract.lot_id}
+              payment_schedule={contract.payment_schedule}
               contract_id={contract.id}
               userRole={userRole}
               refreshContracts={refreshContracts}

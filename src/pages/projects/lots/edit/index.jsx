@@ -4,6 +4,15 @@ import AuthContext from "../../../../context/AuthContext";
 import { API_URL } from "../../../../../config";
 import { getToken } from "../../../../../auth";
 
+// ---- Area conversion factors (from m2) ----
+const M2_TO_FT2_FACTOR = 10.7639;
+const M2_TO_VARA2_FACTOR = 1.431;
+const AREA_CONVERSION_FROM_M2 = {
+  m2: 1,
+  ft2: M2_TO_FT2_FACTOR,
+  vara2: M2_TO_VARA2_FACTOR,
+};
+
 function EditLot() {
   const { project_id, lot_id } = useParams();
   const navigate = useNavigate();
@@ -85,24 +94,17 @@ function EditLot() {
     fetchLot();
   }, [project_id, lot_id, token]);
 
-  // Derived area always in m2 stored? Backend area_m2 exists but we recalc for instant feedback
+  // Derived area always in m2
   const areaM2 = useMemo(() => {
     const l = Number(length) || 0;
     const w = Number(width) || 0;
     return +(l * w).toFixed(2);
   }, [length, width]);
 
-  // Convert area into project's measurement unit if different
+  // Convert area into selected measurement unit using constants
   const displayedArea = useMemo(() => {
-    switch (measurementUnit) {
-      case 'ft2':
-        return +(areaM2 * 10.7639).toFixed(2);
-      case 'vara2':
-        return +(areaM2 * 1.431).toFixed(2);
-      case 'm2':
-      default:
-        return areaM2;
-    }
+    const factor = AREA_CONVERSION_FROM_M2[measurementUnit] || 1;
+    return +(areaM2 * factor).toFixed(2);
   }, [areaM2, measurementUnit]);
 
   const calculatedPrice = useMemo(() => {

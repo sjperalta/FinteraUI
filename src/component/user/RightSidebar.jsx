@@ -7,15 +7,21 @@ import { Link } from "react-router-dom";
 function RightSidebar({ user, onClose, currentUser }) {
   const [summary, setSummary] = useState(null);
   const [summaryError, setSummaryError] = useState("");
-  const { token } = useContext(AuthContext);
+  const { token, user: loggedUser } = useContext(AuthContext);
+  const viewer = currentUser || loggedUser;
 
+  // Minimal guard: don't attempt to render sidebar when no user provided
+  if (!user) return null;
+  
   useEffect(() => {
-    if (!user || !user.id) return;
+    const userId = user?.id;
+    if (!userId) return;
+    // do not fetch for admin/seller accounts
     if (user?.role === "admin" || user?.role === "seller") return;
 
     const fetchSummary = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/v1/users/${user.id}/summary`, {
+        const response = await fetch(`${API_URL}/api/v1/users/${userId}/summary`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -27,6 +33,8 @@ function RightSidebar({ user, onClose, currentUser }) {
           throw new Error("Failed to fetch summary");
         }
         const data = await response.json();
+        // minimal debug to confirm fetch ran
+        // console.debug("fetched user summary", userId, data);
         setSummary(data);
       } catch (error) {
         console.error(error);
@@ -35,8 +43,8 @@ function RightSidebar({ user, onClose, currentUser }) {
     };
 
     fetchSummary();
-  }, [user, token]);
-
+  }, [user?.id, user?.role, token]);
+  
   // Function to Download PDF
   const downloadUserBalancePDF = async () => {
     if (!user || !user.id) return;
@@ -92,11 +100,30 @@ function RightSidebar({ user, onClose, currentUser }) {
 
       <header className="flex flex-col items-center text-center -mt-8 pb-7">
         <img src={userImg} className="rounded-lg" alt="User avatar" />
-        <h3 className="text-xl font-bold text-bgray-700 dark:text-white mt-4">
-          {user.full_name}
-        </h3>
-        <p className="text-base font-medium text-bgray-500 dark:text-white">
+        <div className="flex items-center gap-3 mt-4">
+          <h3 className="text-xl font-bold text-bgray-700 dark:text-white">
+            {user.full_name}
+          </h3>
+          <span
+            className={
+              `text-sm font-medium px-2 py-1 rounded-full ` +
+              (user?.role === "admin"
+                ? "bg-success-300 text-white"
+                : user?.role === "seller"
+                ? "bg-yellow-400 text-white"
+                : "bg-bgray-100 text-bgray-900 dark:bg-darkblack-500 dark:text-bgray-50")
+            }
+          >
+            {user?.role}
+          </span>
+        </div>
+        <p className="text-base font-medium text-bgray-500 dark:text-white mt-2">
           {summary?.contractList || "No Contracts"}
+        </p>
+
+        {/* Show address prominently under header */}
+        <p className="text-sm text-bgray-600 dark:text-bgray-200 mt-2">
+          {user.address ? user.address : "Dirección no proporcionada"}
         </p>
       </header>
 
@@ -106,10 +133,23 @@ function RightSidebar({ user, onClose, currentUser }) {
           <span className="text-sm font-semibold text-bgray-900 dark:text-white">{user.email}</span>
         </li>
         <li className="flex justify-between">
+          <span className="font-medium text-gray-500 text-sm dark:text-white">Dirección</span>
+          <span className="text-sm font-semibold text-bgray-900 dark:text-white">{user.address || "-"}</span>
+        </li>
+        <li className="flex justify-between">
+          <span className="font-medium text-gray-500 text-sm dark:text-white">Cédula</span>
+          <span className="text-sm font-semibold text-bgray-900 dark:text-white">{user.identity || "-"}</span>
+        </li>
+        <li className="flex justify-between">
+          <span className="font-medium text-gray-500 text-sm dark:text-white">RTN</span>
+          <span className="text-sm font-semibold text-bgray-900 dark:text-white">{user.rtn || "-"}</span>
+        </li>
+        <li className="flex justify-between">
           <span className="font-medium text-gray-500 text-sm dark:text-white">Teléfono</span>
           <span className="text-sm font-semibold text-bgray-900 dark:text-white">{user.phone}</span>
         </li>
-        {user?.role === "user" ?
+        {/* Balance (only show for target users with role "user" and visible to admin/creator/self) */}
+  {user?.role === "user" && ((viewer?.role === "admin") || String(viewer?.id) === String(user?.id) || String(viewer?.id) === String(user?.created_by)) ? (
         <li className="flex justify-between">
           <span className="font-medium text-gray-500 text-sm dark:text-white">Balance</span>
           <span className="text-sm font-semibold text-bgray-900 dark:text-white">
@@ -118,9 +158,19 @@ function RightSidebar({ user, onClose, currentUser }) {
               : summaryError || "Loading..."}
           </span>
         </li>
-        : ""
-        }
-        {user?.role === "user" ?
+        ) : null}
+        {user?.note ? (
+          <li>
+            <div className="text-sm text-bgray-700 dark:text-bgray-200">{user.note}</div>
+          </li>
+        ) : null}
+        {user?.created_by ? (
+          <li className="pt-2">
+            <div className="text-xs text-gray-500 dark:text-bgray-300">Creado por</div>
+            <div className="text-sm font-semibold text-bgray-900 dark:text-white">ID: {user.created_by}</div>
+          </li>
+        ) : null}
+  {user?.role === "user" && ((viewer?.role === "admin") || String(viewer?.id) === String(user?.id) || String(viewer?.id) === String(user?.created_by)) ? (
         <li>
           <Link to={`/balance/user/${user.id}`}>
             <div className="">
@@ -138,12 +188,11 @@ function RightSidebar({ user, onClose, currentUser }) {
             </div>
           </Link>
         </li>
-        : ""
-        }
+        ) : null}
       </ul>
 
       {/* File Download Section */}
-      {user?.role === "user" ?
+  {user?.role === "user" && ((viewer?.role === "admin") || String(viewer?.id) === String(user?.id) || String(viewer?.id) === String(user?.created_by)) ? (
       <div className="py-6 border-b border-bgray-200 dark:border-darkblack-400">
         <h4 className="font-medium text-gray-500 text-sm dark:text-white mb-3">Files</h4>
         <ul className="space-y-2.5">
@@ -206,8 +255,7 @@ function RightSidebar({ user, onClose, currentUser }) {
           </li>
         </ul>
       </div>
-      : ""
-      }
+      ) : null}
     </aside>
   );
 }

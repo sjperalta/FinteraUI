@@ -17,12 +17,17 @@ import PersonalInfo from "./pages/settings/personal-info";
 import Security from "./pages/settings/security";
 import TermsAndCondition from "./pages/settings/terms&condition";
 import CreateProject from "./pages/projects/create";
+import EditProject from "./pages/projects/edit";
+import AdminRoute from "./component/protectedRoute/AdminRoute";
 import LotsList from "./pages/projects/lots";
+import CreateLot from "./pages/projects/lots/create";
+import EditLot from "./pages/projects/lots/edit";
 import Reserve from "./pages/projects/reserve";
 import CreateUser from "./pages/users/create";
 import Balance from "./pages/balance";
 import Upload from "./pages/balance/upload";
 import Summary from "./pages/balance/summary";
+import AdminOrOwnerRoute from "./component/protectedRoute/AdminOrOwnerRoute";
 import Audits from "./pages/audits";
 
 const router = createBrowserRouter([
@@ -66,9 +71,17 @@ const router = createBrowserRouter([
       {
         path: "/projects/create",
         element: (
-          <ProtectedRoute>
+          <AdminRoute>
             <CreateProject />
-          </ProtectedRoute>
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "/projects/:id/edit",
+        element: (
+          <AdminRoute>
+            <EditProject />
+          </AdminRoute>
         ),
       },
       {
@@ -76,6 +89,22 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <LotsList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/projects/:id/lots/create",
+        element: (
+          <AdminRoute>
+            <CreateLot />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "/projects/:project_id/lots/:lot_id/edit",
+        element: (
+          <ProtectedRoute>
+            <EditLot />
           </ProtectedRoute>
         ),
       },
@@ -97,7 +126,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/balance/user/:userId",
-        Component: Balance,
+        element: (
+          <AdminOrOwnerRoute>
+            <Balance />
+          </AdminOrOwnerRoute>
+        ),
         children: [
           {
             index: true,

@@ -1,8 +1,11 @@
-import ProtoTypes from "prop-types";
+import PropTypes from "prop-types";
+import { useContext } from "react";
+import AuthContext from "../../context/AuthContext";
 import Progressbar from "../chart/Progressbar";
 import TabBtn from "../button/TabBtn";
 
 function SettingsSidebar() {
+  const { user: loggedUser } = useContext(AuthContext);
   return (
     <aside className="col-span-3 border-r border-bgray-200 dark:border-darkblack-400">
       {/* Sidebar Tabs */}
@@ -83,15 +86,18 @@ function SettingsSidebar() {
       </div>
       {/* Progressbar  */}
       <div className="px-8">
-        <Progressbar className="bg-bgray-200 dark:bg-darkblack-500 p-7 rounded-xl" />
+        <Progressbar
+          className="bg-bgray-200 dark:bg-darkblack-500 p-7 rounded-xl"
+          user={loggedUser}
+        />
       </div>
     </aside>
   );
 }
 
 SettingsSidebar.propTypes = {
-  activeTab: ProtoTypes.string,
-  handleActiveTab: ProtoTypes.func,
+  activeTab: PropTypes.string,
+  handleActiveTab: PropTypes.func,
 };
 
 export default SettingsSidebar;

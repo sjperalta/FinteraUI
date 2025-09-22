@@ -19,13 +19,13 @@ import debounce from "lodash.debounce";
  *  - minSearchLength (number): minimum length to trigger onSearchChange (default 3).
  */
 function GenericFilter({
-  searchTerm,
-  filterValue,
-  filterOptions,
-  onSearchChange,
-  onFilterChange,
-  searchPlaceholder,
-  filterPlaceholder,
+  searchTerm = "",
+  filterValue = "",
+  filterOptions = ["All", "Option1", "Option2"],
+  onSearchChange = () => {},
+  onFilterChange = () => {},
+  searchPlaceholder = "Search...",
+  filterPlaceholder = "Select Filter",
   minSearchLength = 3,
 }) {
   const [term, setTerm] = useState(searchTerm);
@@ -197,20 +197,11 @@ GenericFilter.propTypes = {
   searchTerm: PropTypes.string,
   filterValue: PropTypes.string,
   filterOptions: PropTypes.arrayOf(PropTypes.string),
-  onSearchChange: PropTypes.func.isRequired,
-  onFilterChange: PropTypes.func.isRequired,
+  onSearchChange: PropTypes.func,
+  onFilterChange: PropTypes.func,
   searchPlaceholder: PropTypes.string,
   filterPlaceholder: PropTypes.string,
   minSearchLength: PropTypes.number,
-};
-
-GenericFilter.defaultProps = {
-  searchTerm: "",
-  filterValue: "",
-  filterOptions: ["All", "Option1", "Option2"],
-  searchPlaceholder: "Search...",
-  filterPlaceholder: "Select Filter",
-  minSearchLength: 3,
 };
 
 export default GenericFilter;

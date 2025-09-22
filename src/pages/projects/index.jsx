@@ -1,9 +1,10 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import Project from "../../component/project"; 
 import { API_URL } from "../../../config"; 
 import AuthContext from "../../context/AuthContext";
-import ActionBtn from "../../component/header/ActionBtn"
+import { useRef } from "react";
+import ActionBtn from "../../component/header/ActionBtn";
+import Project from "../../component/project";
 
 // Import the new reusable component
 import GenericFilter from "../../component/forms/GenericFilter";
@@ -20,8 +21,15 @@ function Projects() {
   const [sortParam, setSortParam] = useState("");  // e.g. "name-asc" or "created_at-desc"
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(20);
+  const fileInputRef = useRef(null);
+  const [importing, setImporting] = useState(false);
+
+  // New import options
+  const [updateExisting, setUpdateExisting] = useState(false);
+  const [skipDuplicates, setSkipDuplicates] = useState(true);
 
   const navigate = useNavigate();
+  const isAdmin = user?.role === 'admin';
 
   // Whenever filters or pagination change, refetch
   useEffect(() => {
@@ -86,6 +94,47 @@ function Projects() {
     navigate("/projects/create");
   };
 
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImportChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImporting(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      // Append options as flags so backend can handle update/skip behavior
+      formData.append("options[update_existing]", updateExisting ? "1" : "0");
+      formData.append("options[skip_duplicates]", skipDuplicates ? "1" : "0");
+
+      const res = await fetch(`${API_URL}/api/v1/projects/import`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${ctxToken}`,
+        },
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "Error importing CSV");
+      }
+
+      // Refresh projects after successful import
+      await fetchProjects();
+      alert("Importación completada");
+    } catch (err) {
+      console.error(err);
+      alert(`Import error: ${err.message}`);
+    } finally {
+      setImporting(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
   // Pagination
   const handlePrevPage = () => {
     if (page > 1) setPage(page - 1);
@@ -129,20 +178,82 @@ function Projects() {
         minSearchLength={3}
       />
 
-      <div className="px-4 py-4 flex items-center">
-        { user?.role === "admin" ? <ActionBtn  
-          name="create_project"
-          clickHandler={handleAddProject}
-          icon={
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-          } />
-          : null}
+  <div className="px-4 py-4 flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          {isAdmin && (
+            <>
+              <ActionBtn
+                name="create_project"
+                clickHandler={handleAddProject}
+                icon={
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                }
+              />
+
+              <div className="flex items-center space-x-2">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".csv"
+                  onChange={handleImportChange}
+                  className="hidden"
+                />
+
+                <ActionBtn
+                  name="import_csv"
+                  clickHandler={handleImportClick}
+                  icon={
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M7 10l5-5 5 5" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v10" />
+                    </svg>
+                  }
+                />
+
+                {/* Import options UI */}
+                <div className="flex items-center space-x-3 ml-4">
+                  <label className="flex items-center text-sm text-bgray-700 dark:text-bgray-50">
+                    <input
+                      type="checkbox"
+                      checked={updateExisting}
+                      onChange={(e) => setUpdateExisting(e.target.checked)}
+                      className="mr-2 h-4 w-4"
+                    />
+                    Actualizar existentes
+                  </label>
+                  <label className="flex items-center text-sm text-bgray-700 dark:text-bgray-50">
+                    <input
+                      type="checkbox"
+                      checked={skipDuplicates}
+                      onChange={(e) => setSkipDuplicates(e.target.checked)}
+                      className="mr-2 h-4 w-4"
+                    />
+                    Omitir duplicados
+                  </label>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+        {/* optionally other header actions */}
       </div>
+
+      {!isAdmin && (
+        <div className="px-4">
+          <p className="text-sm text-bgray-600 dark:text-bgray-400">Las acciones "Agregar" y "Importar CSV" están disponibles sólo para administradores.</p>
+        </div>
+      )}
 
       {/* Projects Grid */}
       <div className="grid lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 lg:gap-4 xl:gap-6">
         {projects.map((project) => (
-          <Project key={project.id} project={project} user={user} />
+          <Project
+            key={project.id}
+            project={project}
+            user={user}
+            onDeleted={fetchProjects}
+          />
         ))}
       </div>
 

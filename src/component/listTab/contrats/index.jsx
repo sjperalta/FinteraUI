@@ -41,6 +41,9 @@ function Contracts() {
   // Sorting states
   const [sortParam, setSortParam] = useState(null); // e.g., 'customer_name' or '-balance'
 
+  // Key to force refetch when child requests a refresh (e.g. after approve)
+  const [refreshKey, setRefreshKey] = useState(0);
+
   /**
    * Reset to first page when search term changes
    */
@@ -91,18 +94,21 @@ function Contracts() {
     };
 
     fetchContracts();
-  }, [token, debouncedSearchTerm, currentPage, pageSize, sortParam, id, lot_id]);
+  }, [token, debouncedSearchTerm, currentPage, pageSize, sortParam, id, lot_id, refreshKey]);
 
   /**
    * Function to refresh contracts data with new parameters
    * Accepts an object with optional sort parameter
    * @param {object} params - Parameters to update (e.g., { sort: 'customer_name' })
    */
-  const refreshContracts = ({ sort }) => {
+  // Allow children to request a refresh. Optional param { sort } updates sorting.
+  const refreshContracts = ({ sort } = {}) => {
     if (sort !== undefined) {
       setSortParam(sort);
     }
     setCurrentPage(1); // Reset to first page on new sort
+    // bump refreshKey to force the fetch effect to re-run (useful after approve/delete)
+    setRefreshKey((k) => k + 1);
   };
 
   // Event Handlers

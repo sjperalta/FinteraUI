@@ -15,8 +15,18 @@ function Project({ project, user }) {
     project_type,
     total_lots,
     total_area,
-    price_per_square_vara,
+    price_per_square_unit,          // renamed
+    measurement_unit,               // new (may come from API if added there)
   } = project;
+
+  const unitLabel = (u) => {
+    switch ((u || "").toLowerCase()) {
+      case "m2": return "m²";
+      case "ft2": return "ft²";
+      case "vara2": return "v²";
+      default: return "m²";
+    }
+  };
 
   return (
     <div className="bg-white dark:bg-darkblack-600 rounded-lg p-6 relative">
@@ -38,18 +48,19 @@ function Project({ project, user }) {
 
       {/* Project Description */}
       <p className="pt-5 pb-8 text-lg text-bgray-600 dark:text-bgray-50">
-        {name} tiene un área total de {total_area} v², posee {available}/
-        {total_lots} lotes disponibles, con un precio por vara de{" "}
-        {price_per_square_vara} LPS.
+        {name} tiene un área total de {total_area} {unitLabel(measurement_unit)}, posee {available}/
+        {total_lots} lotes disponibles, con un precio por {unitLabel(measurement_unit)} de{" "}
+        {price_per_square_unit} LPS.
       </p>
 
       {/* Action Links */}
       <div className="flex items-center gap-5">
         <Link
           to={`/projects/${id}/lots`}
-          className="text-sm font-medium text-success-300"
+          className="bg-success-300 hover:bg-success-400 text-white text-sm font-medium px-3 py-1 rounded"
+          aria-label={`Ver lotes del proyecto ${name}`}
         >
-          Reservas
+          Lotes ({total_lots})
         </Link>
         {/* Only render Editar and Eliminar if user is admin */}
         {user && user.role === "admin" && (
@@ -80,8 +91,9 @@ Project.propTypes = {
     name: PropTypes.string.isRequired,
     project_type: PropTypes.string.isRequired,
     total_lots: PropTypes.number.isRequired,
-    total_area: PropTypes.string.isRequired,
-    price_per_square_vara: PropTypes.string.isRequired,
+    total_area: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    price_per_square_unit: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    measurement_unit: PropTypes.string, // optional
   }).isRequired,
 };
 

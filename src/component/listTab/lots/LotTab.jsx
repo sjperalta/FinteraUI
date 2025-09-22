@@ -210,9 +210,11 @@ function LotTab({ lots, userRole, pageSize, refreshLots }) {
               status={lot.status}
               project_id={lot.project_id}
               lot_id={lot.id}
-              contract_id={lot.contract_id} 
+              contract_id={lot.contract_id}
               userRole={userRole}
               refreshLots={refreshLots}
+              measurement_unit={lot.measurement_unit}
+              area={lot.area}
             />
           ))}
         </tbody>

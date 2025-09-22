@@ -17,7 +17,9 @@ import PersonalInfo from "./pages/settings/personal-info";
 import Security from "./pages/settings/security";
 import TermsAndCondition from "./pages/settings/terms&condition";
 import CreateProject from "./pages/projects/create";
+import EditProject from "./pages/projects/edit";
 import LotsList from "./pages/projects/lots";
+import EditLot from "./pages/projects/lots/edit";
 import Reserve from "./pages/projects/reserve";
 import CreateUser from "./pages/users/create";
 import Balance from "./pages/balance";
@@ -72,10 +74,26 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "/projects/:id/edit",
+        element: (
+          <ProtectedRoute>
+            <EditProject />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "/projects/:id/lots",
         element: (
           <ProtectedRoute>
             <LotsList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/projects/:project_id/lots/:lot_id/edit",
+        element: (
+          <ProtectedRoute>
+            <EditLot />
           </ProtectedRoute>
         ),
       },

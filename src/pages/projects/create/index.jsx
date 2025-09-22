@@ -8,9 +8,10 @@ function CreateProject() {
   const [description, setDescription] = useState("");
   const [address, setAddress] = useState("");
   const [lotCount, setLotCount] = useState(0);
-  const [pricePerSquareVara, setPricePerSquareVara] = useState(0);
+  const [pricePerSquareUnit, setPricePerSquareUnit] = useState(0); // renamed
+  const [measurementUnit, setMeasurementUnit] = useState("m2");    // new
   const [interestRate, setInterestRate] = useState(0);
-  const [commissionRate, setCommissionRate] = useState(0); // New state for commission rate
+  const [commissionRate, setCommissionRate] = useState(0);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const token = getToken();
@@ -27,13 +28,16 @@ function CreateProject() {
           'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
-          name,
-          description,
-          address,
-          lot_count: lotCount,
-          price_per_square_vara: pricePerSquareVara,
-          interest_rate: interestRate,
-          commission_rate: commissionRate, // Include the commission rate
+          project: {   // nested per strong params
+            name,
+            description,
+            address,
+            lot_count: Number(lotCount),
+            price_per_square_unit: Number(pricePerSquareUnit),
+            measurement_unit: measurementUnit,
+            interest_rate: Number(interestRate),
+            commission_rate: Number(commissionRate),
+          }
         }),
       });
 
@@ -120,18 +124,34 @@ function CreateProject() {
             />
           </div>
 
-          {/* Price Per Square Foot */}
+          {/* Measurement Unit */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">
-              Precio por Vara Cuadrada
+              Unidad de Medida
+            </label>
+            <select
+              value={measurementUnit}
+              onChange={(e) => setMeasurementUnit(e.target.value)}
+              className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
+            >
+              <option value="m2">m²</option>
+              <option value="ft2">ft²</option>
+              <option value="vara2">v²</option>
+            </select>
+          </div>
+
+          {/* Precio por Unidad */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">
+              Precio por {measurementUnit === 'm2' ? 'm²' : measurementUnit === 'ft2' ? 'ft²' : 'v²'}
             </label>
             <input
               type="number"
-              value={pricePerSquareVara}
-              onChange={(e) => setPricePerSquareVara(e.target.value)}
+              value={pricePerSquareUnit}
+              onChange={(e) => setPricePerSquareUnit(e.target.value)}
               required
               className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
-              placeholder="Ingrese el precio por vara cuadrada"
+              placeholder="Ingrese el precio por unidad"
             />
           </div>
 

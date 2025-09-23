@@ -38,6 +38,8 @@ function Payments() {
 
   // Sorting states
   const [sortParam, setSortParam] = useState(null); // e.g., 'due_date' or '-amount'
+  // Key to force refetch when child requests a refresh (e.g. after approve)
+  const [refreshKey, setRefreshKey] = useState(0);
 
   /**
    * Reset to first page when search term changes
@@ -89,18 +91,28 @@ function Payments() {
     };
 
     fetchPayments();
-  }, [token, debouncedSearchTerm, currentPage, pageSize, sortParam]);
+  }, [token, debouncedSearchTerm, currentPage, pageSize, sortParam, refreshKey]);
 
   /**
    * Refresh payments data with new parameters
    * Accepts an object with optional sort parameter
    * @param {object} params - Parameters to update (e.g., { sort: 'due_date' })
    */
-  const refreshPayments = ({ sort }) => {
+  // Allow children to request a refresh. Accepts optional { sort, page, per_page }.
+  const refreshPayments = ({ sort, page, per_page } = {}) => {
     if (sort !== undefined) {
       setSortParam(sort);
     }
-    setCurrentPage(1); // Reset to first page on new sort
+    if (per_page !== undefined) {
+      setPageSize(per_page);
+    }
+    if (page !== undefined) {
+      setCurrentPage(page);
+    } else {
+      setCurrentPage(1);
+    }
+    // bump refreshKey to force the fetch effect to re-run (useful after approve/delete)
+    setRefreshKey((k) => k + 1);
   };
 
   // Event Handlers

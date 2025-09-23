@@ -51,32 +51,30 @@ function PaymentInfo({
   };
 
   // APPROVE endpoint: /api/v1/payments/:id/approve
-  const handleApprove = async () => {
-    if (!payment_id) {
-      alert("No payment_id available to approve.");
-      return;
-    }
-
+  async function handleApprove() {
     try {
-      const response = await fetch(`${API_URL}/api/v1/payments/${payment_id}/approve`, {
+      // perform approve API call
+      const res = await fetch(`${API_URL}/api/v1/payments/${payment_id}/approve`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
-
-      if (!response.ok) {
-        throw new Error("Error approving payment.");
+      if (!res.ok) {
+        throw new Error("Error approving payment");
       }
 
-      alert("Pago aprobado exitosamente.");
-      refreshPayments({});
-    } catch (error) {
-      alert(`Error: ${error.message}`);
-      console.error(error);
+      // notify parent to refresh the list
+      if (typeof refreshPayments === "function") {
+        // keep behavior consistent: reset to first page and re-fetch
+        refreshPayments({ page: 1 });
+      }
+    } catch (err) {
+      console.error(err);
+      alert("No se pudo aprobar el pago");
     }
-  };
+  }
 
   const handleDownloadReceipt = async () => {
     try {

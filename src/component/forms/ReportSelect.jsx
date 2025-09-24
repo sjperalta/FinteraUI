@@ -3,19 +3,21 @@ import { getToken } from "../../../auth";
 import PropTypes from "prop-types";
 import { useState } from "react";
 
-function ReportSelect({ contract_id, financing_type }) {
-  const [filterShow, setFilterShow] = useState(false);
+function DocumentSelect({ contract_id, financing_type, status }) {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [downloading, setDownloading] = useState(null);
   const token = getToken();
 
   /**
-   * Realiza la solicitud POST para descargar el reporte.
+   * Realiza la solicitud POST para descargar el documento.
    * URL y método siguiendo tu mismo esquema (/approve, /reject, /cancel).
    */
-  const handleDownload = async (report_name) => {
-
+  const handleDownload = async (document_name, document_label) => {
+    setDownloading(document_name);
+    
     try {
-      let endpoint = `${API_URL}/api/v1/reports/${report_name}?contract_id=${contract_id}`;
-      if (financing_type && report_name === 'user_promise_contract_pdf') {
+      let endpoint = `${API_URL}/api/v1/reports/${document_name}?contract_id=${contract_id}`;
+      if (financing_type && document_name === 'user_promise_contract_pdf') {
         endpoint += `&financing_type=${financing_type}`;
       }
       const response = await fetch(endpoint,
@@ -29,78 +31,165 @@ function ReportSelect({ contract_id, financing_type }) {
       );
 
       if (!response.ok) {
-        throw new Error(`Error downloading ${report_name}`);
+        throw new Error(`Error downloading ${document_label}`);
       }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${report_name}.pdf`;
+      a.download = `${document_name}.pdf`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-      alert(`${report_name} descargado exitosamente.`);
+      alert(`${document_label} descargado exitosamente.`);
+      setDropdownOpen(false);
     } catch (error) {
       alert(`Error: ${error.message}`);
       console.error(error);
+    } finally {
+      setDownloading(null);
     }
   };
 
   /**
-   * Devuelve las opciones de reportes según el tipo de financiamiento.
+   * Devuelve las opciones de documentos según el tipo de financiamiento y estado.
    */
-  const getReportOptions = () => {
+  const getDocumentOptions = () => {
+    const contractStatus = status?.toLowerCase();
+    const canDownloadRescission = contractStatus === "cancelled" || contractStatus === "canceled" || contractStatus === "rejected";
+    
     const options = [
-      { key: "user_promise_contract_pdf", label: "Promesa de Compra Venta" },
-      { key: "user_rescission_contract_pdf", label: "Rescisión de Contrato" },
-      { key: "user_information_pdf", label: "Ficha de Cliente" },
+      { 
+        key: "user_promise_contract_pdf", 
+        label: "Promesa de Compra Venta",
+        icon: "📄",
+        description: "Contrato de promesa",
+        disabled: false
+      },
+      { 
+        key: "user_rescission_contract_pdf", 
+        label: "Rescisión de Contrato",
+        icon: "📋",
+        description: canDownloadRescission ? "Documento de rescisión" : "Solo disponible para contratos cancelados/rechazados",
+        disabled: !canDownloadRescission
+      },
+      { 
+        key: "user_information_pdf", 
+        label: "Ficha de Cliente",
+        icon: "👤",
+        description: "Información del cliente",
+        disabled: false
+      },
     ];
 
     // Mostrar "Promesa de Compra Venta" solo si es direct, cash o bank
     if (!["direct", "cash", "bank"].includes(financing_type?.toLowerCase())) {
-      return options.filter((opt) => opt.key !== "promesa_compra_venta");
+      return options.filter((opt) => opt.key !== "user_promise_contract_pdf");
     }
 
     return options;
   };
 
+  const handleClickOutside = (e) => {
+    if (!e.target.closest('.document-select')) {
+      setDropdownOpen(false);
+    }
+  };
+
+  // Add click outside listener
+  if (dropdownOpen) {
+    document.addEventListener('click', handleClickOutside);
+  } else {
+    document.removeEventListener('click', handleClickOutside);
+  }
+
   return (
-    <div className="report-select relative mb-3">
+    <div className="document-select relative">
       <button
-        aria-label="none"
-        name="button"
-        onClick={() => setFilterShow(!filterShow)}
+        aria-label="Document options"
+        onClick={() => setDropdownOpen(!dropdownOpen)}
         type="button"
-        className="bg-gray-200 hover:bg-gray-300 text-black font-bold py-1 px-3 rounded"
+        className="group relative inline-flex items-center px-3 py-2 text-xs font-semibold bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 text-white"
       >
-        Reportes
-      </button>
-      {filterShow && (
-        <div
-          id="cardsOptions"
-          className="absolute right-0 top-full z-10 min-w-[180px] overflow-hidden rounded-lg bg-white shadow-lg"
+        <span className="mr-1">📁</span>
+        <span className="text-white">Documentos</span>
+        <svg 
+          className={`ml-1 w-3 h-3 transition-transform duration-200 text-white ${dropdownOpen ? 'rotate-180' : ''}`} 
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
         >
-          <ul>
-            {getReportOptions().map(({ key, label }) => (
-              <li
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+        <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 rounded-lg transition-opacity"></div>
+      </button>
+      
+      {dropdownOpen && (
+        <div className="absolute right-0 top-full z-50 min-w-[240px] mt-2 overflow-hidden rounded-xl bg-white dark:bg-darkblack-600 shadow-xl border border-bgray-200 dark:border-darkblack-400">
+          <div className="py-2">
+            <div className="px-4 py-2 border-b border-bgray-200 dark:border-darkblack-400">
+              <p className="text-xs font-semibold text-bgray-600 dark:text-bgray-300 uppercase tracking-wide">
+                Documentos Disponibles
+              </p>
+            </div>
+            {getDocumentOptions().map(({ key, label, icon, description, disabled }) => (
+              <button
                 key={key}
-                onClick={() => handleDownload(key, financing_type)}
-                className="cursor-pointer px-5 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100"
+                onClick={() => !disabled && handleDownload(key, label)}
+                disabled={downloading === key || disabled}
+                className={`w-full text-left px-4 py-3 transition-colors duration-150 disabled:cursor-not-allowed ${
+                  disabled 
+                    ? 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-700' 
+                    : 'hover:bg-bgray-50 dark:hover:bg-darkblack-500'
+                } ${downloading === key ? 'opacity-50' : ''}`}
               >
-                {label}
-              </li>
+                <div className="flex items-start space-x-3">
+                  <span className={`text-lg flex-shrink-0 mt-0.5 ${disabled ? 'grayscale' : ''}`}>{icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-sm font-semibold ${
+                      disabled 
+                        ? 'text-gray-400 dark:text-gray-500' 
+                        : 'text-bgray-900 dark:text-white'
+                    }`}>
+                      {downloading === key ? "Descargando..." : label}
+                    </p>
+                    <p className={`text-xs mt-0.5 ${
+                      disabled 
+                        ? 'text-gray-400 dark:text-gray-500' 
+                        : 'text-bgray-500 dark:text-bgray-300'
+                    }`}>
+                      {description}
+                    </p>
+                  </div>
+                  {downloading === key ? (
+                    <div className="flex-shrink-0">
+                      <div className="animate-spin w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full"></div>
+                    </div>
+                  ) : (
+                    <span className={`text-xs flex-shrink-0 mt-0.5 ${
+                      disabled 
+                        ? 'text-gray-400 dark:text-gray-500' 
+                        : 'text-bgray-400 dark:text-bgray-500'
+                    }`}>
+                      {disabled ? '🚫' : 'PDF'}
+                    </span>
+                  )}
+                </div>
+              </button>
             ))}
-          </ul>
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-ReportSelect.propTypes = {
+DocumentSelect.propTypes = {
+  contract_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   financing_type: PropTypes.string.isRequired,
+  status: PropTypes.string.isRequired,
 };
 
-export default ReportSelect;
+export default DocumentSelect;

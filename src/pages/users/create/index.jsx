@@ -29,15 +29,21 @@ function formatRTN(raw) {
 }
 
 function evaluatePasswordStrength(pw) {
-  let score = 0;
-  if (pw.length >= 8) score++;
-  if (/[A-Z]/.test(pw)) score++;
-  if (/[a-z]/.test(pw)) score++;
-  if (/[0-9]/.test(pw)) score++;
-  if (/[^A-Za-z0-9]/.test(pw)) score++;
-  if (score <= 2) return { label: "Weak", score };
-  if (score === 3 || score === 4) return { label: "Medium", score };
-  return { label: "Strong", score };
+  const criteria = {
+    length: pw.length >= 8,
+    upper: /[A-Z]/.test(pw),
+    lower: /[a-z]/.test(pw),
+    number: /[0-9]/.test(pw),
+    symbol: /[^A-Za-z0-9]/.test(pw),
+  };
+
+  const score = Object.values(criteria).reduce((s, ok) => s + (ok ? 1 : 0), 0);
+  let label = "";
+  if (score <= 2) label = "Weak";
+  else if (score <= 4) label = "Medium";
+  else label = "Strong";
+
+  return { label, score, criteria };
 }
 
 function CreateUser() {
@@ -256,18 +262,66 @@ function CreateUser() {
               required
               className="bg-bgray-50 dark:bg-darkblack-500 p-4 rounded-lg border-0 focus:ring-2 focus:ring-success-300"
             />
-            <div className="mt-2 text-sm">
-              <span
-                className={
-                  pwFeedback.label === "Strong"
-                    ? "text-green-600"
-                    : pwFeedback.label === "Medium"
-                    ? "text-yellow-500"
-                    : "text-red-600"
-                }
-              >
-                Contraseña: {pwFeedback.label}
-              </span>
+            <div className="mt-2">
+              <div className="mb-2">
+                <div className="w-full bg-bgray-100 dark:bg-darkblack-500 rounded-full h-2 overflow-hidden">
+                  <div
+                    className={`h-2 rounded-full transition-all duration-200 ${
+                      pwFeedback.score >= 5
+                        ? 'bg-green-500'
+                        : pwFeedback.score >= 3
+                        ? 'bg-yellow-500'
+                        : 'bg-red-500'
+                    }`}
+                    style={{ width: `${(pwFeedback.score / 5) * 100}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between text-sm mb-2">
+                <div className="flex items-center gap-2">
+                  <span className={`font-medium ${pwFeedback.label === 'Strong' ? 'text-green-600' : pwFeedback.label === 'Medium' ? 'text-yellow-500' : 'text-red-600'}`}>
+                    Contraseña: {pwFeedback.label || '—'}
+                  </span>
+                </div>
+                <div className="text-xs text-bgray-500 dark:text-bgray-400">{formData.password.length} / 8 chars</div>
+              </div>
+
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                <li className="flex items-center gap-2">
+                  <span className={`w-4 h-4 flex items-center justify-center rounded-full text-white text-[10px] ${pwFeedback.criteria?.length ? 'bg-green-500' : 'bg-bgray-300 dark:bg-darkblack-400'}`}>
+                    {pwFeedback.criteria?.length ? '✓' : ''}
+                  </span>
+                  <span className="text-bgray-700 dark:text-gray-300">Al menos 8 caracteres</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className={`w-4 h-4 flex items-center justify-center rounded-full text-white text-[10px] ${pwFeedback.criteria?.upper ? 'bg-green-500' : 'bg-bgray-300 dark:bg-darkblack-400'}`}>
+                    {pwFeedback.criteria?.upper ? '✓' : ''}
+                  </span>
+                  <span className="text-bgray-700 dark:text-gray-300">Una letra mayúscula (A-Z)</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className={`w-4 h-4 flex items-center justify-center rounded-full text-white text-[10px] ${pwFeedback.criteria?.lower ? 'bg-green-500' : 'bg-bgray-300 dark:bg-darkblack-400'}`}>
+                    {pwFeedback.criteria?.lower ? '✓' : ''}
+                  </span>
+                  <span className="text-bgray-700 dark:text-gray-300">Una letra minúscula (a-z)</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className={`w-4 h-4 flex items-center justify-center rounded-full text-white text-[10px] ${pwFeedback.criteria?.number ? 'bg-green-500' : 'bg-bgray-300 dark:bg-darkblack-400'}`}>
+                    {pwFeedback.criteria?.number ? '✓' : ''}
+                  </span>
+                  <span className="text-bgray-700 dark:text-gray-300">Al menos un número (0-9)</span>
+                </li>
+                <li className="flex items-center gap-2 col-span-1 sm:col-span-2">
+                  <span className={`w-4 h-4 flex items-center justify-center rounded-full text-white text-[10px] ${pwFeedback.criteria?.symbol ? 'bg-green-500' : 'bg-bgray-300 dark:bg-darkblack-400'}`}>
+                    {pwFeedback.criteria?.symbol ? '✓' : ''}
+                  </span>
+                  <span className="text-bgray-700 dark:text-gray-300">Al menos un carácter especial (ej. !@#$%)</span>
+                </li>
+              </ul>
+              <div className="sr-only" aria-live="polite">
+                {pwFeedback.label ? `Password strength ${pwFeedback.label}` : ''}
+              </div>
             </div>
           </div>
 

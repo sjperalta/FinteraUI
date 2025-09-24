@@ -6,11 +6,10 @@ import { API_URL } from "../../../../config";
 import { getToken } from "../../../../auth";
 
 import ContractTab from "./ContractTab";
-import Search from "../../forms/Search";
+import ContractFilter from "../../forms/ContractFilter";
 import Pagination from "../../Pagination";
 import AuthContext from "../../../context/AuthContext";
 import useDebounce from "../../../utils/useDebounce";
-import Filter from "../../forms/Filter";
 
 /**
  * The parent container that:
@@ -28,6 +27,9 @@ function Contracts() {
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 500); // 500ms debounce
 
+  // Filter state
+  const [status, setStatus] = useState("");
+
   // Contracts data state
   const [contracts, setContracts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -39,17 +41,17 @@ function Contracts() {
   const [totalPages, setTotalPages] = useState(1);
 
   // Sorting states
-  const [sortParam, setSortParam] = useState(null); // e.g., 'customer_name' or '-balance'
+  const [sortParam, setSortParam] = useState("created_at-desc"); // Default sort by created_at descending
 
   // Key to force refetch when child requests a refresh (e.g. after approve)
   const [refreshKey, setRefreshKey] = useState(0);
 
   /**
-   * Reset to first page when search term changes
+   * Reset to first page when search term or status changes
    */
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm, status]);
 
   /**
    * Fetch contracts data from the backend API
@@ -63,6 +65,7 @@ function Contracts() {
       // Construct query parameters
       const params = new URLSearchParams();
       if (debouncedSearchTerm) params.append("search_term", debouncedSearchTerm);
+      if (status) params.append("status", status.toLowerCase());
       params.append("page", currentPage);
       params.append("per_page", pageSize);
       if (sortParam) params.append("sort", sortParam); // Include sort parameter if present
@@ -82,7 +85,13 @@ function Contracts() {
         }
 
         const data = await response.json();
-        setContracts(data.contracts || []);
+        // Normalize contracts: ensure `project_name` exists (fallback to nested project.name if present)
+        const normalized = (data.contracts || []).map((c) => ({
+          ...c,
+          project_name: c.project_name || (c.project && c.project.name) || null,
+        }));
+
+        setContracts(normalized);
 
         // Update pagination metadata
         setTotalPages(data.pagination?.pages || 1);
@@ -94,7 +103,7 @@ function Contracts() {
     };
 
     fetchContracts();
-  }, [token, debouncedSearchTerm, currentPage, pageSize, sortParam, id, lot_id, refreshKey]);
+  }, [token, debouncedSearchTerm, status, currentPage, pageSize, sortParam, id, lot_id, refreshKey]);
 
   /**
    * Function to refresh contracts data with new parameters
@@ -118,6 +127,12 @@ function Contracts() {
    * @param {string} term - The search term entered by the user
    */
   const handleSearch = (term) => setSearchTerm(term);
+
+  /**
+   * Handle status filter changes
+   * @param {string} statusValue - The status selected by the user
+   */
+  const handleStatusChange = (statusValue) => setStatus(statusValue);
 
   /**
    * Handle changes to the page size
@@ -166,11 +181,13 @@ function Contracts() {
   return (
     <div className="w-full rounded-lg bg-white px-6 py-6 dark:bg-darkblack-600">
       <div className="flex flex-col space-y-5">
-        {/* Search bar */}
-        <div className="flex h-[56px] w-full space-x-4">
-          <Search onSearch={handleSearch} initialValue={searchTerm} />
-          <Filter options={["Directo", "Banco", "Contado"]} />
-        </div>
+        {/* Filter bar */}
+        <ContractFilter
+          searchTerm={searchTerm}
+          status={status}
+          onSearchChange={handleSearch}
+          onStatusChange={handleStatusChange}
+        />
 
         {/* The table of contracts, purely presentational */}
         <ContractTab
@@ -195,7 +212,7 @@ function Contracts() {
 
         {contracts.length === 0 && !loading && (
           <div className="text-center text-bgray-600 dark:text-bgray-50">
-            No se encontraron contratos con el término de búsqueda "{searchTerm}".
+            No se encontraron contratos{searchTerm && ` con el término de búsqueda "${searchTerm}"`}{status && ` con estado "${status}"`}.
           </div>
         )}
       </div>

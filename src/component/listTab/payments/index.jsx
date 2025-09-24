@@ -5,11 +5,10 @@ import { API_URL } from "../../../../config";
 import { getToken } from "../../../../auth";
 
 import PaymentTab from "./PaymentTab"; // Component for rendering payments
-import Search from "../../forms/Search";
+import TransactionFilter from "../../forms/TransactionFilter";
 import Pagination from "../../Pagination";
 import AuthContext from "../../../context/AuthContext";
 import useDebounce from "../../../utils/useDebounce";
-import Filter from "../../forms/Filter";
 
 /**
  * The parent container that:
@@ -25,6 +24,9 @@ function Payments() {
   // Search state
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 500); // 500ms debounce
+
+  // Filter state
+  const [status, setStatus] = useState("");
 
   // Payments data state
   const [payments, setPayments] = useState([]);
@@ -42,11 +44,11 @@ function Payments() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   /**
-   * Reset to first page when search term changes
+   * Reset to first page when search term or status changes
    */
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm, status]);
 
   /**
    * Fetch payments data from the backend API
@@ -60,6 +62,7 @@ function Payments() {
       // Construct query parameters
       const params = new URLSearchParams();
       if (debouncedSearchTerm) params.append("search_term", debouncedSearchTerm);
+      if (status) params.append("status", status.toLowerCase());
       params.append("page", currentPage);
       params.append("per_page", pageSize);
       if (sortParam) params.append("sort", sortParam); // Include sort parameter if present
@@ -91,7 +94,7 @@ function Payments() {
     };
 
     fetchPayments();
-  }, [token, debouncedSearchTerm, currentPage, pageSize, sortParam, refreshKey]);
+  }, [token, debouncedSearchTerm, status, currentPage, pageSize, sortParam, refreshKey]);
 
   /**
    * Refresh payments data with new parameters
@@ -118,6 +121,12 @@ function Payments() {
   // Event Handlers
 
   const handleSearch = (term) => setSearchTerm(term);
+
+  /**
+   * Handle status filter changes
+   * @param {string} statusValue - The status selected by the user
+   */
+  const handleStatusChange = (statusValue) => setStatus(statusValue);
   const handleSetPageSize = (size) => {
     setPageSize(size);
     setCurrentPage(1); // Reset to first page when page size changes
@@ -148,11 +157,13 @@ function Payments() {
   return (
     <div className="w-full rounded-lg bg-white px-6 py-6 dark:bg-darkblack-600">
       <div className="flex flex-col space-y-5">
-        {/* Search bar */}
-        <div className="flex h-[56px] w-full space-x-4">
-          <Search onSearch={handleSearch} initialValue={searchTerm} />
-          <Filter options={["Pendiente", "Pagado", "Vencido"]} />
-        </div>
+        {/* Filter bar */}
+        <TransactionFilter
+          searchTerm={searchTerm}
+          status={status}
+          onSearchChange={handleSearch}
+          onStatusChange={handleStatusChange}
+        />
 
         {/* The table of payments */}
         <PaymentTab
@@ -177,7 +188,7 @@ function Payments() {
 
         {payments.length === 0 && !loading && (
           <div className="text-center text-bgray-600 dark:text-bgray-50">
-            No se encontraron pagos con el término de búsqueda "{searchTerm}".
+            No se encontraron pagos{searchTerm && ` con el término de búsqueda "${searchTerm}"`}{status && ` con estado "${status}"`}.
           </div>
         )}
       </div>

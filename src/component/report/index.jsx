@@ -2,6 +2,7 @@ import { useState } from "react";
 // Adjust these imports based on your project structure
 import { API_URL } from "../../../config";  // e.g. "http://localhost:3000" or your prod URL
 import { getToken } from "../../../auth";   // If you use token-based auth
+import DatePicker from "../forms/DatePicker";
 
 function Report() {
   // Store the selected start/end dates in ISO format (e.g., "2025-01-15")
@@ -75,7 +76,7 @@ function Report() {
   };
 
   return (
-    <aside className="w-full bg-white dark:bg-darkblack-600 rounded-xl shadow-lg border border-gray-100 dark:border-darkblack-500 overflow-hidden">
+    <aside className="w-full bg-white dark:bg-darkblack-600 rounded-xl shadow-lg border border-gray-100 dark:border-darkblack-500 overflow-visible">
       {/* Header Section */}
       <div className="bg-gradient-to-r from-bgray-50 to-gray-100 dark:from-darkblack-700 dark:to-darkblack-600 px-6 py-4 border-b border-gray-200 dark:border-darkblack-500">
         <div className="flex items-center space-x-3">
@@ -99,54 +100,25 @@ function Report() {
       <div className="p-6">
         {/* Date Range Selection */}
         <div className="mb-6 space-y-4">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-bgray-900 dark:text-white">
-              Fecha inicial
-            </label>
-            <div className="relative">
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setStartDate(value);
-                  console.log("Start Date:", value);
-                }}
-                className="w-full px-4 py-3 border border-gray-200 dark:border-darkblack-500 rounded-lg bg-white dark:bg-darkblack-600 text-bgray-900 dark:text-white placeholder-bgray-500 dark:placeholder-bgray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                placeholder="Seleccionar fecha inicial"
-              />
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <svg className="w-5 h-5 text-bgray-500 dark:text-bgray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-            </div>
-          </div>
+          <DatePicker
+            label="Fecha inicial"
+            value={startDate}
+            onChange={(value) => {
+              setStartDate(value);
+            }}
+            placeholder="Seleccionar fecha inicial"
+            required
+          />
 
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-bgray-900 dark:text-white">
-              Fecha final
-            </label>
-            <div className="relative">
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setEndDate(value);
-                  console.log("End Date:", value);
-                }}
-                className="w-full px-4 py-3 border border-gray-200 dark:border-darkblack-500 rounded-lg bg-white dark:bg-darkblack-600 text-bgray-900 dark:text-white placeholder-bgray-500 dark:placeholder-bgray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                placeholder="Seleccionar fecha final"
-                min={startDate} // Ensure end date is not before start date
-              />
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <svg className="w-5 h-5 text-bgray-500 dark:text-bgray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-            </div>
-          </div>
+          <DatePicker
+            label="Fecha final"
+            value={endDate}
+            onChange={(value) => {
+              setEndDate(value);
+            }}
+            placeholder="Seleccionar fecha final"
+            required
+          />
         </div>
 
         {/* Download Section */}

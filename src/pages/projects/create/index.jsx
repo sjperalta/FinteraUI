@@ -44,7 +44,7 @@ function CreateProject() {
       if (response.ok) {
         navigate('/projects');
       } else {
-        console.log('Error al crear el proyecto');
+        console.warn('Error al crear el proyecto');
       }
     } catch (error) {
       console.error('Error al conectar con el servidor', error);

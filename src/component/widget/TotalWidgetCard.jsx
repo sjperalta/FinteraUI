@@ -100,9 +100,7 @@ function TotalWidgetCard({ title, amount, groth, memberImg, totalEarnImg, curren
           </svg>
         );
       default:
-        return totalEarnImg ? (
-          <img src={totalEarnImg} alt="icon" className="w-6 h-6" />
-        ) : (
+        return (
           <svg className={`w-6 h-6 ${cardStyles.iconColor}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
           </svg>
@@ -190,25 +188,18 @@ function TotalWidgetCard({ title, amount, groth, memberImg, totalEarnImg, curren
       <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${cardStyles.gradient} opacity-5 rounded-full -mr-16 -mt-16`}></div>
       
       <div className="relative z-10">
-        <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className={`${cardStyles.iconBg} p-3 rounded-lg`}>
-              {getCardIcon()}
-            </div>
-            <div>
-              <span className="text-lg font-semibold text-bgray-900 dark:text-white block">
-                {title}
-              </span>
-              <span className="text-sm text-bgray-500 dark:text-bgray-300">
-                Período actual
-              </span>
-            </div>
+        <div className="mb-6 flex items-center space-x-3">
+          <div className={`${cardStyles.iconBg} p-3 rounded-lg`}>
+            {getCardIcon()}
           </div>
-          {memberImg && (
-            <div className="hidden sm:block">
-              <img src={memberImg} alt="members" className="w-8 h-8 rounded-full" />
-            </div>
-          )}
+          <div>
+            <span className="text-lg font-semibold text-bgray-900 dark:text-white block">
+              {title}
+            </span>
+            <span className="text-sm text-bgray-500 dark:text-bgray-300">
+              Período actual
+            </span>
+          </div>
         </div>
 
         <div className="flex items-end justify-between">

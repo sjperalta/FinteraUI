@@ -531,7 +531,6 @@ function ContractInfo({
             onPaymentSuccess={(updatedPayment) => {
               // Optional: Update contract balance or other fields if needed
               // No need for full refresh - the modal handles its own state updates
-              console.log('Payment updated:', updatedPayment);
             }}
           />,
           document.body

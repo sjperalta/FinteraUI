@@ -1,11 +1,15 @@
 import BarChart from "../chart/BarChart";
 import DateFilter from "../forms/DateFilter";
-import { useContext, useRef } from "react";
+import { useContext, useRef, useState, useEffect } from "react";
 import { ThemeContext } from "../layout";
+import { API_URL } from "../../../config";
+import { getToken } from "../../../auth";
 
-function RevenueFlow() {
+function RevenueFlow({ selectedYear = new Date().getFullYear() }) {
   const ctx = useContext(ThemeContext);
   const warnedRef = useRef(false);
+  const token = getToken();
+  
   if (ctx == null && !warnedRef.current) {
     // Warn once if ThemeContext is unexpectedly missing
     // eslint-disable-next-line no-console
@@ -14,6 +18,57 @@ function RevenueFlow() {
   }
   const theme = ctx?.theme ?? "";
 
+  // State for API data
+  const [revenueFlowData, setRevenueFlowData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Helper function to format large numbers in short format
+  const formatLargeNumber = (num) => {
+    if (num >= 1000000000) {
+      return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
+    } else if (num >= 1000000) {
+      return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+    } else if (num >= 1000) {
+      return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+    }
+    return num.toString();
+  };
+
+  // Fetch revenue flow data
+  useEffect(() => {
+    const fetchRevenueFlow = async () => {
+      if (!token) return;
+      
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch(`${API_URL}/api/v1/statistics/revenue_flow?year=${selectedYear}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Error fetching revenue flow data: ${response.status}`);
+        }
+
+  const data = await response.json();
+        setRevenueFlowData(data);
+      } catch (err) {
+        console.error('Error fetching revenue flow:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRevenueFlow();
+  }, [token, selectedYear]);
+
+  // Fallback static data (in case API fails)
   let month = [
     "Jan",
     "Feb",
@@ -170,7 +225,8 @@ function RevenueFlow() {
         ticks: {
           color: theme === "" ? "black" : "white",
           callback(value) {
-            return `${value}% `;
+            // Format as currency with short format (2M, 1K, etc.)
+            return `L ${formatLargeNumber(value)}`;
           },
         },
       },
@@ -192,6 +248,15 @@ function RevenueFlow() {
       legend: {
         display: false,
       },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            const label = context.dataset.label || '';
+            const value = context.parsed.y;
+            return `${label}: L ${value.toLocaleString()}`;
+          },
+        },
+      },
     },
     x: {
       stacked: true,
@@ -200,16 +265,23 @@ function RevenueFlow() {
       stacked: true,
     },
   };
+
+  // Use API data if available, otherwise fallback to static data
+  const chartLabels = revenueFlowData?.labels || month;
+  const chartDatasets = revenueFlowData 
+    ? (theme === "" ? revenueFlowData.datasets_light : revenueFlowData.datasets_dark)
+    : (theme === "" ? dataSetsLight : dataSetsDark);
+
   const data = {
-    labels: month,
-    datasets: theme === "" ? dataSetsLight : dataSetsDark,
+    labels: chartLabels,
+    datasets: chartDatasets,
   };
 
   return (
     <div className="flex w-full flex-col justify-between rounded-lg bg-white py-3 dark:bg-darkblack-600">
       <div className="mb-2 flex items-center justify-between border-b border-bgray-300 pb-2 dark:border-darkblack-400">
         <h3 className="text-xl font-bold text-bgray-900 dark:text-white sm:text-2xl">
-          Flujo Ingresos
+          Flujo Ingresos {selectedYear}
         </h3>
         <div className="hidden items-center space-x-[28px] sm:flex">
           <div className="flex items-center space-x-2">
@@ -231,13 +303,28 @@ function RevenueFlow() {
             </span>
           </div>
         </div>
-
-        <DateFilter
-          options={["2022", "2023", "2024"]}
-        />
       </div>
+      
       <div className="w-full h-[400px]">
-        <BarChart options={options} data={data} />
+        {loading ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-3"></div>
+              <p className="text-sm text-bgray-600 dark:text-bgray-50">Cargando datos de flujo de ingresos...</p>
+            </div>
+          </div>
+        ) : error ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center text-red-500">
+              <svg className="w-10 h-10 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="text-sm">Error: {error}</p>
+            </div>
+          </div>
+        ) : (
+          <BarChart options={options} data={data} />
+        )}
       </div>
     </div>
   );

@@ -8,12 +8,6 @@ import { API_URL } from "../../../config";
 
 // A MonthSelector component with prev/next buttons and a dropdown for month selection
 function MonthSelector({ selectedMonth, onChange }) {
-  // Format the selected month (e.g., "March 2025")
-  const monthYear = selectedMonth.toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
-
   // Handler to go to the previous month
   const handlePrev = () => {
     const newDate = new Date(
@@ -102,8 +96,8 @@ function MonthSelector({ selectedMonth, onChange }) {
 }
 
 function Home() {
-  const { user } = useContext(AuthContext); // To use user data if needed
-  const token = getToken(); // Authentication token
+  const { user } = useContext(AuthContext);
+  const token = getToken();
 
   const [statistics, setStatistics] = useState({
     total_income: 0,
@@ -113,11 +107,8 @@ function Home() {
     payment_installments: 0,
     payment_down_payment: 0,
   });
-  const [revenueData, setRevenueData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [revenueLoading, setRevenueLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [revenueError, setRevenueError] = useState(null);
 
   // Set selectedMonth as the first day of the current month
   const [selectedMonth, setSelectedMonth] = useState(
@@ -128,15 +119,14 @@ function Home() {
   useEffect(() => {
     const fetchStatistics = async () => {
       if (!token) return;
-      
+
       setLoading(true);
       setError(null);
 
       try {
         const month = selectedMonth.getMonth() + 1; // 1-indexed month
         const year = selectedMonth.getFullYear();
-        console.log(`Fetching statistics for month: ${month}, year: ${year}`);
-        
+
         const response = await fetch(`${API_URL}/api/v1/statistics?month=${month}&year=${year}`, {
           headers: {
             "Content-Type": "application/json",
@@ -144,48 +134,25 @@ function Home() {
           },
         });
 
-        console.log('Response status:', response.status);
-        console.log('Response headers:', response.headers);
-
         if (!response.ok) {
           const errorText = await response.text();
-          console.error('API Error:', errorText);
           throw new Error(`Error fetching statistics data: ${response.status} ${errorText}`);
         }
 
         const data = await response.json();
-        console.log('API Response from /api/v1/statistics:', data);
-        console.log('API Response keys:', Object.keys(data));
-        console.log('Payment fields in API response:');
-        console.log('- payment_reserve:', data.payment_reserve);
-        console.log('- payment_down_payment:', data.payment_down_payment);
-        console.log('- payment_installments:', data.payment_installments);
-        
-        // Check for alternative field names
-        console.log('Alternative field names:');
-        console.log('- reservas:', data.reservas);
-        console.log('- prima:', data.prima);
-        console.log('- cuotas:', data.cuotas);
-        console.log('- total_reserves:', data.total_reserves);
-        console.log('- total_down_payments:', data.total_down_payments);
-        console.log('- total_installments:', data.total_installments);
-        
-        console.log('Full data structure:', JSON.stringify(data, null, 2));
-        
+
         // Normalize the data with potential field mappings
         const normalizedData = {
           ...data,
-          payment_reserve: data.payment_reserve || data.reservas || data.total_reserves || 0,
-          payment_down_payment: data.payment_down_payment || data.prima || data.total_down_payments || 0,
-          payment_installments: data.payment_installments || data.cuotas || data.total_installments || 0,
+          payment_reserve: data.payment_reserve ?? data.reservas ?? data.total_reserves ?? 0,
+          payment_down_payment: data.payment_down_payment ?? data.prima ?? data.total_down_payments ?? 0,
+          payment_installments: data.payment_installments ?? data.cuotas ?? data.total_installments ?? 0,
         };
-        
-        console.log('Normalized data:', normalizedData);
+
         setStatistics(normalizedData);
-        
-        // If payment fields are still missing, try to fetch from a different endpoint
+
+        // If payment fields are still missing, try an alternative endpoint
         if (!normalizedData.payment_reserve && !normalizedData.payment_down_payment && !normalizedData.payment_installments) {
-          console.log('Payment fields missing, trying alternative endpoint...');
           try {
             const paymentResponse = await fetch(`${API_URL}/api/v1/payments/statistics?month=${month}&year=${year}`, {
               headers: {
@@ -193,20 +160,18 @@ function Home() {
                 Authorization: `Bearer ${token}`,
               },
             });
-            
+
             if (paymentResponse.ok) {
               const paymentData = await paymentResponse.json();
-              console.log('Payment statistics from alternative endpoint:', paymentData);
-              
               setStatistics(prev => ({
                 ...prev,
-                payment_reserve: paymentData.payment_reserve || paymentData.reservas || prev.payment_reserve,
-                payment_down_payment: paymentData.payment_down_payment || paymentData.prima || prev.payment_down_payment,
-                payment_installments: paymentData.payment_installments || paymentData.cuotas || prev.payment_installments,
+                payment_reserve: paymentData.payment_reserve ?? paymentData.reservas ?? prev.payment_reserve,
+                payment_down_payment: paymentData.payment_down_payment ?? paymentData.prima ?? prev.payment_down_payment,
+                payment_installments: paymentData.payment_installments ?? paymentData.cuotas ?? prev.payment_installments,
               }));
             }
-          } catch (paymentErr) {
-            console.log('Alternative payment endpoint not available:', paymentErr.message);
+          } catch (_) {
+            // Ignore alternative endpoint errors
           }
         }
       } catch (err) {
@@ -217,39 +182,6 @@ function Home() {
     };
 
     fetchStatistics();
-  }, [token, selectedMonth]);
-
-  // Fetch monthly revenue data
-  useEffect(() => {
-    const fetchMonthlyRevenue = async () => {
-      if (!token) return;
-      
-      setRevenueLoading(true);
-      setRevenueError(null);
-
-      try {
-        const year = selectedMonth.getFullYear();
-        const response = await fetch(`${API_URL}/api/v1/statistics/monthly_revenue?year=${year}`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error("Error fetching monthly revenue data");
-        }
-
-        const data = await response.json();
-        setRevenueData(data);
-      } catch (err) {
-        setRevenueError(err.message);
-      } finally {
-        setRevenueLoading(false);
-      }
-    };
-
-    fetchMonthlyRevenue();
   }, [token, selectedMonth]);
 
   return (
@@ -345,27 +277,9 @@ function Home() {
                 </div>
               </div>
               <div className="p-6">
-                {revenueLoading ? (
-                  <div className="flex items-center justify-center h-[400px]">
-                    <div className="text-center">
-                      <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                      <p className="text-bgray-600 dark:text-bgray-50">Cargando datos de ingresos...</p>
-                    </div>
-                  </div>
-                ) : revenueError ? (
-                  <div className="flex items-center justify-center h-[400px]">
-                    <div className="text-center text-red-500">
-                      <svg className="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <p>Error cargando datos: {revenueError}</p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="h-[400px]">
-                    <RevenueFlow revenueData={revenueData} selectedYear={selectedMonth.getFullYear()} />
-                  </div>
-                )}
+                <div className="h-[400px]">
+                  <RevenueFlow selectedYear={selectedMonth.getFullYear()} />
+                </div>
               </div>
             </div>
           </div>

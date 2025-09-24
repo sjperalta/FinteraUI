@@ -1,83 +1,12 @@
 import { useState } from "react";
-import Datepicker from "tailwind-datepicker-react";
 // Adjust these imports based on your project structure
 import { API_URL } from "../../../config";  // e.g. "http://localhost:3000" or your prod URL
 import { getToken } from "../../../auth";   // If you use token-based auth
 
-const options = {
-  title: "Calendario",
-  autoHide: true,
-  todayBtn: false,
-  clearBtn: true,
-  clearBtnText: "Clear",
-  maxDate: new Date("2030-01-01"),
-  minDate: new Date("1950-01-01"),
-  theme: {
-    background: "",
-    todayBtn: "",
-    clearBtn: "",
-    icons: "",
-    text: "",
-    disabledText: "bg-gray-300",
-    input: "",
-    inputIcon: "",
-    selected: "bg-green-400",
-  },
-  icons: {
-    prev: () => <span>Previous</span>,
-    next: () => <span>Next</span>,
-  },
-  datepickerClassNames: "top-12",
-  defaultDate: new Date(),
-  language: "en",
-  disabledDates: [],
-  weekDays: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
-  inputNameProp: "date",
-  inputIdProp: "date",
-  inputPlaceholderProp: "Select Date",
-  inputDateFormatProp: {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  },
-};
-
 function Report() {
-  // Control the show/hide of each datepicker separately
-  const [showStart, setShowStart] = useState(false);
-  const [showEnd, setShowEnd] = useState(false);
-
   // Store the selected start/end dates in ISO format (e.g., "2025-01-15")
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-
-  // Called when user picks a start date
-  const handleStartChange = (selectedDate) => {
-    if (selectedDate) {
-      const iso = selectedDate.toISOString().split("T")[0]; // "YYYY-MM-DD"
-      setStartDate(iso);
-      console.log("Start Date:", iso);
-    }
-  };
-
-  // Called when user picks an end date
-  const handleEndChange = (selectedDate) => {
-    if (selectedDate) {
-      const iso = selectedDate.toISOString().split("T")[0];
-      setEndDate(iso);
-      console.log("End Date:", iso);
-    }
-  };
-
-  // Closes the start datepicker
-  const handleCloseStart = (state) => {
-    setShowStart(state);
-  };
-
-  // Closes the end datepicker
-  const handleCloseEnd = (state) => {
-    setShowEnd(state);
-  };
 
   /**
    * Utility function to open the CSV endpoint in a new tab,
@@ -88,6 +17,18 @@ function Report() {
    */
   
   const downloadCSV = async (reportEndpoint) => {
+    // Validate that both dates are selected
+    if (!startDate || !endDate) {
+      alert("Por favor selecciona ambas fechas antes de descargar el reporte.");
+      return;
+    }
+
+    // Validate that start date is not after end date
+    if (new Date(startDate) > new Date(endDate)) {
+      alert("La fecha inicial no puede ser posterior a la fecha final.");
+      return;
+    }
+
     try {
       const token = getToken(); // Retrieve your Bearer token
       const queryParams = new URLSearchParams({
@@ -129,255 +70,344 @@ function Report() {
       URL.revokeObjectURL(link.href);
     } catch (err) {
       console.error("Error downloading CSV:", err);
+      alert("Error al descargar el reporte. Por favor intenta nuevamente.");
     }
   };
 
   return (
-    <aside className="2xl:w-[382px] w-full bg-white dark:bg-darkblack-600 rounded-lg px-12 pb-7">
-      <header className="flex flex-col -mt-8 pb-7 mt-2 pt-4">
-        <h3 className="text-xl font-bold text-bgray-900 dark:text-white">
-            Reportes Financieros
-        </h3>
-      </header>
+    <aside className="w-full bg-white dark:bg-darkblack-600 rounded-xl shadow-lg border border-gray-100 dark:border-darkblack-500 overflow-hidden">
+      {/* Header Section */}
+      <div className="bg-gradient-to-r from-bgray-50 to-gray-100 dark:from-darkblack-700 dark:to-darkblack-600 px-6 py-4 border-b border-gray-200 dark:border-darkblack-500">
+        <div className="flex items-center space-x-3">
+          <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+            <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <div>
+            <h3 className="text-xl font-semibold text-bgray-900 dark:text-white">
+              Reportes Financieros
+            </h3>
+            <p className="text-sm text-bgray-500 dark:text-bgray-300">
+              Descarga reportes por rango de fechas
+            </p>
+          </div>
+        </div>
+      </div>
 
-      {/* Start Date */}
-      <h3>Fecha inicial</h3>
-      <Datepicker
-        options={options}
-        onChange={handleStartChange}
-        show={showStart}
-        setShow={handleCloseStart}
-      />
+      {/* Content Section */}
+      <div className="p-6">
+        {/* Date Range Selection */}
+        <div className="mb-6 space-y-4">
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-bgray-900 dark:text-white">
+              Fecha inicial
+            </label>
+            <div className="relative">
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setStartDate(value);
+                  console.log("Start Date:", value);
+                }}
+                className="w-full px-4 py-3 border border-gray-200 dark:border-darkblack-500 rounded-lg bg-white dark:bg-darkblack-600 text-bgray-900 dark:text-white placeholder-bgray-500 dark:placeholder-bgray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                placeholder="Seleccionar fecha inicial"
+              />
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg className="w-5 h-5 text-bgray-500 dark:text-bgray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+            </div>
+          </div>
 
-      <br />
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-bgray-900 dark:text-white">
+              Fecha final
+            </label>
+            <div className="relative">
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setEndDate(value);
+                  console.log("End Date:", value);
+                }}
+                className="w-full px-4 py-3 border border-gray-200 dark:border-darkblack-500 rounded-lg bg-white dark:bg-darkblack-600 text-bgray-900 dark:text-white placeholder-bgray-500 dark:placeholder-bgray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                placeholder="Seleccionar fecha final"
+                min={startDate} // Ensure end date is not before start date
+              />
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg className="w-5 h-5 text-bgray-500 dark:text-bgray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      {/* End Date */}
-      <h3>Fecha final</h3>
-      <Datepicker
-        options={options}
-        onChange={handleEndChange}
-        show={showEnd}
-        setShow={handleCloseEnd}
-      />
+        {/* Download Section */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h4 className="font-semibold text-bgray-900 dark:text-white text-sm">
+              Reportes Disponibles
+            </h4>
+            {(!startDate || !endDate) && (
+              <span className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-2 py-1 rounded-full">
+                Selecciona fechas
+              </span>
+            )}
+          </div>
+          {/* 
+            We have 3 different CSV exports: 
+              1) commissions_csv
+              2) total_revenue_csv
+              3) overdue_payments_csv
+            Let's attach them to the 3 items below
+          */}
 
-      <div className="py-6 border-b border-bgray-200 dark:border-darkblack-400">
-        <h4 className="font-medium text-gray-500 text-sm dark:text-white mb-3">
-          Files
-        </h4>
-        {/* 
-          We have 3 different CSV exports: 
-            1) commissions_csv
-            2) total_revenue_csv
-            3) overdue_payments_csv
-          Let's attach them to the 3 items below
-        */}
-
-        <ul className="space-y-2.5">
-          {/* Commissions.csv */}
-          <li className="bg-[#E4FDED] dark:bg-darkblack-500 py-3 px-2 pr-4 flex justify-between items-center rounded-lg">
-            <div className="flex items-center gap-x-3">
-              <span className="bg-white dark:bg-darkblack-600 w-10 h-10 rounded-lg inline-flex justify-center items-center">
-                {/* An icon, e.g. a contract icon, or PDF icon */}
+          <div className="space-y-3">
+            {/* Commissions.csv */}
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-darkblack-500 dark:to-darkblack-400 py-4 px-4 flex justify-between items-center rounded-lg border border-green-200 dark:border-darkblack-400 hover:shadow-md transition-all duration-200 group">
+              <div className="flex items-center gap-x-3">
+                <span className="bg-white dark:bg-darkblack-600 w-12 h-12 rounded-lg inline-flex justify-center items-center shadow-sm">
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 22 22"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12.8334 2.74951V6.41618C12.8334 6.65929 12.93 6.89245 13.1019 7.06436C13.2738 7.23627 13.5069 7.33285 13.75 7.33285H17.4167"
+                      stroke="#22C55E"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M15.5834 19.2495H6.41671C5.93048 19.2495 5.46416 19.0564 5.12034 18.7125C4.77653 18.3687 4.58337 17.9024 4.58337 17.4162V4.58285C4.58337 4.09661 4.77653 3.6303 5.12034 3.28648C5.46416 2.94267 5.93048 2.74951 6.41671 2.74951H12.8334L17.4167 7.33285V17.4162C17.4167 17.9024 17.2236 18.3687 16.8797 18.7125C16.5359 19.0564 16.0696 19.2495 15.5834 19.2495Z"
+                      stroke="#22C55E"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </span>
+                <div className="flex flex-col">
+                  <h5 className="font-semibold text-bgray-900 dark:text-white text-sm">
+                    Comisiones.csv
+                  </h5>
+                  <span className="text-xs text-bgray-500 dark:text-bgray-400 cursor-pointer hover:text-green-600 transition-colors" onClick={() => downloadCSV("commissions_csv")}>
+                    Click para descargar
+                  </span>
+                </div>
+              </div>
+              <button
+                className={`p-2 rounded-lg transition-all duration-200 ${
+                  (!startDate || !endDate) 
+                    ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed opacity-50' 
+                    : 'bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-900/50 group-hover:scale-105'
+                }`}
+                aria-label="Descargar Comisiones"
+                onClick={() => downloadCSV("commissions_csv")}
+                disabled={!startDate || !endDate}
+              >
                 <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 22 22"
+                  className={(!startDate || !endDate) 
+                    ? "stroke-gray-400 dark:stroke-gray-600" 
+                    : "stroke-green-600 dark:stroke-green-400"
+                  }
+                  width="20"
+                  height="20"
+                  viewBox="0 0 20 20"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M12.8334 2.74951V6.41618C12.8334 6.65929 12.93 6.89245 13.1019 7.06436C13.2738 7.23627 13.5069 7.33285 13.75 7.33285H17.4167"
-                    stroke="#22C55E"
+                    d="M17.5 12.4995V15.8328C17.5 16.2749 17.3244 16.6988 17.0118 17.0114C16.6993 17.3239 16.2754 17.4995 15.8333 17.4995H4.16667C3.72464 17.4995 3.30072 17.3239 2.98816 17.0114C2.67559 16.6988 2.5 16.2749 2.5 15.8328V12.4995"
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
                   <path
-                    d="M15.5834 19.2495H6.41671C5.93048 19.2495 5.46416 19.0564 5.12034 18.7125C4.77653 18.3687 4.58337 17.9024 4.58337 17.4162V4.58285C4.58337 4.09661 4.77653 3.6303 5.12034 3.28648C5.46416 2.94267 5.93048 2.74951 6.41671 2.74951H12.8334L17.4167 7.33285V17.4162C17.4167 17.9024 17.2236 18.3687 16.8797 18.7125C16.5359 19.0564 16.0696 19.2495 15.5834 19.2495Z"
-                    stroke="#22C55E"
+                    d="M5.83337 8.33301L10 12.4997L14.1667 8.33301"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M10 12.4995V2.49951"
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
                 </svg>
-              </span>
-              <div className="flex flex-col">
-                <h5 className="font-semibold text-bgray-900 dark:text-white text-sm">
-                  Comisiones.csv
-                </h5>
-                <span className="text-xs text-bgray-500" onClick={() => downloadCSV("commissions_csv")}>Click para descargar</span>
-              </div>
+              </button>
             </div>
-            <button
-              aria-label="Descargar Comisiones"
-              onClick={() => downloadCSV("commissions_csv")}
-            >
-              <svg
-                className="stroke-bgray-900 dark:stroke-bgray-50"
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M17.5 12.4995V15.8328C17.5 16.2749 17.3244 16.6988 17.0118 17.0114C16.6993 17.3239 16.2754 17.4995 15.8333 17.4995H4.16667C3.72464 17.4995 3.30072 17.3239 2.98816 17.0114C2.67559 16.6988 2.5 16.2749 2.5 15.8328V12.4995"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M5.83337 8.33301L10 12.4997L14.1667 8.33301"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M10 12.4995V2.49951"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-          </li>
 
-          {/* Flujo Ingreso.csv => total_revenue_csv */}
-          <li className="bg-[#E4FDED] dark:bg-darkblack-500 py-3 px-2 pr-4 flex justify-between items-center rounded-lg">
-            <div className="flex items-center gap-x-3">
-              <span className="bg-white dark:bg-darkblack-600 w-10 h-10 rounded-lg inline-flex justify-center items-center">
+            {/* Flujo Ingreso.csv => total_revenue_csv */}
+            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-darkblack-500 dark:to-darkblack-400 py-4 px-4 flex justify-between items-center rounded-lg border border-blue-200 dark:border-darkblack-400 hover:shadow-md transition-all duration-200 group">
+              <div className="flex items-center gap-x-3">
+                <span className="bg-white dark:bg-darkblack-600 w-12 h-12 rounded-lg inline-flex justify-center items-center shadow-sm">
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 22 22"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12.8334 2.74951V6.41618C12.8334 6.65929 12.93 6.89245 13.1019 7.06436C13.2738 7.23627 13.5069 7.33285 13.75 7.33285H17.4167"
+                      stroke="#3B82F6"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M15.5834 19.2495H6.41671C5.93048 19.2495 5.46416 19.0564 5.12034 18.7125C4.77653 18.3687 4.58337 17.9024 4.58337 17.4162V4.58285C4.58337 4.09661 4.77653 3.6303 5.12034 3.28648C5.46416 2.94267 5.93048 2.74951 6.41671 2.74951H12.8334L17.4167 7.33285V17.4162C17.4167 17.9024 17.2236 18.3687 16.8797 18.7125C16.5359 19.0564 16.0696 19.2495 15.5834 19.2495Z"
+                      stroke="#3B82F6"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </span>
+                <div className="flex flex-col">
+                  <h5 className="font-semibold text-bgray-900 dark:text-white text-sm">
+                    Flujo Ingreso.csv
+                  </h5>
+                  <span className="text-xs text-bgray-500 dark:text-bgray-400 cursor-pointer hover:text-blue-600 transition-colors" onClick={() => downloadCSV("total_revenue_csv")}>
+                    Click para descargar
+                  </span>
+                </div>
+              </div>
+              <button
+                className={`p-2 rounded-lg transition-all duration-200 ${
+                  (!startDate || !endDate) 
+                    ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed opacity-50' 
+                    : 'bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-900/50 group-hover:scale-105'
+                }`}
+                aria-label="Descargar Flujo Ingreso"
+                onClick={() => downloadCSV("total_revenue_csv")}
+                disabled={!startDate || !endDate}
+              >
                 <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 22 22"
+                  className={(!startDate || !endDate) 
+                    ? "stroke-gray-400 dark:stroke-gray-600" 
+                    : "stroke-blue-600 dark:stroke-blue-400"
+                  }
+                  width="20"
+                  height="20"
+                  viewBox="0 0 20 20"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M12.8334 2.74951V6.41618C12.8334 6.65929 12.93 6.89245 13.1019 7.06436C13.2738 7.23627 13.5069 7.33285 13.75 7.33285H17.4167"
-                    stroke="#22C55E"
+                    d="M17.5 12.4995V15.8328C17.5 16.2749 17.3244 16.6988 17.0118 17.0114C16.6993 17.3239 16.2754 17.4995 15.8333 17.4995H4.16667C3.72464 17.4995 3.30072 17.3239 2.98816 17.0114C2.67559 16.6988 2.5 16.2749 2.5 15.8328V12.4995"
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
                   <path
-                    d="M15.5834 19.2495H6.41671C5.93048 19.2495 5.46416 19.0564 5.12034 18.7125C4.77653 18.3687 4.58337 17.9024 4.58337 17.4162V4.58285C4.58337 4.09661 4.77653 3.6303 5.12034 3.28648C5.46416 2.94267 5.93048 2.74951 6.41671 2.74951H12.8334L17.4167 7.33285V17.4162C17.4167 17.9024 17.2236 18.3687 16.8797 18.7125C16.5359 19.0564 16.0696 19.2495 15.5834 19.2495Z"
-                    stroke="#22C55E"
+                    d="M5.83337 8.33301L10 12.4997L14.1667 8.33301"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M10 12.4995V2.49951"
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
                 </svg>
-              </span>
-              <div className="flex flex-col">
-                <h5 className="font-semibold text-bgray-900 dark:text-white text-sm">
-                  Flujo Ingreso.csv
-                </h5>
-                <span className="text-xs text-bgray-500" onClick={() => downloadCSV("total_revenue_csv")}>Click para descargar</span>
-              </div>
+              </button>
             </div>
-            <button
-              aria-label="Descargar Flujo Ingreso"
-              onClick={() => downloadCSV("total_revenue_csv")}
-            >
-              <svg
-                className="stroke-bgray-900 dark:stroke-bgray-50"
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M17.5 12.4995V15.8328C17.5 16.2749 17.3244 16.6988 17.0118 17.0114C16.6993 17.3239 16.2754 17.4995 15.8333 17.4995H4.16667C3.72464 17.4995 3.30072 17.3239 2.98816 17.0114C2.67559 16.6988 2.5 16.2749 2.5 15.8328V12.4995"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M5.83337 8.33301L10 12.4997L14.1667 8.33301"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M10 12.4995V2.49951"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-          </li>
 
-          {/* Morosidad.csv => overdue_payments_csv */}
-          <li className="bg-[#E4FDED] dark:bg-darkblack-500 py-3 px-2 pr-4 flex justify-between items-center rounded-lg">
-            <div className="flex items-center gap-x-3">
-              <span className="bg-white dark:bg-darkblack-600 w-10 h-10 rounded-lg inline-flex justify-center items-center">
+            {/* Morosidad.csv => overdue_payments_csv */}
+            <div className="bg-gradient-to-r from-red-50 to-rose-50 dark:from-darkblack-500 dark:to-darkblack-400 py-4 px-4 flex justify-between items-center rounded-lg border border-red-200 dark:border-darkblack-400 hover:shadow-md transition-all duration-200 group">
+              <div className="flex items-center gap-x-3">
+                <span className="bg-white dark:bg-darkblack-600 w-12 h-12 rounded-lg inline-flex justify-center items-center shadow-sm">
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 22 22"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12.8334 2.74951V6.41618C12.8334 6.65929 12.93 6.89245 13.1019 7.06436C13.2738 7.23627 13.5069 7.33285 13.75 7.33285H17.4167"
+                      stroke="#EF4444"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M15.5834 19.2495H6.41671C5.93048 19.2495 5.46416 19.0564 5.12034 18.7125C4.77653 18.3687 4.58337 17.9024 4.58337 17.4162V4.58285C4.58337 4.09661 4.77653 3.6303 5.12034 3.28648C5.46416 2.94267 5.93048 2.74951 6.41671 2.74951H12.8334L17.4167 7.33285V17.4162C17.4167 17.9024 17.2236 18.3687 16.8797 18.7125C16.5359 19.0564 16.0696 19.2495 15.5834 19.2495Z"
+                      stroke="#EF4444"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </span>
+                <div className="flex flex-col">
+                  <h5 className="font-semibold text-bgray-900 dark:text-white text-sm">
+                    Morosidad.csv
+                  </h5>
+                  <span className="text-xs text-bgray-500 dark:text-bgray-400 cursor-pointer hover:text-red-600 transition-colors" onClick={() => downloadCSV("overdue_payments_csv")}>
+                    Click para descargar
+                  </span>
+                </div>
+              </div>
+              <button
+                className={`p-2 rounded-lg transition-all duration-200 ${
+                  (!startDate || !endDate) 
+                    ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed opacity-50' 
+                    : 'bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 group-hover:scale-105'
+                }`}
+                aria-label="Descargar Morosidad"
+                onClick={() => downloadCSV("overdue_payments_csv")}
+                disabled={!startDate || !endDate}
+              >
                 <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 22 22"
+                  className={(!startDate || !endDate) 
+                    ? "stroke-gray-400 dark:stroke-gray-600" 
+                    : "stroke-red-600 dark:stroke-red-400"
+                  }
+                  width="20"
+                  height="20"
+                  viewBox="0 0 20 20"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M12.8334 2.74951V6.41618C12.8334 6.65929 12.93 6.89245 13.1019 7.06436C13.2738 7.23627 13.5069 7.33285 13.75 7.33285H17.4167"
-                    stroke="#22C55E"
+                    d="M17.5 12.4995V15.8328C17.5 16.2749 17.3244 16.6988 17.0118 17.0114C16.6993 17.3239 16.2754 17.4995 15.8333 17.4995H4.16667C3.72464 17.4995 3.30072 17.3239 2.98816 17.0114C2.67559 16.6988 2.5 16.2749 2.5 15.8328V12.4995"
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
                   <path
-                    d="M15.5834 19.2495H6.41671C5.93048 19.2495 5.46416 19.0564 5.12034 18.7125C4.77653 18.3687 4.58337 17.9024 4.58337 17.4162V4.58285C4.58337 4.09661 4.77653 3.6303 5.12034 3.28648C5.46416 2.94267 5.93048 2.74951 6.41671 2.74951H12.8334L17.4167 7.33285V17.4162C17.4167 17.9024 17.2236 18.3687 16.8797 18.7125C16.5359 19.0564 16.0696 19.2495 15.5834 19.2495Z"
-                    stroke="#22C55E"
+                    d="M5.83337 8.33301L10 12.4997L14.1667 8.33301"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M10 12.4995V2.49951"
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
                 </svg>
-              </span>
-              <div className="flex flex-col">
-                <h5 className="font-semibold text-bgray-900 dark:text-white text-sm">
-                  Morosidad.csv
-                </h5>
-                <span className="text-xs text-bgray-500" onClick={() => downloadCSV("overdue_payments_csv")}>Click para descargar</span>
-              </div>
+              </button>
             </div>
-            <button
-              aria-label="Descargar Morosidad"
-              onClick={() => downloadCSV("overdue_payments_csv")}
-            >
-              <svg
-                className="stroke-bgray-900 dark:stroke-bgray-50"
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M17.5 12.4995V15.8328C17.5 16.2749 17.3244 16.6988 17.0118 17.0114C16.6993 17.3239 16.2754 17.4995 15.8333 17.4995H4.16667C3.72464 17.4995 3.30072 17.3239 2.98816 17.0114C2.67559 16.6988 2.5 16.2749 2.5 15.8328V12.4995"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M5.83337 8.33301L10 12.4997L14.1667 8.33301"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M10 12.4995V2.49951"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-          </li>
-        </ul>
+          </div>
+        </div>
       </div>
     </aside>
   );

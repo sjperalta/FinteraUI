@@ -6,7 +6,7 @@ import LotInfo from "./LotInfo";
  * This component renders the table headers and maps over the lots to render each LotInfo row.
  * It accepts lots data, user role, page size, and a refresh function to update data after actions.
  */
-function LotTab({ lots, userRole, pageSize, refreshLots }) {
+function LotTab({ lots, userRole, pageSize, refreshLots, highlightedLotId }) {
   // State for sorting
   const [sortField, setSortField] = useState(null); // e.g., 'name', 'project_name'
   const [sortDirection, setSortDirection] = useState('asc'); // 'asc' or 'desc'
@@ -142,11 +142,11 @@ function LotTab({ lots, userRole, pageSize, refreshLots }) {
               </div>
             </th>
 
-            {/* Nombre */}
+            {/* Nombre (ahora incluye dirección y registro) */}
             <th className="px-6 py-5 xl:px-0 text-left">
               <div className="flex items-center space-x-2.5">
                 <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  Nombre
+                  Lote
                 </span>
                 {/* Sorting Icon */}
                 {renderSortIcon('name')}
@@ -164,11 +164,11 @@ function LotTab({ lots, userRole, pageSize, refreshLots }) {
               </div>
             </th>
 
-            {/* Balance */}
+            {/* Precio (actualizado desde Balance) */}
             <th className="px-6 py-5 xl:px-0 text-left">
               <div className="flex items-center space-x-2.5">
                 <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  Balance
+                  Precio
                 </span>
                 {/* Sorting Icon */}
                 {renderSortIcon('price')}
@@ -194,6 +194,15 @@ function LotTab({ lots, userRole, pageSize, refreshLots }) {
                 {renderSortIcon('status')}
               </div>
             </th>
+
+            {/* Acciones */}
+            <th className="px-6 py-5 xl:px-0 text-center">
+              <div className="flex justify-center">
+                <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
+                  Acciones
+                </span>
+              </div>
+            </th>
           </tr>
         </thead>
 
@@ -204,8 +213,12 @@ function LotTab({ lots, userRole, pageSize, refreshLots }) {
               key={lot.id}
               project_name={lot.project_name}
               name={lot.name}
+              address={lot.address}
+              registration_number={lot.registration_number}
               dimensions={lot.dimensions}
               balance={lot.balance}
+              price={lot.price}
+              override_price={lot.override_price}
               reserved_by={lot.reserved_by}
               status={lot.status}
               project_id={lot.project_id}
@@ -215,6 +228,7 @@ function LotTab({ lots, userRole, pageSize, refreshLots }) {
               refreshLots={refreshLots}
               measurement_unit={lot.measurement_unit}
               area={lot.area}
+              isHighlighted={highlightedLotId && lot.id === highlightedLotId}
             />
           ))}
         </tbody>
@@ -240,6 +254,7 @@ LotTab.propTypes = {
   userRole: PropTypes.string.isRequired, // new prop
   pageSize: PropTypes.number,            // existing prop
   refreshLots: PropTypes.func.isRequired, // new prop
+  highlightedLotId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // new prop for highlighting
 };
 
 export default LotTab;

@@ -127,7 +127,10 @@ function EditLot() {
     if (!name.trim()) fe.name = "Nombre requerido";
     if (!(Number(length) > 0)) fe.length = "Longitud debe ser > 0";
     if (!(Number(width) > 0)) fe.width = "Anchura debe ser > 0";
-  if (overridePrice && !(Number(overridePriceValue) > 0)) fe.override_price = "Precio debe ser > 0";
+    // Only validate override price if user has enabled override and provided a value
+    if (overridePrice && overridePriceValue && !(Number(overridePriceValue) > 0)) {
+      fe.override_price = "Precio override debe ser > 0";
+    }
     if (Object.keys(fe).length) {
       setFieldErrors(fe);
       setSaving(false);
@@ -145,11 +148,13 @@ function EditLot() {
             name,
             length: Number(length),
             width: Number(width),
-            // Persist manual override in override_price only when toggled
-            ...(overridePrice ? { override_price: Number(overridePriceValue) } : { override_price: null }),
+            // Only send override_price when user has enabled override and provided a value
+            // Let backend calculate the regular price based on dimensions
+            ...(overridePrice && overridePriceValue ? { override_price: Number(overridePriceValue) } : { override_price: null }),
             address: address || "",
             registration_number: registrationNumber || "",
             note: note || ""
+            // Note: We don't send 'price' field - let backend calculate it from dimensions
           }
         }),
       });

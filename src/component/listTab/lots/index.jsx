@@ -1,12 +1,12 @@
 // src/component/listTab/lots/index.jsx
 import { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { API_URL } from "../../../../config";
 import { getToken } from "../../../../auth";
 
 import LotTab from "./LotTab";
-import Search from "../../forms/Search";
+import LotFilter from "../../forms/LotFilter";
 import Pagination from "../../Pagination";
 import AuthContext from "../../../context/AuthContext";
 import useDebounce from "../../../utils/useDebounce";
@@ -22,10 +22,17 @@ function Lots() {
   const { user } = useContext(AuthContext);
   const token = getToken();
   const { id } = useParams(); // e.g., /projects/:id/lots
+  const location = useLocation();
 
   // Search state
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 500); // 500ms debounce
+
+  // Filter state
+  const [status, setStatus] = useState("");
+  
+  // Highlighted lot state for navigation from contracts
+  const [highlightedLotId, setHighlightedLotId] = useState(null);
 
   // Lots data state
   const [lots, setLots] = useState([]);
@@ -41,15 +48,40 @@ function Lots() {
   const [sortParam, setSortParam] = useState(null); // e.g., 'name' or '-name'
 
   /**
-   * Reset to first page when search term changes
+   * Handle navigation from contracts page - auto-search for the specific lot
+   */
+  useEffect(() => {
+    if (location.state?.selectedLotId || location.state?.selectedLotName) {
+      // Set the search term to the lot name to help find it in the list
+      if (location.state.selectedLotName) {
+        setSearchTerm(location.state.selectedLotName);
+      }
+      
+      // Set the highlighted lot ID to visually distinguish it
+      if (location.state.selectedLotId) {
+        setHighlightedLotId(location.state.selectedLotId);
+        
+        // Clear the highlighting after 5 seconds
+        setTimeout(() => {
+          setHighlightedLotId(null);
+        }, 5000);
+      }
+      
+      // Clear the navigation state after using it
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
+  /**
+   * Reset to first page when search term or status changes
    */
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm, status]);
 
   /**
    * Fetch lots data from the backend API
-   * This effect runs when token, debouncedSearchTerm, currentPage, pageSize, sortParam, or id changes
+   * This effect runs when token, debouncedSearchTerm, status, currentPage, pageSize, sortParam, or id changes
    */
   useEffect(() => {
     const fetchLots = async () => {
@@ -59,6 +91,7 @@ function Lots() {
       // Construct query parameters
       const params = new URLSearchParams();
       if (debouncedSearchTerm) params.append("search_term", debouncedSearchTerm);
+      if (status) params.append("status", status.toLowerCase());
       params.append("page", currentPage);
       params.append("per_page", pageSize);
       if (sortParam) params.append("sort", sortParam); // Include sort parameter if present
@@ -90,14 +123,14 @@ function Lots() {
     };
 
     fetchLots();
-  }, [token, debouncedSearchTerm, currentPage, pageSize, sortParam, id]);
+  }, [token, debouncedSearchTerm, status, currentPage, pageSize, sortParam, id]);
 
   /**
    * Function to refresh lots data with new parameters
    * Accepts an object with optional sort parameter
    * @param {object} params - Parameters to update (e.g., { sort: 'name' })
    */
-  const refreshLots = ({ sort }) => {
+  const refreshLots = ({ sort } = {}) => {
     if (sort !== undefined) {
       setSortParam(sort);
     }
@@ -111,6 +144,12 @@ function Lots() {
    * @param {string} term - The search term entered by the user
    */
   const handleSearch = (term) => setSearchTerm(term);
+
+  /**
+   * Handle status filter changes
+   * @param {string} statusValue - The status selected by the user
+   */
+  const handleStatusChange = (statusValue) => setStatus(statusValue);
 
   /**
    * Handle changes to the page size
@@ -157,10 +196,13 @@ function Lots() {
   return (
     <div className="w-full rounded-lg bg-white px-6 py-6 dark:bg-darkblack-600">
       <div className="flex flex-col space-y-5">
-        {/* Search bar */}
-        <div className="flex h-[56px] w-full space-x-4">
-          <Search onSearch={handleSearch} initialValue={searchTerm} />
-        </div>
+        {/* Filter bar */}
+        <LotFilter
+          searchTerm={searchTerm}
+          status={status}
+          onSearchChange={handleSearch}
+          onStatusChange={handleStatusChange}
+        />
 
         {/* The table of lots, purely presentational */}
         <LotTab
@@ -168,6 +210,7 @@ function Lots() {
           pageSize={pageSize}
           userRole={user?.role}
           refreshLots={refreshLots}
+          highlightedLotId={highlightedLotId}
         />
 
         {/* Pagination controls if multiple pages */}
@@ -185,7 +228,7 @@ function Lots() {
 
       {lots.length === 0 && !loading && (
         <div className="text-center text-bgray-600 dark:text-bgray-50">
-          No se encontraron lotes con el término de búsqueda "{searchTerm}".
+          No se encontraron lotes{searchTerm && ` con el término de búsqueda "${searchTerm}"`}{status && ` con estado "${status}"`}.
         </div>
       )}
       </div>

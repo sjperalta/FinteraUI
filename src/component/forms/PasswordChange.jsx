@@ -64,7 +64,7 @@ function PasswordChange({ token, userId }) {
           htmlFor="oldPassword"
           className="text-sm block mb-3 font-medium text-bgray-500 dark:text-darkblack-300"
         >
-          Contraseña Anterior
+          Nueva Contraseña
         </label>
         <input
           type={showOldPassword ? "text" : "password"}
@@ -128,7 +128,7 @@ function PasswordChange({ token, userId }) {
           htmlFor="newPassword"
           className="text-sm block mb-3 font-medium text-bgray-500 dark:text-darkblack-300"
         >
-          Nueva Contraseña
+          Repetir Contraseña
         </label>
         <input
           type={showNewPassword ? "text" : "password"}

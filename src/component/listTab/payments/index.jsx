@@ -62,7 +62,12 @@ function Payments() {
       // Construct query parameters
       const params = new URLSearchParams();
       if (debouncedSearchTerm) params.append("search_term", debouncedSearchTerm);
-      if (status) params.append("status", status.toLowerCase());
+      // If a specific status is selected, use it. Otherwise default to fetching paid and submitted.
+      if (status) {
+        params.append("status", String(status).toLowerCase());
+      } else {
+        params.append("status", "[paid|submitted]"); // default: only 'paid' and 'submitted'
+      }
       params.append("page", currentPage);
       params.append("per_page", pageSize);
       if (sortParam) params.append("sort", sortParam); // Include sort parameter if present

@@ -219,7 +219,10 @@ function LotTab({ lots, userRole, pageSize, refreshLots, highlightedLotId }) {
               balance={lot.balance}
               price={lot.price}
               override_price={lot.override_price}
+              contract_created_user_id={lot.contract_created_user_id}
+              contract_created_by={lot.contract_created_by}
               reserved_by={lot.reserved_by}
+              reserved_by_user_id={lot.reserved_by_user_id}
               status={lot.status}
               project_id={lot.project_id}
               lot_id={lot.id}

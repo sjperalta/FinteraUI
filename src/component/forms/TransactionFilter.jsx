@@ -2,13 +2,19 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import debounce from 'lodash.debounce';
+import { formatStatus } from "../../utils/formatStatus";
 
 function TransactionFilter({ searchTerm, status, onSearchChange, onStatusChange }) {
   const [activeFilter, setActiveFilter] = useState("");
   const [showFilter, setShowFilter] = useState(false);
   const [term, setTerm] = useState(searchTerm);
   const [selectedStatus, setSelectedStatus] = useState(status);
-  const statuses = ["All", "Pending", "Paid", "Overdue", "Cancelled"]; // Payment status options
+  // Payment status options (value for API). Labels come from formatStatus for consistency.
+  const statuses = [
+    { value: "" },
+    { value: "submitted" },
+    { value: "paid" },
+  ];
   
   const navigate = useNavigate();
 
@@ -21,9 +27,9 @@ function TransactionFilter({ searchTerm, status, onSearchChange, onStatusChange 
     debouncedSearch(e.target.value);
   };
 
-  const handleStatusSelect = (status) => {
-    setSelectedStatus(status);
-    onStatusChange(status === "All" ? "" : status); // Update parent with selected status
+  const handleStatusSelect = (statusValue) => {
+    setSelectedStatus(statusValue);
+    onStatusChange(statusValue); // Update parent with selected status (empty string means all)
   };
 
   // Create a debounced version of onSearchChange
@@ -44,6 +50,12 @@ function TransactionFilter({ searchTerm, status, onSearchChange, onStatusChange 
       debouncedSearch.cancel();
     };
   }, [debouncedSearch]);
+
+  // Initialize visible label from incoming prop `status`
+  useEffect(() => {
+    setSelectedStatus(status);
+    setActiveFilter(status ? formatStatus(status) : "Todos");
+  }, [status]);
 
   return (
     <div className="bg-white dark:bg-darkblack-600 rounded-lg p-4 mb-8 items-center flex">
@@ -137,15 +149,16 @@ function TransactionFilter({ searchTerm, status, onSearchChange, onStatusChange 
           <ul>
             {statuses.map((statusOption) => (
               <li
-                key={statusOption}
-                onClick={(e) => {
-                  setShowFilter(false);     
-                  handleActiveFilter(e);
-                  handleStatusSelect(statusOption);
+                key={statusOption.value !== undefined ? statusOption.value : statusOption.label}
+                onClick={() => {
+                  setShowFilter(false);
+                  // set the visible label (use central helper)
+                  setActiveFilter(formatStatus(statusOption.value || ""));
+                  handleStatusSelect(statusOption.value);
                 }}
                 className="text-sm text-bgray-900 dark:text-bgray-50 hover:dark:bg-darkblack-600 cursor-pointer px-5 py-2 hover:bg-bgray-100 font-semibold"
               >
-                {statusOption}
+                {formatStatus(statusOption.value)}
               </li>
             ))}
           </ul>
@@ -169,18 +182,6 @@ function TransactionFilter({ searchTerm, status, onSearchChange, onStatusChange 
               strokeLinejoin="round"
             />
           </svg>
-        </button>
-      </div>
-      <div className="pl-10 md:block hidden">
-        <button
-          aria-label="Export transactions"
-          className="py-3 px-10 bg-success-300 text-white font-bold rounded-lg hover:bg-success-400 transition-all"
-          onClick={() => {
-            // Add export functionality here
-            alert("Exportar funcionalidad próximamente");
-          }}
-        >
-          Exportar
         </button>
       </div>
     </div>

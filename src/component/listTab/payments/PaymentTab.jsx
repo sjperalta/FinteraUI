@@ -127,62 +127,60 @@ function PaymentTab({ payments, userRole, pageSize, refreshPayments }) {
       <table className="w-full">
         <thead>
           <tr className="border-b border-bgray-300 dark:border-darkblack-400">
-            {/* Description */}
+            {/* Descripción */}
             <th className="px-6 py-5 xl:px-0 text-left">
               <div className="flex items-center space-x-2.5">
                 <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
                   Descripción
                 </span>
                 {/* Sorting Icon */}
-                {renderSortIcon("description")}
+                {renderSortIcon('description')}
               </div>
             </th>
 
-            {/* Amount */}
+            {/* Solicitante */}
             <th className="px-6 py-5 xl:px-0 text-left">
               <div className="flex items-center space-x-2.5">
                 <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  Monto
+                  Solicitante
                 </span>
-                {/* Sorting Icon */}
-                {renderSortIcon("amount")}
               </div>
             </th>
 
-            {/* Due Date */}
+            {/* Monto Total */}
             <th className="px-6 py-5 xl:px-0 text-left">
               <div className="flex items-center space-x-2.5">
                 <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  Fecha de Vencimiento
+                  Monto Total
                 </span>
                 {/* Sorting Icon */}
-                {renderSortIcon("due_date")}
+                {renderSortIcon('amount')}
               </div>
             </th>
 
-            {/* Interest */}
+            {/* Vencimiento */}
             <th className="px-6 py-5 xl:px-0 text-left">
               <div className="flex items-center space-x-2.5">
                 <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  Interés
+                  Vencimiento
                 </span>
                 {/* Sorting Icon */}
-                {renderSortIcon("interest_amount")}
+                {renderSortIcon('due_date')}
               </div>
             </th>
 
-            {/* Status */}
+            {/* Estado */}
             <th className="px-6 py-5 xl:px-0 text-left">
               <div className="flex items-center space-x-2.5">
                 <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
                   Estado
                 </span>
                 {/* Sorting Icon */}
-                {renderSortIcon("status")}
+                {renderSortIcon('status')}
               </div>
             </th>
 
-            {/* Actions */}
+            {/* Acciones */}
             <th className="px-6 py-5 xl:px-0 text-center">
               <div className="flex justify-center">
                 <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
@@ -193,7 +191,7 @@ function PaymentTab({ payments, userRole, pageSize, refreshPayments }) {
           </tr>
         </thead>
         <tbody>
-          {payments?.map((payment) => (
+          {payments.map((payment) => (
             <PaymentInfo
               key={payment.id}
               description={payment.description}
@@ -204,7 +202,13 @@ function PaymentTab({ payments, userRole, pageSize, refreshPayments }) {
               payment_id={payment.id}
               userRole={userRole}
               refreshPayments={refreshPayments}
-              currency={payment.contract.currency}
+              currency={payment.contract?.currency || "HNL"}
+              applicant_name={payment.contract?.applicant_user?.full_name}
+              applicant_phone={payment.contract?.applicant_user?.phone}
+              applicant_identity={payment.contract?.applicant_user?.identity}
+              lot_name={payment.contract?.lot?.name}
+              lot_address={payment.contract?.lot?.address}
+              pageSize={pageSize}
             />
           ))}
         </tbody>

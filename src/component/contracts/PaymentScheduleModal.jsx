@@ -104,15 +104,13 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
 
   // Handle payment response and update contract balance
   const handlePaymentResponse = (paymentResponse) => {
-    console.log('Payment response received:', paymentResponse);
-    
+   
     // Update the contract balance if included in the response
     if (paymentResponse?.payment?.contract?.balance !== undefined) {
       setCurrentContract(prev => ({
         ...prev,
         balance: paymentResponse.payment.contract.balance
       }));
-      console.log('Updated contract balance to:', paymentResponse.payment.contract.balance);
     }
     
     // Call the original callback if provided
@@ -123,7 +121,6 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
 
   useEffect(() => {
     if (!open || !contract) return;
-    console.log('PaymentScheduleModal - Contract data:', contract);
     setCurrentContract(contract);
     loadPaymentSchedule();
   }, [open, contract]);
@@ -642,8 +639,6 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                                       onPaymentSuccess(mockUndoResponse);
                                     }
                                     
-                                    console.log('Undoing payment for:', row);
-                                    console.log('Updated balance:', (currentContract?.balance || 0) + paymentAmount);
                                   }}
                                   className="px-2 py-1 text-xs font-medium bg-red-100 hover:bg-red-200 text-red-700 rounded transition-colors"
                                   title="Deshacer Pago"
@@ -818,8 +813,6 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                       // Handle the capital payment response and update balance
                       handlePaymentResponse(data);
                       
-                      console.log('Applied capital payment:', paymentAmount);
-                      console.log('Capital payment response:', data);
                     } else {
                       // Handle regular payment - Make API call to apply payment
                       const interestAmount = parseFloat(editableInterest) || 0;
@@ -873,9 +866,6 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                       // Handle the payment response and update balance
                       handlePaymentResponse(data);
                       
-                      console.log('Applied payment for:', selectedPayment);
-                      console.log('Amount:', editableAmount, 'Interest:', editableInterest);
-                      console.log('Payment response:', data);
                     }
                     
                     // Show success feedback
@@ -954,7 +944,6 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                   );
                   setSchedule(updatedSchedule);
                   
-                  console.log('Updated moratory amount for:', editingMora, 'Amount:', moratoryAmount);
                   setEditingMora(null);
                   setMoratoryAmount("");
                 }}

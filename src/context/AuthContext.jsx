@@ -92,7 +92,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    console.log("called logout");
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.removeItem('refresh_token');

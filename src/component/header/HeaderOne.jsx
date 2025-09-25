@@ -45,7 +45,6 @@ function HeaderOne({ handleSidebar }) {
   }, [user]);
 
   const fetchNotifications = async () => {
-    console.log("Loading Notifications");
     setLoading(true);
     try {
       const res = await fetch(`${API_URL}/api/v1/notifications`, {

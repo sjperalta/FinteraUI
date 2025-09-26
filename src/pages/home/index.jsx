@@ -114,6 +114,7 @@ function Home() {
   const [selectedMonth, setSelectedMonth] = useState(
     new Date(new Date().getFullYear(), new Date().getMonth(), 1)
   );
+  const [refreshing, setRefreshing] = useState(false);
 
   // Fetch statistics data
   useEffect(() => {
@@ -184,6 +185,50 @@ function Home() {
     fetchStatistics();
   }, [token, selectedMonth]);
 
+  // Function to refresh statistics
+  const handleRefreshStats = async () => {
+    setRefreshing(true);
+    try {
+      const dateParam = selectedMonth.toISOString().split('T')[0];
+
+      const response = await fetch(`${API_URL}/api/v1/statistics/refresh`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          date: dateParam
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error refreshing statistics');
+      }
+
+      // After successful refresh, fetch the updated statistics
+      const statsResponse = await fetch(`${API_URL}/api/v1/statistics?month=${selectedMonth.getMonth() + 1}&year=${selectedMonth.getFullYear()}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (statsResponse.ok) {
+        const updatedStats = await statsResponse.json();
+        setStatistics(updatedStats);
+      }
+
+      // Show success message
+      alert('Estadísticas actualizadas correctamente');
+    } catch (err) {
+      console.error('Error refreshing statistics:', err);
+      alert('Error al actualizar las estadísticas');
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   return (
     <main className="w-full px-6 pb-6 pt-[100px] sm:pt-[156px] xl:px-12 xl:pb-12">
       {/* Header Section */}
@@ -204,6 +249,34 @@ function Home() {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Refresh Stats Button */}
+      <div className="mb-8">
+        <div className="flex justify-center lg:justify-end">
+          <button
+            onClick={handleRefreshStats}
+            disabled={refreshing}
+            className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center gap-2 font-semibold shadow-md hover:shadow-lg"
+          >
+            {refreshing ? (
+              <>
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Actualizando Estadísticas...
+              </>
+            ) : (
+              <>
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Actualizar Estadísticas
+              </>
+            )}
+          </button>
         </div>
       </div>
 

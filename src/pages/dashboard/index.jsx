@@ -86,11 +86,7 @@ function Dashboard() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // Set selectedMonth as the first day of the current month
-  const [selectedMonth, setSelectedMonth] = useState(
-    new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-  );
+  const [selectedMonth, setSelectedMonth] = useState(new Date());
 
   // Optionally, if your API supports filtering by month, you can include the selected month
   useEffect(() => {
@@ -126,7 +122,7 @@ function Dashboard() {
   }, [token, selectedMonth]);
 
   return (
-    <main className="w-full px-6 pb-6 pt-[100px] sm:pt-[156px] xl:px-12 xl:pb-12">
+    <div className="w-full px-6 pb-6 pt-[100px] sm:pt-[156px] xl:px-12 xl:pb-12">
       {/* Month Selector */}
       <MonthSelector
         selectedMonth={selectedMonth}
@@ -195,12 +191,12 @@ function Dashboard() {
               </div>
             </div>
           </section>
-          {/* <section className="flex w-full flex-col space-x-0 lg:flex-row lg:space-x-6 2xl:w-[400px] 2xl:flex-col 2xl:space-x-0">
+          <section className="flex w-full flex-col space-x-0 lg:flex-row lg:space-x-6 2xl:w-[400px] 2xl:flex-col 2xl:space-x-0">
             <Report />
-          </section> */}
+          </section>
         </div>
       )}
-    </main>
+    </div>
   );
 }
 

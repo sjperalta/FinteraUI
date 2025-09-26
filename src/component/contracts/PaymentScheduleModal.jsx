@@ -824,9 +824,9 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                         return;
                       }
 
-                      // Make API call to apply payment
+                      // Make API call to approve payment
                       const response = await fetch(
-                        `${API_URL}/api/v1/payments/${selectedPayment.id}/apply`,
+                        `${API_URL}/api/v1/payments/${selectedPayment.id}/approve`,
                         {
                           method: "POST",
                           headers: {

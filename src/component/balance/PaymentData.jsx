@@ -340,7 +340,9 @@ function PaymentData({ paymentData, user, index }) {
       )}
     </div>
   );
-}PaymentData.propTypes = {
+}
+
+PaymentData.propTypes = {
   paymentData: PropTypes.shape({
     id: PropTypes.number.isRequired,
     contract: PropTypes.shape({

@@ -3,9 +3,7 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import ContractInfo from "./ContractInfo";
 
-function ContractTab({ contracts, userRole, pageSize, refreshContracts }) {
-  const [sortField, setSortField] = useState("created_at");
-  const [sortDirection, setSortDirection] = useState("desc");
+function ContractTab({ contracts, userRole, pageSize, refreshContracts, sortField, sortDirection }) {
 
   /**
    * Handles sorting when a table header is clicked.
@@ -17,14 +15,9 @@ function ContractTab({ contracts, userRole, pageSize, refreshContracts }) {
       // Toggle sort direction if the same field is clicked
       direction = sortDirection === 'asc' ? 'desc' : 'asc';
     }
-    setSortField(field);
-    setSortDirection(direction);
 
-    // Prepare the sort parameter for the API
-    const sortParam = `${field}-${direction}`;
-
-    // Call the refreshContracts function with the new sort parameter
-    refreshContracts({ sort: sortParam });
+    // Call the refreshContracts function with the new sort parameters
+    refreshContracts({ sortField: field, sortDirection: direction });
   };
 
   /**
@@ -178,7 +171,7 @@ function ContractTab({ contracts, userRole, pageSize, refreshContracts }) {
                   Creado
                 </span>
                 {/* Sorting Icon */}
-                {renderSortIcon('created_at')}
+                {renderSortIcon('contracts.created_at')}
               </div>
             </th>
 
@@ -241,6 +234,8 @@ ContractTab.propTypes = {
   userRole: PropTypes.string.isRequired,
   pageSize: PropTypes.number,
   refreshContracts: PropTypes.func.isRequired,
+  sortField: PropTypes.string.isRequired,
+  sortDirection: PropTypes.string.isRequired,
 };
 
 export default ContractTab;

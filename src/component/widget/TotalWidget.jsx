@@ -28,12 +28,12 @@ function TotalWidget({ statistics }) {
 
   return (
     <div className="mb-[32px] w-full">
-      <div className="grid grid-cols-1 gap-[24px] lg:grid-cols-3 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-[24px] lg:grid-cols-2 xl:grid-cols-4">
         <div className="transform hover:scale-105 transition-all duration-300 ease-in-out hover:shadow-lg">
           <TotalWidgetCard
             title="Ingresos Totales"
             amount={formatLargeNumber(statistics.total_income)}
-            groth={5.2} // You can calculate this based on previous period
+            growth={Number(statistics.total_income_growth)} // You can calculate this based on previous period
             id="totalIncome"
             type="money"
             currency="L "
@@ -43,9 +43,9 @@ function TotalWidget({ statistics }) {
         
         <div className="transform hover:scale-105 transition-all duration-300 ease-in-out hover:shadow-lg">
           <TotalWidgetCard
-            title="Intereses Moratorios"
+            title="Interes Moratorios"
             amount={formatLargeNumber(statistics.total_interest)}
-            groth={3.1}
+            growth={Number(statistics.total_interest_growth)}
             id="totalInterest"
             type="money"
             currency="L "
@@ -57,10 +57,21 @@ function TotalWidget({ statistics }) {
           <TotalWidgetCard
             title="Nuevos Clientes"
             amount={formatNumber(statistics.new_customers)}
-            groth={12.5}
+            growth={Number(statistics.new_customers_growth)}
             id="newCustomers"
             type="number"
             cardType="customers"
+          />
+        </div>
+
+        <div className="transform hover:scale-105 transition-all duration-300 ease-in-out hover:shadow-lg">
+          <TotalWidgetCard
+            title="Nuevos Contratos"
+            amount={formatNumber(statistics.new_contracts)}
+            growth={Number(statistics.new_contracts_growth)}
+            id="newContracts"
+            type="number"
+            cardType="contracts"
           />
         </div>
       </div>

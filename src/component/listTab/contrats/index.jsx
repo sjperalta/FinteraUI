@@ -41,7 +41,8 @@ function Contracts() {
   const [totalPages, setTotalPages] = useState(1);
 
   // Sorting states
-  const [sortParam, setSortParam] = useState("created_at-desc"); // Default sort by created_at descending
+  const [sortField, setSortField] = useState("contracts.created_at");
+  const [sortDirection, setSortDirection] = useState("desc");
 
   // Key to force refetch when child requests a refresh (e.g. after approve)
   const [refreshKey, setRefreshKey] = useState(0);
@@ -68,7 +69,8 @@ function Contracts() {
       if (status) params.append("status", status.toLowerCase());
       params.append("page", currentPage);
       params.append("per_page", pageSize);
-      if (sortParam) params.append("sort", sortParam); // Include sort parameter if present
+      const sortParam = `${sortField}-${sortDirection}`;
+      params.append("sort", sortParam); // Include sort parameter
 
       try {
         const response = await fetch(
@@ -103,17 +105,20 @@ function Contracts() {
     };
 
     fetchContracts();
-  }, [token, debouncedSearchTerm, status, currentPage, pageSize, sortParam, id, lot_id, refreshKey]);
+  }, [token, debouncedSearchTerm, status, currentPage, pageSize, sortField, sortDirection, id, lot_id, refreshKey]);
 
   /**
    * Function to refresh contracts data with new parameters
-   * Accepts an object with optional sort parameter
-   * @param {object} params - Parameters to update (e.g., { sort: 'customer_name' })
+   * Accepts an object with optional sort field and direction parameters
+   * @param {object} params - Parameters to update (e.g., { sortField: 'customer_name', sortDirection: 'asc' })
    */
-  // Allow children to request a refresh. Optional param { sort } updates sorting.
-  const refreshContracts = ({ sort } = {}) => {
-    if (sort !== undefined) {
-      setSortParam(sort);
+  // Allow children to request a refresh. Optional param { sortField, sortDirection } updates sorting.
+  const refreshContracts = ({ sortField: newSortField, sortDirection: newSortDirection } = {}) => {
+    if (newSortField !== undefined) {
+      setSortField(newSortField);
+    }
+    if (newSortDirection !== undefined) {
+      setSortDirection(newSortDirection);
     }
     setCurrentPage(1); // Reset to first page on new sort
     // bump refreshKey to force the fetch effect to re-run (useful after approve/delete)
@@ -195,6 +200,8 @@ function Contracts() {
           pageSize={pageSize}
           userRole={user?.role}
           refreshContracts={refreshContracts}
+          sortField={sortField}
+          sortDirection={sortDirection}
         />
 
         {/* Pagination controls if multiple pages */}

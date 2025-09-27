@@ -103,6 +103,7 @@ function Home() {
     total_income: 0,
     total_interest: 0,
     new_customers: 0,
+    new_contracts: 0,
     payment_reserve: 0,
     payment_installments: 0,
     payment_down_payment: 0,
@@ -148,6 +149,7 @@ function Home() {
           payment_reserve: data.payment_reserve ?? data.reservas ?? data.total_reserves ?? 0,
           payment_down_payment: data.payment_down_payment ?? data.prima ?? data.total_down_payments ?? 0,
           payment_installments: data.payment_installments ?? data.cuotas ?? data.total_installments ?? 0,
+          new_contracts: data.new_contracts ?? data.total_new_contracts ?? data.contracts_count ?? 0,
         };
 
         setStatistics(normalizedData);
@@ -206,25 +208,33 @@ function Home() {
         throw new Error('Error refreshing statistics');
       }
 
-      // After successful refresh, fetch the updated statistics
-      const statsResponse = await fetch(`${API_URL}/api/v1/statistics?month=${selectedMonth.getMonth() + 1}&year=${selectedMonth.getFullYear()}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      // After successful refresh, wait a few seconds then fetch the updated statistics
+      setTimeout(async () => {
+        try {
+          const statsResponse = await fetch(`${API_URL}/api/v1/statistics?month=${selectedMonth.getMonth() + 1}&year=${selectedMonth.getFullYear()}`, {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          });
 
-      if (statsResponse.ok) {
-        const updatedStats = await statsResponse.json();
-        setStatistics(updatedStats);
-      }
+          if (statsResponse.ok) {
+            const updatedStats = await statsResponse.json();
+            setStatistics(updatedStats);
+          }
 
-      // Show success message
-      alert('Estadísticas actualizadas correctamente');
+          // Show success message
+          alert('Estadísticas actualizadas correctamente');
+        } catch (err) {
+          console.error('Error fetching updated statistics:', err);
+          alert('Error al obtener las estadísticas actualizadas');
+        } finally {
+          setRefreshing(false);
+        }
+      }, 3000); // Wait 3 seconds
     } catch (err) {
       console.error('Error refreshing statistics:', err);
       alert('Error al actualizar las estadísticas');
-    } finally {
       setRefreshing(false);
     }
   };
@@ -341,10 +351,10 @@ function Home() {
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold text-bgray-900 dark:text-white">
-                      Flujo de Ingresos
+                      Proyección de Ingresos
                     </h3>
                     <p className="text-sm text-bgray-500 dark:text-bgray-300">
-                      Análisis mensual de ingresos por tipo de pago
+                      Análisis comparativo de proyección de ingresos por tipo de pago
                     </p>
                   </div>
                 </div>

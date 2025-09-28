@@ -201,7 +201,9 @@ function ContractTab({ contracts, userRole, pageSize, refreshContracts, sortFiel
               applicant_name={contract.applicant_name}
               applicant_phone={contract.applicant_phone}
               applicant_identity={contract.applicant_identity}
+              applicant_credit_score={contract.applicant_credit_score}
               created_by={contract.created_by}
+              approved_at={contract.approved_at}
               lot_name={contract.lot_name}
               lot_address={contract.lot_address}
               balance={contract.balance}
@@ -212,15 +214,17 @@ function ContractTab({ contracts, userRole, pageSize, refreshContracts, sortFiel
               reserve_amount={contract.reserve_amount}
               status={contract.status}
               project_name={contract.project_name}
+              project_address={contract.project_address}
               rejection_reason={contract.rejection_reason}
               cancellation_notes={contract.cancellation_notes}
+              note={contract.note}
               created_at={contract.created_at}
               project_id={contract.project_id}
               lot_id={contract.lot_id}
               payment_schedule={contract.payment_schedule}
               contract_id={contract.id}
               userRole={userRole}
-              refreshContracts={refreshContracts}
+              refreshContracts={refreshContracts} 
             />
           ))}
         </tbody>

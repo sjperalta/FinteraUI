@@ -5,7 +5,7 @@ import { useContext } from "react";
 import AuthContext from "../../../context/AuthContext";
 import { API_URL } from "../../../../config";
 import { getToken } from "../../../../auth";
-import { formatStatus } from "../../../utils/formatStatus"; // Ensure this path is correct
+import { getStatusLabel, getStatusBadgeClass } from "../../../utils/statusUtils"; // Updated import
 
 /**
  * This component displays a single lot row.
@@ -39,25 +39,10 @@ function LotInfo({
   const token = getToken();
   const { user } = useContext(AuthContext) || {};
   const currentUserId = user?.id ?? null;
-  // Normalize status and provide Spanish labels
-  const statusLower = status?.toLowerCase() || '';
-  const statusLabel =
-    statusLower === 'available' ? 'Disponible' :
-    statusLower === 'reserved' ? 'Reservado' :
-    statusLower === 'sold' ? 'Vendido' :
-    formatStatus(status);
 
-  // Badge classes with proper dark mode variants
-  let badgeClass = 'block rounded-md px-4 py-1.5 text-sm font-semibold leading-[22px] ';
-  if (statusLower === 'available') {
-    badgeClass += 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-  } else if (statusLower === 'reserved') {
-    badgeClass += 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200';
-  } else if (statusLower === 'sold') {
-    badgeClass += 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200';
-  } else {
-    badgeClass += 'bg-gray-100 dark:bg-darkblack-500';
-  }
+  // Get status label and badge class using centralized utilities
+  const statusLabel = getStatusLabel(status);
+  const badgeClass = getStatusBadgeClass(status);
 
   return (
     <tr className={`border-b border-bgray-300 dark:border-darkblack-400 ${
@@ -209,7 +194,7 @@ LotInfo.propTypes = {
   balance: PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // keeping for backward compatibility
   price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // lot_price from backend
   override_price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // lot_override_price from backend
-  reserved_by: PropTypes.string.isRequired,
+  reserved_by: PropTypes.string,
   reserved_by_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   reserved_by_user: PropTypes.string,
   contract_created_by: PropTypes.string,

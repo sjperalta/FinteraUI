@@ -247,7 +247,7 @@ LotTab.propTypes = {
       project_name: PropTypes.string,
       name: PropTypes.string,
       dimensions: PropTypes.string,
-      balance: PropTypes.string,
+      balance: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       reserved_by: PropTypes.string,
       status: PropTypes.string,
       project_id: PropTypes.number,

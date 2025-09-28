@@ -87,13 +87,7 @@ function Contracts() {
         }
 
         const data = await response.json();
-        // Normalize contracts: ensure `project_name` exists (fallback to nested project.name if present)
-        const normalized = (data.contracts || []).map((c) => ({
-          ...c,
-          project_name: c.project_name || (c.project && c.project.name) || null,
-        }));
-
-        setContracts(normalized);
+        setContracts(data.contracts || []);
 
         // Update pagination metadata
         setTotalPages(data.pagination?.pages || 1);

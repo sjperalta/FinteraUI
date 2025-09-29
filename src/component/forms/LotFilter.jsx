@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import PropTypes from "prop-types";
 import debounce from 'lodash.debounce';
 import { STATUS_CONFIG, getStatusLabel } from "../../utils/statusUtils";
+import AuthContext from "../../context/AuthContext";
 
 /**
  * LotFilter component provides search and status filtering for lots
@@ -13,6 +14,8 @@ function LotFilter({ searchTerm, status, onSearchChange, onStatusChange }) {
   const [showFilter, setShowFilter] = useState(false);
   const [term, setTerm] = useState(searchTerm);
   const [selectedStatus, setSelectedStatus] = useState(status);
+
+  const { user } = useContext(AuthContext);
 
   // Generate status options with only the relevant statuses for lot filtering
   // Includes "Todos" option for showing all lots
@@ -185,15 +188,18 @@ function LotFilter({ searchTerm, status, onSearchChange, onStatusChange }) {
           </svg>
         </button>
       </div>
-      <div className="pl-10 md:block hidden">
-        <button
-          aria-label="Add new lot"
-          className="py-3 px-10 bg-success-300 text-white font-bold rounded-lg hover:bg-success-400 transition-all"
-          onClick={() => navigate(`/projects/${id}/lots/create`)}
-        >
-          Agregar Lote
-        </button>
-      </div>
+
+      {user?.role === 'admin' && (
+        <div className="pl-10 md:block hidden">
+          <button
+            aria-label="Add new lot"
+            className="py-3 px-10 bg-success-300 text-white font-bold rounded-lg hover:bg-success-400 transition-all"
+            onClick={() => navigate(`/projects/${id}/lots/create`)}
+          >
+            Agregar Lote
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -67,16 +67,6 @@ function SidebarV2({user, handleLogout }) {
                       </li>
                       <li>
                         <Link
-                          to="/home-2"
-                          className={`text-md inline-block py-1.5 font-medium text-bgray-600 hover:text-bgray-800 ${
-                            location === "/home-2" ? "nav-active" : ""
-                          } `}
-                        >
-                          Dashboard two
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
                           to="/home-3"
                           className={`text-md inline-block py-1.5 font-medium text-bgray-600 hover:text-bgray-800 ${
                             location === "/home-3" ? "nav-active" : ""

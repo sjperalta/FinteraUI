@@ -95,13 +95,26 @@ function UserData({ userInfo, index, token, onClick}) {
 
             {/* Second line: email + created_at (removed phone & duplicate role) */}
             <div className="mt-1">
-              <span className="font-medium text-base text-bgray-700 dark:text-bgray-50">
-                {email} •{" "}
-              </span>
-              <span className="text-sm text-gray-500">
-                Creado: {formattedDate}
-              </span>
-              <div className="text-sm text-gray-500 mt-1">{/* Creator info (could be id or object) */}
+              <div className="flex items-center gap-1 mb-1">
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                <span className="font-medium text-base text-bgray-700 dark:text-bgray-50">
+                  {email}
+                </span>
+              </div>
+              <div className="flex items-center gap-1 mb-1">
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span className="text-sm text-gray-500">
+                  Creado: {formattedDate}
+                </span>
+              </div>
+              <div className="flex items-center gap-1 text-sm text-gray-500">
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
                 <span className="font-medium text-bgray-700 dark:text-bgray-50">Creado por: </span>
                 <span className="ml-1">{creatorLabel}</span>
               </div>

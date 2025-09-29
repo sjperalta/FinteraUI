@@ -99,6 +99,14 @@ function Home() {
   const { user } = useContext(AuthContext);
   const token = getToken();
 
+  // Function to get dynamic greeting based on time of day
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Buenos días";
+    if (hour < 18) return "Buenas tardes";
+    return "Buenas noches";
+  };
+
   const [statistics, setStatistics] = useState({
     total_income: 0,
     total_interest: 0,
@@ -243,7 +251,7 @@ function Home() {
     <main className="w-full px-6 pb-6 pt-[100px] sm:pt-[156px] xl:px-12 xl:pb-12">
       {/* Header Section */}
       <div className="mb-8">
-        <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white shadow-lg">
+        <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="p-3 bg-white/20 rounded-lg">
@@ -254,7 +262,7 @@ function Home() {
               <div>
                 <h1 className="text-3xl font-bold mb-1">Dashboard Principal</h1>
                 <p className="text-blue-100">
-                  Bienvenido {user?.name || 'Usuario'}, aquí está tu resumen ejecutivo
+                  {getGreeting()} {user?.full_name || 'Usuario'}, aquí está tu resumen ejecutivo
                 </p>
               </div>
             </div>
@@ -292,7 +300,7 @@ function Home() {
 
       {/* Month Selector */}
       <div className="mb-8">
-        <div className="bg-white dark:bg-darkblack-600 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-darkblack-500">
+        <div className="bg-white dark:bg-darkblack-600 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-darkblack-500 hover:shadow-md transition-shadow duration-300">
           <MonthSelector
             selectedMonth={selectedMonth}
             onChange={(newMonth) => setSelectedMonth(newMonth)}
@@ -340,8 +348,8 @@ function Home() {
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Main Content Area */}
           <div className="xl:col-span-2 space-y-6">
-            <TotalWidget statistics={statistics} />
-            <div className="w-full rounded-xl bg-white dark:bg-darkblack-600 shadow-lg border border-gray-100 dark:border-darkblack-500 overflow-hidden">
+            <TotalWidget statistics={statistics} className="animate-fade-in-up" />
+            <div className="w-full rounded-xl bg-white dark:bg-darkblack-600 shadow-lg border border-gray-100 dark:border-darkblack-500 overflow-hidden hover:shadow-xl transition-shadow duration-300">
               <div className="bg-gradient-to-r from-bgray-50 to-gray-100 dark:from-darkblack-700 dark:to-darkblack-600 px-6 py-4 border-b border-gray-200 dark:border-darkblack-500">
                 <div className="flex items-center space-x-3">
                   <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">

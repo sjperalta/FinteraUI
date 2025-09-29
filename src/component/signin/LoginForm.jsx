@@ -30,7 +30,7 @@ function LoginForm({
             <div className="space-y-2">
               <label
                 htmlFor="email"
-                className="block text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center"
+                className="block text-base font-semibold text-gray-700 dark:text-gray-300 flex items-center"
               >
                 <svg
                   className="w-4 h-4 mr-2 text-blue-500"
@@ -105,7 +105,7 @@ function LoginForm({
             <div className="space-y-2">
               <label
                 htmlFor="password"
-                className="block text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center"
+                className="block text-base font-semibold text-gray-700 dark:text-gray-300 flex items-center"
               >
                 <svg
                   className="w-4 h-4 mr-2 text-indigo-500"
@@ -218,7 +218,7 @@ function LoginForm({
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-700 hover:via-blue-800 hover:to-indigo-800 disabled:from-blue-400 disabled:to-indigo-400 text-white font-semibold py-5 px-6 rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-500/30 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] shadow-xl hover:shadow-2xl relative overflow-hidden group"
+            className="w-full bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-700 hover:via-blue-800 hover:to-indigo-800 disabled:from-blue-400 disabled:to-indigo-400 text-white font-semibold py-5 px-6 rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-500/30 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] shadow-xl hover:shadow-2xl hover:shadow-blue-500/50 relative overflow-hidden group"
           >
             {/* Button shimmer effect (prefers-reduced-motion respected) */}
             <div

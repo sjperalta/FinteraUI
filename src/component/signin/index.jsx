@@ -1,16 +1,22 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import PropTypes from "prop-types";
 import AuthContext from "../../context/AuthContext";
 import PasswordResetModal from "../modal/PasswordResetModal";
 import LeftSide from "./LeftSide";
-import RightSide from "./RightSide";
 
 function SignIn() {
   const [modalOpen, setModalOpen] = useState(false);
 
-  const [email, setEmail] = useState("admin@example.com");
-  const [password, setPassword] = useState("superPassword@123");
+  // Only auto-fill admin credentials during local development or staging.
+  const hostname = typeof window !== "undefined" ? window.location.hostname : "";
+  const isDevOrStaging =
+    (typeof process !== "undefined" && process.env && process.env.NODE_ENV !== "production") ||
+    hostname.includes("localhost") ||
+    hostname.includes("127.0.0.1") ||
+    hostname.includes("staging");
+
+  const [email, setEmail] = useState(() => (isDevOrStaging ? "admin@example.com" : ""));
+  const [password, setPassword] = useState(() => (isDevOrStaging ? "superPassword@123" : ""));
   const [errors, setErrors] = useState({ email: "", password: "" });
   
   const navigate = useNavigate();
@@ -51,7 +57,7 @@ function SignIn() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row justify-between min-h-screen">
+    <div className="flex h-screen overflow-hidden">
       <LeftSide
         email={email}
         setEmail={setEmail}
@@ -63,7 +69,6 @@ function SignIn() {
         apiError={apiError}
         setModalOpen={setModalOpen}
       />
-      <RightSide />
       <PasswordResetModal
         isActive={modalOpen}
         handleActive={setModalOpen}

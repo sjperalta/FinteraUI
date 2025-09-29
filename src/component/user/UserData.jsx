@@ -5,7 +5,7 @@ import { API_URL } from "../../../config";
 import inbox1 from "../../assets/images/avatar/profile.png";
 
 function UserData({ userInfo, index, token, onClick}) {
-  const { id, full_name, phone, email, status: initialStatus, role, created_at } = userInfo;
+  const { id, full_name, phone, email, status: initialStatus, role, created_at, created_by, creator } = userInfo;
   const [status, setStatus] = useState(initialStatus); // Use local state for status
 
   const toggleUserStatus = async () => {
@@ -56,6 +56,9 @@ function UserData({ userInfo, index, token, onClick}) {
     ? new Date(created_at).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })
     : "-";
 
+  // Use backend-provided creator.full_name when available; otherwise show placeholder
+  const creatorLabel = creator?.full_name || "—";
+
   return (
     <tr
       className={`${index % 2 === 0 ? "bg-white dark:bg-darkblack-600" : ""} hover:bg-success-50 cursor-pointer`}
@@ -98,6 +101,10 @@ function UserData({ userInfo, index, token, onClick}) {
               <span className="text-sm text-gray-500">
                 Creado: {formattedDate}
               </span>
+              <div className="text-sm text-gray-500 mt-1">{/* Creator info (could be id or object) */}
+                <span className="font-medium text-bgray-700 dark:text-bgray-50">Creado por: </span>
+                <span className="ml-1">{creatorLabel}</span>
+              </div>
             </div>
           </div>
         </div>

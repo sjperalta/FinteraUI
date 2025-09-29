@@ -239,7 +239,7 @@ function Projects() {
         {/* optionally other header actions */}
       </div>
 
-      {!isAdmin && (
+      {isAdmin && (
         <div className="px-4">
           <p className="text-sm text-bgray-600 dark:text-bgray-400">Las acciones "Agregar" y "Importar CSV" están disponibles sólo para administradores.</p>
         </div>

@@ -1,4 +1,7 @@
 import PropTypes from "prop-types";
+import LoginHeader from "./LoginHeader";
+import LoginForm from "./LoginForm";
+import LoginFooter from "./LoginFooter";
 
 function LeftSide({
   email,
@@ -12,136 +15,49 @@ function LeftSide({
   setModalOpen
 }) {
   return (
-    <div className="w-full lg:w-1/2 flex flex-col justify-center py-10 px-5 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
-      <div className="w-full max-w-md mx-auto">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            FinteraUI
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Inicia sesión en tu cuenta
-          </p>
-        </div>
+  <div className="w-full px-4 sm:px-6 lg:px-0 xl:px-0 h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900/20 relative overflow-y-auto">
+    {/* Enhanced animated background elements */}
+    <div className="absolute inset-0 overflow-hidden hidden lg:block">
+      {/* Main gradient orbs */}
+      <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/40 to-purple-600/40 rounded-full blur-3xl animate-blob"></div>
+      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-indigo-400/40 to-pink-600/40 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-gradient-to-br from-cyan-400/30 to-blue-600/30 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
+      
+      {/* Floating particles */}
+      <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-white/60 rounded-full animate-pulse"></div>
+      <div className="absolute top-1/3 right-1/4 w-1 h-1 bg-blue-400/80 rounded-full animate-bounce"></div>
+      <div className="absolute bottom-1/4 left-1/3 w-1.5 h-1.5 bg-purple-400/70 rounded-full animate-ping"></div>
+      <div className="absolute top-2/3 right-1/3 w-1 h-1 bg-indigo-400/60 rounded-full animate-pulse delay-1000"></div>
+      
+      {/* Subtle grid overlay */}
+      <div className="absolute inset-0 opacity-5" style={{
+        backgroundImage: `
+          linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px)
+        `,
+        backgroundSize: '40px 40px'
+      }}></div>
+    </div>
+    
+  <div className="w-full max-w-full relative z-10 flex flex-col justify-center min-h-full py-8">
+        {/* Header */}
+        <LoginHeader />
 
         {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Email Field */}
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-            >
-              Correo electrónico
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
-                errors.email
-                  ? "border-red-500 focus:ring-red-500"
-                  : "border-gray-300 dark:border-gray-600"
-              } bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
-              placeholder="tu@email.com"
-              disabled={loading}
-            />
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                {errors.email}
-              </p>
-            )}
-          </div>
-
-          {/* Password Field */}
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-            >
-              Contraseña
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
-                errors.password
-                  ? "border-red-500 focus:ring-red-500"
-                  : "border-gray-300 dark:border-gray-600"
-              } bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
-              placeholder="••••••••"
-              disabled={loading}
-            />
-            {errors.password && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                {errors.password}
-              </p>
-            )}
-          </div>
-
-          {/* API Error */}
-          {apiError && (
-            <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-              <p className="text-sm text-red-600 dark:text-red-400">
-                {apiError}
-              </p>
-            </div>
-          )}
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium py-3 px-4 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed"
-          >
-            {loading ? (
-              <div className="flex items-center justify-center">
-                <svg
-                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Iniciando sesión...
-              </div>
-            ) : (
-              "Iniciar sesión"
-            )}
-          </button>
-
-          {/* Forgot Password Link */}
-          <div className="text-center">
-            <button
-              type="button"
-              onClick={() => setModalOpen(true)}
-              className="text-sm text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-            >
-              ¿Olvidaste tu contraseña?
-            </button>
-          </div>
-        </form>
+        <LoginForm
+          email={email}
+          setEmail={setEmail}
+          password={password}
+          setPassword={setPassword}
+          errors={errors}
+          handleSubmit={handleSubmit}
+          loading={loading}
+          apiError={apiError}
+          setModalOpen={setModalOpen}
+        />
 
         {/* Footer */}
-        <div className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-          <p>© 2025 FinteraUI. Todos los derechos reservados.</p>
-        </div>
+        <LoginFooter />
       </div>
     </div>
   );

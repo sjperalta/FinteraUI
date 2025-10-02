@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { API_URL } from '../../../config';
 import { getToken } from '../../../auth';
+import MessageEditor from '../editor/MessageEditor';
 
 export default function ContractNotesTab({ currentContract, onContractUpdate }) {
   const [editingNotes, setEditingNotes] = useState(false);
@@ -128,14 +129,9 @@ export default function ContractNotesTab({ currentContract, onContractUpdate }) 
             <div className="px-6 py-4">
               {note.editable && editingNotes ? (
                 <div className="space-y-3">
-                  <textarea
-                    value={editedNotes}
-                    onChange={(e) => setEditedNotes(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white resize-vertical focus:ring-2 focus:ring-blue-300 focus:border-transparent"
-                    rows="4"
-                    placeholder="Escriba las notas del contrato aquí..."
-                    disabled={saving}
-                  />
+                  <div className="rounded-lg overflow-hidden border border-gray-300 dark:border-darkblack-400">
+                    <MessageEditor onTextChange={setEditedNotes} initialValue={editedNotes} />
+                  </div>
                   <div className="flex justify-end gap-2">
                     <button
                       onClick={handleCancelEdit}
@@ -155,8 +151,12 @@ export default function ContractNotesTab({ currentContract, onContractUpdate }) 
                 </div>
               ) : (
                 <>
-                  <div className="text-sm text-bgray-700 dark:text-bgray-300 whitespace-pre-wrap">
-                    {note.content}
+                  <div className="text-sm text-bgray-700 dark:text-bgray-300">
+                    {note.content === 'No hay notas generales registradas.' || note.content === 'No aplica' ? (
+                      <span className="whitespace-pre-wrap">{note.content}</span>
+                    ) : (
+                      <div dangerouslySetInnerHTML={{ __html: note.content }} />
+                    )}
                   </div>
                   {note.editable && (
                     <div className="mt-3 flex justify-end">

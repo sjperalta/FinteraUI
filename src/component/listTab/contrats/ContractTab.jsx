@@ -216,7 +216,6 @@ function ContractTab({ contracts, userRole, pageSize, refreshContracts, sortFiel
               project_name={contract.project_name}
               project_address={contract.project_address}
               rejection_reason={contract.rejection_reason}
-              cancellation_notes={contract.cancellation_notes}
               note={contract.note}
               created_at={contract.created_at}
               project_id={contract.project_id}

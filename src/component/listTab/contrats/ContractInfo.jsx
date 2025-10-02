@@ -72,7 +72,6 @@ function ContractInfo({
   status,
   note,
   rejection_reason,
-  cancellation_notes,
   created_at,
   project_id,
   payment_schedule,
@@ -327,18 +326,6 @@ function ContractInfo({
                 </p>
               </div>
             )}
-
-            {/* Show cancellation notes if status is cancelled */}
-            {(status?.toLowerCase() === "cancelled" || status?.toLowerCase() === "canceled") && cancellation_notes && (
-              <div className="bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-md p-2">
-                <p className="text-xs font-medium text-gray-800 dark:text-gray-200 mb-1">
-                  Notas de cancelación:
-                </p>
-                <p className="text-xs text-gray-700 dark:text-gray-300">
-                  {cancellation_notes}
-                </p>
-              </div>
-            )}
           </div>
         </td>
 
@@ -475,7 +462,6 @@ function ContractInfo({
               lot_address,
               note,
               rejection_reason,
-              cancellation_notes,
             }}
             open={showSchedule}
             onClose={() => setShowSchedule(false)}
@@ -518,7 +504,6 @@ function ContractInfo({
           reserve_amount,
           status,
           rejection_reason,
-          cancellation_notes,
           created_at,
           approved_at,
           contract_id,
@@ -545,7 +530,6 @@ ContractInfo.propTypes = {
   down_payment: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   status: PropTypes.string.isRequired,
   rejection_reason: PropTypes.string,
-  cancellation_notes: PropTypes.string,
   created_at: PropTypes.string.isRequired,
   project_name: PropTypes.string,
   project_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,

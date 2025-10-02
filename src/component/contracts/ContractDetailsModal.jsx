@@ -58,7 +58,7 @@ const ContractDetailsModal = ({ isOpen, onClose, contract }) => {
           </div>
           <button
             onClick={onClose}
-            className="text-white hover:text-indigo-200 transition-colors text-2xl"
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/30 text-white hover:text-indigo-200 transition-all duration-200 text-xl font-light"
             aria-label="Cerrar"
           >
             ×
@@ -169,7 +169,7 @@ const ContractDetailsModal = ({ isOpen, onClose, contract }) => {
                     </div>
                   </div>
                 )}
-                {contract.applicant_credit_score && (
+                {contract.applicant_credit_score || contract.applicant_credit_score >= 0 && (
                   <div className="flex items-start space-x-2">
                     <span className="text-purple-600 dark:text-purple-400 mt-0.5">📊</span>
                     <div>
@@ -306,16 +306,7 @@ const ContractDetailsModal = ({ isOpen, onClose, contract }) => {
                     </div>
                   </div>
                 )}
-                {contract.cancellation_notes && (
-                  <div className="flex items-start space-x-2">
-                    <span className="text-orange-600 dark:text-orange-400 mt-0.5">🚫</span>
-                    <div>
-                      <p className="text-sm font-medium text-orange-800 dark:text-orange-200">Notas de Cancelación</p>
-                      <p className="text-sm text-orange-700 dark:text-orange-300">{contract.cancellation_notes}</p>
-                    </div>
-                  </div>
-                )}
-                {!contract.rejection_reason && !contract.cancellation_notes && (
+                {!contract.rejection_reason && (
                   <div className="text-center py-4">
                     <p className="text-sm text-orange-600 dark:text-orange-400">No hay información adicional</p>
                   </div>
@@ -334,19 +325,20 @@ const ContractDetailsModal = ({ isOpen, onClose, contract }) => {
                 <h4 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200">Notas del Contrato</h4>
               </div>
               <div className="bg-white/50 dark:bg-yellow-900/10 rounded-lg p-4 border border-yellow-200 dark:border-yellow-600">
-                <p className="text-sm text-yellow-800 dark:text-yellow-200 leading-relaxed whitespace-pre-wrap">
-                  {contract.note}
-                </p>
+                <div 
+                  className="text-sm text-yellow-800 dark:text-yellow-200 leading-relaxed prose prose-sm max-w-none"
+                  dangerouslySetInnerHTML={{ __html: contract.note }}
+                />
               </div>
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end px-8 py-4 border-t border-bgray-200 dark:border-darkblack-400 bg-gray-50 dark:bg-darkblack-500">
+        <div className="flex justify-end px-8 py-0 border-t border-bgray-200 dark:border-darkblack-400 bg-gray-50 dark:bg-darkblack-500">
           <button
             onClick={onClose}
-            className="px-6 py-3 text-sm font-semibold rounded-xl bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+            className="px-6 py-2 text-sm font-semibold rounded-lg bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
           >
             Cerrar
           </button>

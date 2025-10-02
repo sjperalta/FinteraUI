@@ -39,7 +39,7 @@ function Payments() {
   const [totalPages, setTotalPages] = useState(1);
 
   // Sorting states
-  const [sortParam, setSortParam] = useState(null); // e.g., 'due_date' or '-amount'
+  const [sortParam, setSortParam] = useState("updated_at-desc"); // e.g., 'due_date' or '-amount'
   // Key to force refetch when child requests a refresh (e.g. after approve)
   const [refreshKey, setRefreshKey] = useState(0);
 

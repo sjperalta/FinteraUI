@@ -24,15 +24,15 @@ function Users() {
         role: "", // We don't have this from contract data
         status: "", // We don't have this from contract data
       };
-      
+
       // Set the search term to the user's name to help find them in the list
       if (location.state.selectedUserName) {
         setSearchTerm(location.state.selectedUserName);
       }
-      
+
       // Set the selected user to show the sidebar
       setSelectedUser(userFromState);
-      
+
       // Clear the navigation state after using it
       window.history.replaceState({}, document.title);
     }
@@ -53,13 +53,14 @@ function Users() {
             onSearchChange={setSearchTerm}
             onRoleChange={setRole}
           />
-          <UsersList 
-            searchTerm={searchTerm} 
-            role={role} 
+          <UsersList
+            searchTerm={searchTerm}
+            role={role}
             onUserSelect={setSelectedUser} // Add this prop
           />
         </div>
-        {selectedUser && <RightSidebar user={selectedUser} onClose={onClose}/>} {/* Conditionally render sidebar */}
+        {selectedUser && <RightSidebar user={selectedUser} onClose={onClose} />}{" "}
+        {/* Conditionally render sidebar */}
       </div>
     </main>
   );

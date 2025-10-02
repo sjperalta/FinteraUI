@@ -29,18 +29,24 @@ function UsersList({ searchTerm, role, onUserSelect }) {
       if (searchTerm) params.append("search_term", searchTerm);
       if (role) params.append("search_term", role);
 
+      // Add sort parameter
+      params.append("sort", "created_at-desc");
+
       // Pagination params
       params.append("page", currentPage);
       params.append("per_page", perPage);
 
       try {
-        const response = await fetch(`${API_URL}/api/v1/users?${params.toString()}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          `${API_URL}/api/v1/users?${params.toString()}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (!response.ok) {
           throw new Error("Error fetching users");
@@ -94,43 +100,112 @@ function UsersList({ searchTerm, role, onUserSelect }) {
   }, [searchTerm, role]);
 
   if (loading) {
-    return <div>Loading users...</div>;
+    return (
+      <div className="flex justify-center items-center py-10">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
+        <span className="ml-3 text-gray-600 dark:text-gray-400">
+          Cargando usuarios...
+        </span>
+      </div>
+    );
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+        <div className="flex items-center">
+          <svg
+            className="w-5 h-5 text-red-500 mr-2"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+              clipRule="evenodd"
+            />
+          </svg>
+          <span className="text-red-700 dark:text-red-300">Error: {error}</span>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="w-full overflow-x-scroll">
-      <table className="w-full">
+    <div className="w-full overflow-x-auto">
+      <table className="w-full table-auto border-collapse bg-white dark:bg-darkblack-600 rounded-lg shadow-md min-w-full">
+        <thead className="bg-gray-50 dark:bg-darkblack-500">
+          <tr>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">
+              Usuario
+            </th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 hidden sm:table-cell">
+              Estado
+            </th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">
+              Acciones
+            </th>
+          </tr>
+        </thead>
         <tbody>
           {users?.map((user, index) => (
-            <UserData key={user.id} userInfo={user} index={index} token={token} onClick={() => handleUserClick(user)} />
+            <UserData
+              key={user.id}
+              userInfo={user}
+              index={index}
+              token={token}
+              onClick={() => handleUserClick(user)}
+            />
           ))}
         </tbody>
       </table>
 
       {/* Pagination Controls */}
-      <div className="flex items-center justify-center gap-4 mt-4">
+      <div className="flex items-center justify-center gap-4 mt-6">
         <button
           onClick={handlePrevPage}
           disabled={currentPage <= 1}
-          className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
+          className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed transition"
         >
-          Prev
+          <svg
+            className="w-4 h-4 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          Anterior
         </button>
 
-        <span>
+        <span className="text-sm text-gray-600 dark:text-gray-400">
           Página {currentPage} de {totalPages}
         </span>
 
         <button
           onClick={handleNextPage}
           disabled={currentPage >= totalPages}
-          className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
+          className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed transition"
         >
-          Next
+          Siguiente
+          <svg
+            className="w-4 h-4 ml-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
         </button>
       </div>
     </div>

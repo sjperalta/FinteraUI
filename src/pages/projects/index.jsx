@@ -113,7 +113,7 @@ function Projects() {
       const res = await fetch(`${API_URL}/api/v1/projects/import`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${ctxToken}`,
+          Authorization: `Bearer ${token}`,
         },
         body: formData,
       });
@@ -239,21 +239,25 @@ function Projects() {
         {/* optionally other header actions */}
       </div>
 
-      {!isAdmin && (
-        <div className="px-4">
+      {isAdmin && (
+        <div className="px-4 py-2 mb-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700">
           <p className="text-sm text-bgray-600 dark:text-bgray-400">Las acciones "Agregar" y "Importar CSV" están disponibles sólo para administradores.</p>
         </div>
       )}
 
       {/* Projects Grid */}
       <div className="grid lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 lg:gap-4 xl:gap-6">
-        {projects.map((project) => (
-          <Project
+        {projects.map((project, index) => (
+          <div
             key={project.id}
-            project={project}
-            user={user}
-            onDeleted={fetchProjects}
-          />
+            className="animate-fade-in-up motion-reduce:animate-none hover:scale-105 transition-transform duration-300 cursor-pointer"
+          >
+            <Project
+              project={project}
+              user={user}
+              onDeleted={fetchProjects}
+            />
+          </div>
         ))}
       </div>
 
@@ -263,7 +267,7 @@ function Projects() {
           <button
             onClick={handlePrevPage}
             disabled={page <= 1}
-            className="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
+            className="bg-gray-200 px-3 py-1 rounded disabled:opacity-50 hover:bg-gray-300 transition-colors duration-200"
           >
             Prev
           </button>
@@ -273,7 +277,7 @@ function Projects() {
           <button
             onClick={handleNextPage}
             disabled={page >= pagination.pages}
-            className="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
+            className="bg-gray-200 px-3 py-1 rounded disabled:opacity-50 hover:bg-gray-300 transition-colors duration-200"
           >
             Next
           </button>

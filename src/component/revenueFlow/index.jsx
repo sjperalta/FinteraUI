@@ -281,7 +281,7 @@ function RevenueFlow({ selectedYear = new Date().getFullYear() }) {
     <div className="flex w-full flex-col justify-between rounded-lg bg-white py-3 dark:bg-darkblack-600">
       <div className="mb-2 flex items-center justify-between border-b border-bgray-300 pb-2 dark:border-darkblack-400">
         <h3 className="text-xl font-bold text-bgray-900 dark:text-white sm:text-2xl">
-          Flujo Ingresos {selectedYear}
+          Comparativo Proyección Ingresos Anual
         </h3>
         <div className="hidden items-center space-x-[28px] sm:flex">
           <div className="flex items-center space-x-2">
@@ -310,7 +310,7 @@ function RevenueFlow({ selectedYear = new Date().getFullYear() }) {
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-3"></div>
-              <p className="text-sm text-bgray-600 dark:text-bgray-50">Cargando datos de flujo de ingresos...</p>
+              <p className="text-sm text-bgray-600 dark:text-bgray-50">Cargando datos de proyección de ingresos...</p>
             </div>
           </div>
         ) : error ? (

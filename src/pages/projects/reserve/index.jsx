@@ -20,6 +20,9 @@ function Reserve() {
   const [error, setError] = useState(null);
   const [formSubmitting, setFormSubmitting] = useState(false);
 
+  // Contract notes state
+  const [contractNotes, setContractNotes] = useState("");
+
   // User search states
   const [userQuery, setUserQuery] = useState("");
   const [userResults, setUserResults] = useState([]);
@@ -229,6 +232,7 @@ function Reserve() {
     formData.append("contract[financing_type]", financingType);
     formData.append("contract[reserve_amount]", reserveAmount);
     formData.append("contract[down_payment]", downPayment || "0");
+    formData.append("contract[note]", contractNotes);
     formData.append("contract[applicant_user_id]", selectedUser?.id || 0); // Use 0 if creating a new user
     formData.append("user[full_name]", fullName);
     formData.append("user[phone]", phone);
@@ -239,7 +243,7 @@ function Reserve() {
     documents.forEach((doc, index) => {
       formData.append(`documents[${index}]`, doc);
     });
-
+    
     try {
       const response = await fetch(`${API_URL}/api/v1/projects/${id}/lots/${lot_id}/contracts`, {
         method: "POST",
@@ -257,7 +261,8 @@ function Reserve() {
       alert("Contrato creado exitosamente");
       navigate(`/projects/${id}/lots`);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Error creando el contrato");
+      setError(err.errors.join(" "));
     } finally {
       setFormSubmitting(false);
     }
@@ -337,7 +342,7 @@ function Reserve() {
       numericDownPayment: downNum,
       financedAmount: financed,
       monthlyPayment: monthly,
-      totalInitial: initial,
+      totalInitial: initial
     };
   }, [lotPrice, reserveAmount, downPayment, paymentTerm]);
 
@@ -541,7 +546,7 @@ function Reserve() {
                     Notas
                   </label>
                   <div className="rounded-lg overflow-hidden border border-bgray-200 dark:border-darkblack-400">
-                    <MessageEditor />
+                    <MessageEditor onTextChange={setContractNotes} />
                   </div>
                 </div>
 

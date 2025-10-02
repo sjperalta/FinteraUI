@@ -10,7 +10,7 @@ const createGradient = (ctx) => {
   return gradient;
 };
 
-function TotalWidgetCard({ title, amount, groth, memberImg, totalEarnImg, currency, type, cardType }) {
+function TotalWidgetCard({ title, amount, growth, memberImg, totalEarnImg, currency, type, cardType }) {
   const chartRef = useRef(null);
 
   useEffect(() => {
@@ -45,11 +45,19 @@ function TotalWidgetCard({ title, amount, groth, memberImg, totalEarnImg, curren
         };
       case 'customers':
         return {
-          gradient: 'from-purple-500 to-purple-600',
-          iconBg: 'bg-purple-100 dark:bg-purple-900/30',
-          iconColor: 'text-purple-600 dark:text-purple-400',
-          shadow: 'shadow-purple-100 dark:shadow-purple-900/20',
-          borderColor: 'border-purple-200 dark:border-purple-800'
+          gradient: 'from-pink-500 to-pink-600',
+          iconBg: 'bg-pink-100 dark:bg-pink-900/30',
+          iconColor: 'text-pink-600 dark:text-pink-400',
+          shadow: 'shadow-pink-100 dark:shadow-pink-900/20',
+          borderColor: 'border-pink-200 dark:border-pink-800'
+        };
+      case 'contracts':
+        return {
+          gradient: 'from-indigo-500 to-indigo-600',
+          iconBg: 'bg-indigo-100 dark:bg-indigo-900/30',
+          iconColor: 'text-indigo-600 dark:text-indigo-400',
+          shadow: 'shadow-indigo-100 dark:shadow-indigo-900/20',
+          borderColor: 'border-indigo-200 dark:border-indigo-800'
         };
       case 'payments':
         return {
@@ -91,6 +99,12 @@ function TotalWidgetCard({ title, amount, groth, memberImg, totalEarnImg, curren
         return (
           <svg className={`w-6 h-6 ${cardStyles.iconColor}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+        );
+      case 'contracts':
+        return (
+          <svg className={`w-6 h-6 ${cardStyles.iconColor}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
         );
       case 'payments':
@@ -208,14 +222,14 @@ function TotalWidgetCard({ title, amount, groth, memberImg, totalEarnImg, curren
               {type === "money" && currency}{amount}
             </p>
             <div className="flex items-center space-x-2">
-              <span className={groth >= 0 ? "text-success-300" : "text-red-400"}>
+              <span className={growth >= 0 ? "text-success-300" : "text-red-400"}>
                 <svg
                   width="16"
                   height="14"
                   viewBox="0 0 16 14"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
-                  className={groth < 0 ? "rotate-180" : ""}
+                  className={growth < 0 ? "rotate-180" : ""}
                 >
                   <path
                     d="M13.4318 0.522827L12.4446 0.522827L8.55575 0.522827L7.56859 0.522827C6.28227 0.522827 5.48082 1.91818 6.12896 3.02928L9.06056 8.05489C9.7037 9.1574 11.2967 9.1574 11.9398 8.05489L14.8714 3.02928C15.5196 1.91818 14.7181 0.522828 13.4318 0.522827Z"
@@ -228,11 +242,11 @@ function TotalWidgetCard({ title, amount, groth, memberImg, totalEarnImg, curren
                   />
                 </svg>
               </span>
-              <span className={`text-sm font-medium ${groth >= 0 ? "text-success-300" : "text-red-400"}`}>
-                {Math.abs(groth)}%
+              <span className={`text-sm font-medium ${growth >= 0 ? "text-success-300" : "text-red-400"}`}>
+                {Math.abs(growth)}%
               </span>
               <span className="text-sm font-medium text-bgray-700 dark:text-bgray-50">
-                {groth >= 0 ? "Aumento" : "Disminución"}
+                {growth >= 0 ? "Aumento" : "Disminución"}
               </span>
             </div>
           </div>
@@ -248,7 +262,7 @@ function TotalWidgetCard({ title, amount, groth, memberImg, totalEarnImg, curren
 TotalWidgetCard.propTypes = {
   title: ProtoTypes.string,
   amount: ProtoTypes.string,
-  groth: ProtoTypes.number,
+  growth: ProtoTypes.number,
   memberImg: ProtoTypes.string,
   totalEarnImg: ProtoTypes.string,
 };

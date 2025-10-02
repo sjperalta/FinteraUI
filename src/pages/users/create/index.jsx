@@ -110,8 +110,11 @@ function CreateUser() {
     }
 
     try {
+      // Ensure non-admin creators can only create users with role 'user'
+      const safeRole = creator?.role === 'admin' ? formData.role : 'user';
       const payload = {
         ...formData,
+        role: safeRole,
         created_by: creator?.id,
       };
 
@@ -353,17 +356,21 @@ function CreateUser() {
             <label htmlFor="role" className="text-base font-medium">
               Rol
             </label>
-            <select
-              id="role"
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              className="bg-bgray-50 dark:bg-darkblack-500 p-4 rounded-lg border-0 focus:ring-2 focus:ring-success-300"
-            >
-              <option value="user">Usuario</option>
-              <option value="admin">Administrador</option>
-              <option value="seller">Vendedor</option>
-            </select>
+              <select
+                id="role"
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="bg-bgray-50 dark:bg-darkblack-500 p-4 rounded-lg border-0 focus:ring-2 focus:ring-success-300"
+                disabled={creator?.role !== 'admin'}
+              >
+                <option value="user">Usuario</option>
+                {creator?.role === 'admin' && <option value="admin">Administrador</option>}
+                {creator?.role === 'admin' && <option value="seller">Vendedor</option>}
+              </select>
+              {creator?.role !== 'admin' && (
+                <p className="text-xs text-gray-500 mt-1">Solo los administradores pueden elegir otro rol; se asignará 'Usuario'.</p>
+              )}
           </div>
 
           {/* Creator read-only field */}

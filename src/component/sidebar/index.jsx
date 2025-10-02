@@ -354,7 +354,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                       />
                     </svg>
                     <span className="item-text text-lg font-medium leading-none">
-                      Iniciar Session
+                      Iniciar Sesión
                     </span>
                   </div>
                 </Link>

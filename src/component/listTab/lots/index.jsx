@@ -45,7 +45,7 @@ function Lots() {
   const [totalPages, setTotalPages] = useState(1);
 
   // Sorting states
-  const [sortParam, setSortParam] = useState(null); // e.g., 'name' or '-name'
+  const [sortParam, setSortParam] = useState('updated_at-asc'); // e.g., 'name' or 'name-asc'
 
   /**
    * Handle navigation from contracts page - auto-search for the specific lot

@@ -1,15 +1,31 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import PropTypes from "prop-types";
 import debounce from 'lodash.debounce';
+import { STATUS_CONFIG, getStatusLabel } from "../../utils/statusUtils";
+import AuthContext from "../../context/AuthContext";
 
+/**
+ * LotFilter component provides search and status filtering for lots
+ * Uses centralized status utilities for consistent status handling
+ */
 function LotFilter({ searchTerm, status, onSearchChange, onStatusChange }) {
   const [activeFilter, setActiveFilter] = useState("");
   const [showFilter, setShowFilter] = useState(false);
   const [term, setTerm] = useState(searchTerm);
   const [selectedStatus, setSelectedStatus] = useState(status);
-  const statuses = ["All", "Available", "Reserved", "Sold"]; // Lot status options
-  
+
+  const { user } = useContext(AuthContext);
+
+  // Generate status options with only the relevant statuses for lot filtering
+  // Includes "Todos" option for showing all lots
+  const statuses = [
+    { key: "all", label: "Todos" },
+    { key: "available", label: getStatusLabel("available") },
+    { key: "reserved", label: getStatusLabel("reserved") },
+    { key: "sold", label: getStatusLabel("sold") }
+  ];
+
   const navigate = useNavigate();
   const { id } = useParams(); // Get project id from params
 
@@ -22,9 +38,10 @@ function LotFilter({ searchTerm, status, onSearchChange, onStatusChange }) {
     debouncedSearch(e.target.value);
   };
 
-  const handleStatusSelect = (status) => {
-    setSelectedStatus(status);
-    onStatusChange(status === "All" ? "" : status); // Update parent with selected status
+  const handleStatusSelect = (statusOption) => {
+    setSelectedStatus(statusOption.key);
+    setActiveFilter(statusOption.label);
+    onStatusChange(statusOption.key === "all" ? "" : statusOption.key); // Update parent with selected status key
   };
 
   // Create a debounced version of onSearchChange
@@ -138,15 +155,14 @@ function LotFilter({ searchTerm, status, onSearchChange, onStatusChange }) {
           <ul>
             {statuses.map((statusOption) => (
               <li
-                key={statusOption}
-                onClick={(e) => {
-                  setShowFilter(false);     
-                  handleActiveFilter(e);
+                key={statusOption.key}
+                onClick={() => {
+                  setShowFilter(false);
                   handleStatusSelect(statusOption);
                 }}
                 className="text-sm text-bgray-900 dark:text-bgray-50 hover:dark:bg-darkblack-600 cursor-pointer px-5 py-2 hover:bg-bgray-100 font-semibold"
               >
-                {statusOption}
+                {statusOption.label}
               </li>
             ))}
           </ul>
@@ -172,22 +188,25 @@ function LotFilter({ searchTerm, status, onSearchChange, onStatusChange }) {
           </svg>
         </button>
       </div>
-      <div className="pl-10 md:block hidden">
-        <button
-          aria-label="Add new lot"
-          className="py-3 px-10 bg-success-300 text-white font-bold rounded-lg hover:bg-success-400 transition-all"
-          onClick={() => navigate(`/projects/${id}/lots/create`)}
-        >
-          Agregar Lote
-        </button>
-      </div>
+
+      {user?.role === 'admin' && (
+        <div className="pl-10 md:block hidden">
+          <button
+            aria-label="Add new lot"
+            className="py-3 px-10 bg-success-300 text-white font-bold rounded-lg hover:bg-success-400 transition-all"
+            onClick={() => navigate(`/projects/${id}/lots/create`)}
+          >
+            Agregar Lote
+          </button>
+        </div>
+      )}
     </div>
   );
 }
 
 LotFilter.propTypes = {
   searchTerm: PropTypes.string,
-  status: PropTypes.string,
+  status: PropTypes.string, // Now expects status key (e.g., "available", "reserved")
   onSearchChange: PropTypes.func.isRequired,
   onStatusChange: PropTypes.func.isRequired
 };

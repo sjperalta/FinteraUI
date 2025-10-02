@@ -12,7 +12,7 @@ function RightSidebar({ user, onClose, currentUser }) {
 
   // Minimal guard: don't attempt to render sidebar when no user provided
   if (!user) return null;
-  
+
   useEffect(() => {
     const userId = user?.id;
     if (!userId) return;
@@ -21,13 +21,16 @@ function RightSidebar({ user, onClose, currentUser }) {
 
     const fetchSummary = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/v1/users/${userId}/summary`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          `${API_URL}/api/v1/users/${userId}/summary`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch summary");
@@ -44,18 +47,21 @@ function RightSidebar({ user, onClose, currentUser }) {
 
     fetchSummary();
   }, [user?.id, user?.role, token]);
-  
+
   // Function to Download PDF
   const downloadUserBalancePDF = async () => {
     if (!user || !user.id) return;
 
     try {
-      const response = await fetch(`${API_URL}/api/v1/reports/user_balance_pdf?user_id=${user.id}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `${API_URL}/api/v1/reports/user_balance_pdf?user_id=${user.id}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to download PDF");
@@ -79,7 +85,6 @@ function RightSidebar({ user, onClose, currentUser }) {
 
   return (
     <aside className="2xl:w-[382px] w-full bg-white dark:bg-darkblack-600 rounded-lg px-12 pb-7 relative">
-      
       {/* ✅ Improved Close Button */}
       <button
         onClick={onClose}
@@ -94,7 +99,11 @@ function RightSidebar({ user, onClose, currentUser }) {
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M6 18L18 6M6 6l12 12"
+          ></path>
         </svg>
       </button>
 
@@ -129,132 +138,176 @@ function RightSidebar({ user, onClose, currentUser }) {
 
       <ul className="py-7 border-t border-b border-gray-200 dark:border-darkblack-400 space-y-6">
         <li className="flex justify-between">
-          <span className="font-medium text-gray-500 text-sm dark:text-white">Correo</span>
-          <span className="text-sm font-semibold text-bgray-900 dark:text-white">{user.email}</span>
-        </li>
-        <li className="flex justify-between">
-          <span className="font-medium text-gray-500 text-sm dark:text-white">Dirección</span>
-          <span className="text-sm font-semibold text-bgray-900 dark:text-white">{user.address || "-"}</span>
-        </li>
-        <li className="flex justify-between">
-          <span className="font-medium text-gray-500 text-sm dark:text-white">Cédula</span>
-          <span className="text-sm font-semibold text-bgray-900 dark:text-white">{user.identity || "-"}</span>
-        </li>
-        <li className="flex justify-between">
-          <span className="font-medium text-gray-500 text-sm dark:text-white">RTN</span>
-          <span className="text-sm font-semibold text-bgray-900 dark:text-white">{user.rtn || "-"}</span>
-        </li>
-        <li className="flex justify-between">
-          <span className="font-medium text-gray-500 text-sm dark:text-white">Teléfono</span>
-          <span className="text-sm font-semibold text-bgray-900 dark:text-white">{user.phone}</span>
-        </li>
-        {/* Balance (only show for target users with role "user" and visible to admin/creator/self) */}
-  {user?.role === "user" && ((viewer?.role === "admin") || String(viewer?.id) === String(user?.id) || String(viewer?.id) === String(user?.created_by)) ? (
-        <li className="flex justify-between">
-          <span className="font-medium text-gray-500 text-sm dark:text-white">Balance</span>
+          <span className="font-medium text-gray-500 text-sm dark:text-white">
+            Correo
+          </span>
           <span className="text-sm font-semibold text-bgray-900 dark:text-white">
-            {summary
-              ? `${(Number(summary.balance) || 0).toLocaleString()} ${summary.currency}`
-              : summaryError || "Loading..."}
+            {user.email}
           </span>
         </li>
+        <li className="flex justify-between">
+          <span className="font-medium text-gray-500 text-sm dark:text-white">
+            Dirección
+          </span>
+          <span className="text-sm font-semibold text-bgray-900 dark:text-white">
+            {user.address || "-"}
+          </span>
+        </li>
+        <li className="flex justify-between">
+          <span className="font-medium text-gray-500 text-sm dark:text-white">
+            Cédula
+          </span>
+          <span className="text-sm font-semibold text-bgray-900 dark:text-white">
+            {user.identity || "-"}
+          </span>
+        </li>
+        <li className="flex justify-between">
+          <span className="font-medium text-gray-500 text-sm dark:text-white">
+            RTN
+          </span>
+          <span className="text-sm font-semibold text-bgray-900 dark:text-white">
+            {user.rtn || "-"}
+          </span>
+        </li>
+        <li className="flex justify-between">
+          <span className="font-medium text-gray-500 text-sm dark:text-white">
+            Teléfono
+          </span>
+          <span className="text-sm font-semibold text-bgray-900 dark:text-white">
+            {user.phone}
+          </span>
+        </li>
+        {/* Balance (only show for target users with role "user" and visible to admin/creator/self) */}
+        {user?.role === "user" &&
+        (viewer?.role === "admin" ||
+          String(viewer?.id) === String(user?.id) ||
+          String(viewer?.id) === String(user?.created_by)) ? (
+          <li className="flex justify-between">
+            <span className="font-medium text-gray-500 text-sm dark:text-white">
+              Balance
+            </span>
+            <span className="text-sm font-semibold text-bgray-900 dark:text-white">
+              {summary
+                ? `${(Number(summary.balance) || 0).toLocaleString()} ${
+                    summary.currency
+                  }`
+                : summaryError || "Loading..."}
+            </span>
+          </li>
         ) : null}
         {user?.note ? (
           <li>
-            <div className="text-sm text-bgray-700 dark:text-bgray-200">{user.note}</div>
+            <div className="text-sm text-bgray-700 dark:text-bgray-200">
+              {user.note}
+            </div>
           </li>
         ) : null}
         {user?.created_by ? (
           <li className="pt-2">
-            <div className="text-xs text-gray-500 dark:text-bgray-300">Creado por</div>
-            <div className="text-sm font-semibold text-bgray-900 dark:text-white">ID: {user.created_by}</div>
+            <div className="text-xs text-gray-500 dark:text-bgray-300">
+              Creado por
+            </div>
+            <div className="text-sm font-semibold text-bgray-900 dark:text-white">
+              {user.creator?.full_name}
+            </div>
           </li>
         ) : null}
-  {user?.role === "user" && ((viewer?.role === "admin") || String(viewer?.id) === String(user?.id) || String(viewer?.id) === String(user?.created_by)) ? (
-        <li>
-          <Link to={`/balance/user/${user.id}`}>
-            <div className="">
-              <svg
-                viewBox="0 0 16 16"
-                fill="currentColor"
-                width="24"
-                height="24"
-              >
-                <path
+        {user?.role === "user" &&
+        (viewer?.role === "admin" ||
+          String(viewer?.id) === String(user?.id) ||
+          String(viewer?.id) === String(user?.created_by)) ? (
+          <li>
+            <Link to={`/balance/user/${user.id}`}>
+              <div className="">
+                <svg
+                  viewBox="0 0 16 16"
                   fill="currentColor"
-                  d="M2 14h14v2H0V0h2zm2.5-1a1.5 1.5 0 11.131-2.994l1.612-2.687a1.5 1.5 0 112.514 0l1.612 2.687a1.42 1.42 0 01.23-.002l2.662-4.658a1.5 1.5 0 111.14.651l-2.662 4.658a1.5 1.5 0 11-2.496.026L7.631 7.994a1.42 1.42 0 01-.262 0l-1.612 2.687A1.5 1.5 0 014.5 13z"
-                />
-              </svg>
-            </div>
-          </Link>
-        </li>
+                  width="24"
+                  height="24"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M2 14h14v2H0V0h2zm2.5-1a1.5 1.5 0 11.131-2.994l1.612-2.687a1.5 1.5 0 112.514 0l1.612 2.687a1.42 1.42 0 01.23-.002l2.662-4.658a1.5 1.5 0 111.14.651l-2.662 4.658a1.5 1.5 0 11-2.496.026L7.631 7.994a1.42 1.42 0 01-.262 0l-1.612 2.687A1.5 1.5 0 014.5 13z"
+                  />
+                </svg>
+              </div>
+            </Link>
+          </li>
         ) : null}
       </ul>
 
       {/* File Download Section */}
-  {user?.role === "user" && ((viewer?.role === "admin") || String(viewer?.id) === String(user?.id) || String(viewer?.id) === String(user?.created_by)) ? (
-      <div className="py-6 border-b border-bgray-200 dark:border-darkblack-400">
-        <h4 className="font-medium text-gray-500 text-sm dark:text-white mb-3">Files</h4>
-        <ul className="space-y-2.5">
-          <li className="bg-[#E4FDED] dark:bg-darkblack-500 py-3 px-2 pr-4 flex justify-between items-center rounded-lg">
-            <div className="flex items-center gap-x-3">
-              <span className="bg-white dark:bg-darkblack-600 w-10 h-10 rounded-lg inline-flex justify-center items-center">
+      {user?.role === "user" &&
+      (viewer?.role === "admin" ||
+        String(viewer?.id) === String(user?.id) ||
+        String(viewer?.id) === String(user?.created_by)) ? (
+        <div className="py-6 border-b border-bgray-200 dark:border-darkblack-400">
+          <h4 className="font-medium text-gray-500 text-sm dark:text-white mb-3">
+            Files
+          </h4>
+          <ul className="space-y-2.5">
+            <li className="bg-[#E4FDED] dark:bg-darkblack-500 py-3 px-2 pr-4 flex justify-between items-center rounded-lg">
+              <div className="flex items-center gap-x-3">
+                <span className="bg-white dark:bg-darkblack-600 w-10 h-10 rounded-lg inline-flex justify-center items-center">
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 22 22"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12.8334 2.74951V6.41618C12.8334 6.65929 12.93 6.89245 13.1019 7.06436C13.2738 7.23627 13.5069 7.33285 13.75 7.33285H17.4167"
+                      stroke="#22C55E"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </span>
+                <div className="flex flex-col">
+                  <h5 className="font-semibold text-bgray-900 dark:text-white text-sm">
+                    Estado de Cuenta.pdf
+                  </h5>
+                  <span className="text-xs text-bgray-500">Descargar</span>
+                </div>
+              </div>
+              {/* Download Button */}
+              <button
+                onClick={downloadUserBalancePDF}
+                aria-label="Download PDF"
+              >
                 <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 22 22"
+                  className="stroke-bgray-900 dark:stroke-bgray-50"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 20 20"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M12.8334 2.74951V6.41618C12.8334 6.65929 12.93 6.89245 13.1019 7.06436C13.2738 7.23627 13.5069 7.33285 13.75 7.33285H17.4167"
-                    stroke="#22C55E"
+                    d="M17.5 12.4995V15.8328C17.5 16.2749 17.3244 16.6988 17.0118 17.0114C16.6993 17.3239 16.2754 17.4995 15.8333 17.4995H4.16667C3.72464 17.4995 3.30072 17.3239 2.98816 17.0114C2.67559 16.6988 2.5 16.2749 2.5 15.8328V12.4995"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M5.83337 8.33301L10 12.4997L14.1667 8.33301"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M10 12.4995V2.49951"
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
                 </svg>
-              </span>
-              <div className="flex flex-col">
-                <h5 className="font-semibold text-bgray-900 dark:text-white text-sm">
-                  Estado de Cuenta.pdf
-                </h5>
-                <span className="text-xs text-bgray-500">Descargar</span>
-              </div>
-            </div>
-            {/* Download Button */}
-            <button onClick={downloadUserBalancePDF} aria-label="Download PDF">
-              <svg
-                className="stroke-bgray-900 dark:stroke-bgray-50"
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M17.5 12.4995V15.8328C17.5 16.2749 17.3244 16.6988 17.0118 17.0114C16.6993 17.3239 16.2754 17.4995 15.8333 17.4995H4.16667C3.72464 17.4995 3.30072 17.3239 2.98816 17.0114C2.67559 16.6988 2.5 16.2749 2.5 15.8328V12.4995"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M5.83337 8.33301L10 12.4997L14.1667 8.33301"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M10 12.4995V2.49951"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-          </li>
-        </ul>
-      </div>
+              </button>
+            </li>
+          </ul>
+        </div>
       ) : null}
     </aside>
   );

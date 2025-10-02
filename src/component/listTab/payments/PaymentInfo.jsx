@@ -66,14 +66,15 @@ function PaymentInfo({
         })
       });
       if (!res.ok) {
-        throw new Error("Error approving payment");
+        const errorData = await res.json();
+        throw new Error(errorData.errors.join(" ") || "Error Aprobando el pago");
       }
       if (typeof refreshPayments === "function") {
         refreshPayments({ page: 1 });
       }
       setShowApproveModal(false);
     } catch (err) {
-      alert("No se pudo aprobar el pago");
+      alert(err.message);
     } finally {
       setApproveLoading(false);
     }

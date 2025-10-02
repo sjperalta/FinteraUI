@@ -6,6 +6,8 @@ import { getToken } from "../../../../auth";
 import { formatStatus } from "../../../utils/formatStatus";
 import DocumentSelect from "../../forms/ReportSelect";
 import PaymentScheduleModal from "../../contracts/PaymentScheduleModal";
+import RejectionModal from "../../contracts/RejectionModal";
+import ContractDetailsModal from "../../contracts/ContractDetailsModal";
 import { createPortal } from "react-dom";
 
 // Translate financing type to Spanish
@@ -54,89 +56,13 @@ const formatDate = (d) => {
   return dt.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
 };
 
-// Rejection Reason Modal Component
-const RejectionModal = ({ isOpen, onClose, onSubmit, loading }) => {
-  const [reason, setReason] = useState("");
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!reason.trim()) {
-      alert("Por favor ingrese una razón para el rechazo.");
-      return;
-    }
-    onSubmit(reason);
-  };
-
-  if (!isOpen) return null;
-
-  return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-md bg-white dark:bg-darkblack-600 rounded-lg shadow-xl mx-4">
-        <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b border-bgray-200 dark:border-darkblack-400">
-          <div>
-            <h3 className="text-lg font-bold text-bgray-900 dark:text-white">Rechazar Contrato</h3>
-            <p className="text-sm text-bgray-500 dark:text-bgray-300 mt-1">
-              Proporcione una razón para el rechazo del contrato
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            className="text-bgray-500 hover:text-bgray-700 dark:text-bgray-300 dark:hover:text-white"
-            aria-label="Cerrar"
-            disabled={loading}
-          >
-            ×
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="px-6 py-4">
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">
-              Razón del rechazo *
-            </label>
-            <textarea
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              className="w-full px-3 py-2 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white resize-none focus:ring-2 focus:ring-red-300 focus:border-transparent"
-              rows="4"
-              placeholder="Ingrese la razón por la cual se rechaza este contrato..."
-              required
-              disabled={loading}
-            />
-          </div>
-
-          <div className="flex justify-end gap-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-sm font-medium rounded-lg bg-bgray-200 hover:bg-bgray-300 dark:bg-darkblack-500 dark:hover:bg-darkblack-400 text-bgray-800 dark:text-bgray-100"
-              disabled={loading}
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 text-sm font-medium rounded-lg bg-red-500 hover:bg-red-600 text-white disabled:opacity-50"
-              disabled={loading || !reason.trim()}
-            >
-              {loading ? "Rechazando..." : "Rechazar Contrato"}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>,
-    document.body
-  );
-};
-
 function ContractInfo({
   applicant_name,
   applicant_phone,
   applicant_identity,
+  applicant_credit_score,
   created_by,
-  lot_name,
-  lot_address,
+  approved_at,
   balance,
   amount, 
   payment_term,
@@ -144,21 +70,25 @@ function ContractInfo({
   reserve_amount,
   down_payment,
   status,
+  note,
   rejection_reason,
-  cancellation_notes,
   created_at,
   project_id,
   payment_schedule,
   lot_id,
+  lot_name,
+  lot_address,
   contract_id,
   userRole,
   project_name,
+  project_address,
   refreshContracts,
 }) {
   const token = getToken();
   const navigate = useNavigate();
   const [showSchedule, setShowSchedule] = useState(false);
   const [showRejectionModal, setShowRejectionModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
 
   // Navigation handlers
@@ -396,18 +326,6 @@ function ContractInfo({
                 </p>
               </div>
             )}
-
-            {/* Show cancellation notes if status is cancelled */}
-            {(status?.toLowerCase() === "cancelled" || status?.toLowerCase() === "canceled") && cancellation_notes && (
-              <div className="bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-md p-2">
-                <p className="text-xs font-medium text-gray-800 dark:text-gray-200 mb-1">
-                  Notas de cancelación:
-                </p>
-                <p className="text-xs text-gray-700 dark:text-gray-300">
-                  {cancellation_notes}
-                </p>
-              </div>
-            )}
           </div>
         </td>
 
@@ -501,6 +419,19 @@ function ContractInfo({
             <div className="flex items-center">
               <DocumentSelect contract_id={contract_id} financing_type={financing_type} status={status} />
             </div>
+
+            {/* View Details Button - For submitted contracts or seller users */}
+            {(status?.toLowerCase() === "submitted" || userRole === "seller") && (
+              <button
+                type="button"
+                onClick={() => setShowDetailsModal(true)}
+                className="group relative inline-flex items-center px-3 py-2 text-xs font-semibold text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+              >
+                <span className="mr-1">📋</span>
+                Ver Detalles
+                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 rounded-lg transition-opacity"></div>
+              </button>
+            )}
           </div>
         </td>
       </tr>
@@ -512,19 +443,25 @@ function ContractInfo({
             contract={{
               id: contract_id,
               applicant_name,
+              applicant_credit_score,
               down_payment,
               payment_term,
               reserve_amount,
               financing_type,
               amount,
               balance,
-              project_id,
-              lot_id,
               payment_schedule,
               created_at,
+              approved_at,
               status,
+              project_id,
               project_name,
-              lot_name
+              project_address,
+              lot_id,
+              lot_name,
+              lot_address,
+              note,
+              rejection_reason,
             }}
             open={showSchedule}
             onClose={() => setShowSchedule(false)}
@@ -543,6 +480,36 @@ function ContractInfo({
         onSubmit={handleReject}
         loading={actionLoading}
       />
+
+      {/* Contract Details Modal */}
+      <ContractDetailsModal
+        isOpen={showDetailsModal}
+        onClose={() => setShowDetailsModal(false)}
+        contract={{
+          project_name,
+          project_address,
+          project_id,
+          lot_name,
+          lot_address,
+          lot_id,
+          applicant_name,
+          applicant_identity,
+          applicant_phone,
+          applicant_credit_score,
+          balance,
+          down_payment,
+          amount,
+          payment_term,
+          financing_type,
+          reserve_amount,
+          status,
+          rejection_reason,
+          created_at,
+          approved_at,
+          contract_id,
+          note,
+        }}
+      />
     </>
   );
 }
@@ -551,6 +518,7 @@ ContractInfo.propTypes = {
   applicant_name: PropTypes.string.isRequired,
   applicant_phone: PropTypes.string,
   applicant_identity: PropTypes.string,
+  applicant_credit_score: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   created_by: PropTypes.string,
   lot_name: PropTypes.string.isRequired,
   lot_address: PropTypes.string,
@@ -562,7 +530,6 @@ ContractInfo.propTypes = {
   down_payment: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   status: PropTypes.string.isRequired,
   rejection_reason: PropTypes.string,
-  cancellation_notes: PropTypes.string,
   created_at: PropTypes.string.isRequired,
   project_name: PropTypes.string,
   project_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,

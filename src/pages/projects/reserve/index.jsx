@@ -243,9 +243,7 @@ function Reserve() {
     documents.forEach((doc, index) => {
       formData.append(`documents[${index}]`, doc);
     });
-
-    console.log("Form Data Submitted:", Object.fromEntries(formData));
-
+    
     try {
       const response = await fetch(`${API_URL}/api/v1/projects/${id}/lots/${lot_id}/contracts`, {
         method: "POST",
@@ -263,9 +261,7 @@ function Reserve() {
       alert("Contrato creado exitosamente");
       navigate(`/projects/${id}/lots`);
     } catch (err) {
-      debugger;
-      console.log(err);
-      setError(err.message);
+      setError(err.message || "Error creando el contrato");
       setError(err.errors.join(" "));
     } finally {
       setFormSubmitting(false);

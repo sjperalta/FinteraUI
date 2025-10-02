@@ -27,8 +27,6 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
   const [ledgerLoading, setLedgerLoading] = useState(false);
   const token = getToken();
 
-  console.log(contract);
-
   // Build synthetic schedule (fallback when no payment_schedule present)
   const buildSynthetic = (c) => {
     if (!c || typeof c !== 'object') return [];

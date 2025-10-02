@@ -96,7 +96,6 @@ function Lots() {
       params.append("per_page", pageSize);
       if (sortParam) params.append("sort", sortParam); // Include sort parameter if present
 
-      console.log("Fetching lots with params:", params.toString());
       try {
         const response = await fetch(
           `${API_URL}/api/v1/projects/${id}/lots?${params.toString()}`,

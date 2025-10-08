@@ -8,11 +8,13 @@ import { format, isBefore, parseISO, startOfDay } from "date-fns";
 import { formatStatus } from "../../utils/formatStatus";
 import { API_URL } from "../../../config";
 import AuthContext from "../../context/AuthContext";
+import { useLocale } from "../../contexts/LocaleContext";
 
 function PaymentData({ paymentData, user, index }) {
   const { id, contract, description, amount, due_date, status: initialStatus, interest_amount } = paymentData;
   const navigate = useNavigate();
   const { token } = useContext(AuthContext);
+  const { t } = useLocale();
 
   // State for payment modal
   const [paymentModal, setPaymentModal] = useState(false);
@@ -128,7 +130,7 @@ function PaymentData({ paymentData, user, index }) {
   };
 
   const getStatusText = () => {
-    return formatStatus(statusKey);
+    return formatStatus(statusKey, t);
   };
 
   return (
@@ -145,7 +147,7 @@ function PaymentData({ paymentData, user, index }) {
                 <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                Vencido
+                {t('payments.overdue')}
               </span>
             )}
           </div>
@@ -165,7 +167,7 @@ function PaymentData({ paymentData, user, index }) {
             <svg className="w-4 h-4 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
             </svg>
-            <span className="text-sm font-medium text-bgray-700 dark:text-bgray-200">Monto</span>
+            <span className="text-sm font-medium text-bgray-700 dark:text-bgray-200">{t('payments.amount')}</span>
           </div>
           <p className="text-xl font-bold text-bgray-900 dark:text-white">
             {contract.currency} {Number(amount).toLocaleString()}
@@ -177,7 +179,7 @@ function PaymentData({ paymentData, user, index }) {
             <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4M8 7h8M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V9a2 2 0 00-2-2h-2" />
             </svg>
-            <span className="text-sm font-medium text-bgray-700 dark:text-bgray-200">Fecha Vencimiento</span>
+            <span className="text-sm font-medium text-bgray-700 dark:text-bgray-200">{t('payments.dueDate')}</span>
           </div>
           <p className={`text-lg font-semibold ${isOverdue ? "text-red-600 dark:text-red-400" : "text-bgray-900 dark:text-white"}`}>
             {formattedDueDate}
@@ -190,7 +192,7 @@ function PaymentData({ paymentData, user, index }) {
               <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span className="text-sm font-medium text-red-700 dark:text-red-300">Interés Moratorio</span>
+              <span className="text-sm font-medium text-red-700 dark:text-red-300">{t('payments.lateInterest')}</span>
             </div>
             <p className="text-lg font-bold text-red-800 dark:text-red-200">
               {contract.currency} {Number(interest_amount).toLocaleString()}
@@ -209,7 +211,7 @@ function PaymentData({ paymentData, user, index }) {
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
-            Realizar Pago
+            {t('payments.makePayment')}
           </button>
         </div>
       )}
@@ -242,7 +244,7 @@ function PaymentData({ paymentData, user, index }) {
             tabIndex="-1"
           >
             <h4 id="modal-title" className="text-lg font-bold text-gray-900 dark:text-white mb-4">
-              Realizar Pago
+              {t('payments.makePayment')}
             </h4>
             <p id="modal-description" className="text-sm text-gray-600 dark:text-gray-300 mb-4">
               {description}
@@ -251,18 +253,18 @@ function PaymentData({ paymentData, user, index }) {
               {/* Subtotal and Total Display */}
               <div className="p-3 bg-gray-50 dark:bg-darkblack-500 rounded-lg">
                 <div className="flex justify-between text-sm text-gray-700 dark:text-gray-300 mb-1">
-                  <span>Subtotal:</span>
+                  <span>{t('payments.subtotal')}:</span>
                   <span>{fmt(parseFloat(amount || 0) + parseFloat(interest_amount || 0))}</span>
                 </div>
                 <div className="flex justify-between font-semibold text-gray-900 dark:text-white">
-                  <span>Total:</span>
+                  <span>{t('payments.total')}:</span>
                   <span>{fmt(parseFloat(amount || 0) + parseFloat(interest_amount || 0))}</span>
                 </div>
               </div>
               {/* File Upload */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Subir Comprobante
+                  {t('payments.uploadReceipt')}
                 </label>
                 <input
                   type="file"
@@ -272,7 +274,7 @@ function PaymentData({ paymentData, user, index }) {
                 />
                 {selectedFile && (
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    Archivo seleccionado: {selectedFile.name}
+                    {t('payments.selectedFile')}: {selectedFile.name}
                   </p>
                 )}
               </div>
@@ -282,12 +284,12 @@ function PaymentData({ paymentData, user, index }) {
                 onClick={closePaymentModal}
                 className="px-4 py-2 text-sm font-medium rounded-lg bg-gray-200 hover:bg-gray-300 dark:bg-darkblack-500 dark:hover:bg-darkblack-400 text-gray-800 dark:text-gray-100"
               >
-                Cancelar
+                {t('common.cancel')}
               </button>
               <button
                 onClick={async () => {
                   if (!selectedFile) {
-                    alert("Por favor seleccione un archivo para subir");
+                    alert(t('payments.selectFileToUpload'));
                     return;
                   }
 
@@ -314,7 +316,7 @@ function PaymentData({ paymentData, user, index }) {
 
                     const data = await response.json();
 
-                    alert("Pago realizado exitosamente");
+                    alert(t('payments.paymentSuccessful'));
 
                     setTimeout(() => {
                       closePaymentModal();
@@ -324,14 +326,14 @@ function PaymentData({ paymentData, user, index }) {
                     }, 500);
                   } catch (error) {
                     console.error('Error uploading payment:', error);
-                    alert(`Error al realizar el pago: ${error.message}`);
+                    alert(`${t('payments.paymentError')}: ${error.message}`);
                     setActionLoading(false);
                   }
                 }}
                 disabled={actionLoading || !selectedFile}
                 className="px-4 py-2 text-sm font-medium rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed bg-blue-500 hover:bg-blue-600"
               >
-                {actionLoading ? "Procesando..." : "Realizar Pago"}
+                {actionLoading ? t('common.processing') : t('payments.makePayment')}
               </button>
             </div>
           </div>

@@ -9,6 +9,7 @@ import TransactionFilter from "../../forms/TransactionFilter";
 import Pagination from "../../Pagination";
 import AuthContext from "../../../context/AuthContext";
 import useDebounce from "../../../utils/useDebounce";
+import { useLocale } from "../../../contexts/LocaleContext";
 
 /**
  * The parent container that:
@@ -20,6 +21,7 @@ import useDebounce from "../../../utils/useDebounce";
 function Payments() {
   const { user } = useContext(AuthContext);
   const token = getToken();
+  const { t } = useLocale();
 
   // Search state
   const [searchTerm, setSearchTerm] = useState("");
@@ -83,7 +85,7 @@ function Payments() {
           }
         );
         if (!response.ok) {
-          throw new Error("Error fetching payments");
+          throw new Error(t('payments.fetchPaymentsError'));
         }
 
         const data = await response.json();
@@ -141,20 +143,20 @@ function Payments() {
   const handlePageClick = (page) => setCurrentPage(page);
 
   // Conditional Rendering for Loading and Error States
-  if (loading) return <div className="loader">Cargando pagos...</div>;
+  if (loading) return <div className="loader">{t('payments.loadingPayments')}</div>;
   if (error)
     return (
       <div
         className="error-container flex flex-col items-center justify-center bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
         role="alert"
       >
-        <strong className="font-bold">Error:</strong>
+        <strong className="font-bold">{t('common.error')}:</strong>
         <span className="block sm:inline"> {error}</span>
         <button
           onClick={() => window.location.reload()}
           className="mt-4 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transition-colors duration-200"
         >
-          Reintentar
+          {t('common.retry')}
         </button>
       </div>
     );
@@ -193,7 +195,10 @@ function Payments() {
 
         {payments.length === 0 && !loading && (
           <div className="text-center text-bgray-600 dark:text-bgray-50">
-            No se encontraron pagos{searchTerm && ` con el término de búsqueda "${searchTerm}"`}{status && ` con estado "${status}"`}.
+            {t('payments.noPaymentsFound', {
+              searchTerm: searchTerm ? ` ${t('payments.withSearchTerm')} "${searchTerm}"` : '',
+              status: status ? ` ${t('payments.withStatus')} "${status}"` : ''
+            })}
           </div>
         )}
       </div>

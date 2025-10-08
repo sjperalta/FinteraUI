@@ -1,7 +1,9 @@
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import { useLocale } from "../../contexts/LocaleContext";
 
 function LotData({ lotInfo, index }) {
+  const { t } = useLocale();
   const {
     id,
     project_id,
@@ -24,19 +26,19 @@ function LotData({ lotInfo, index }) {
             </h4>
             <div>
               <span className="font-medium text-base text-bgray-700 dark:text-bgray-50">
-                Area: {area} m² •{" "}
+                {t('lots.area')}: {area} m² •{" "}
               </span>
               <span className="font-medium text-base text-bgray-700 dark:text-bgray-50">
-                Largo: {length} m
+                {t('lots.length')}: {length} m
               </span>•{" "}
               <span className="font-medium text-base text-bgray-700 dark:text-bgray-50">
-                Ancho: {width} m
+                {t('lots.width')}: {width} m
               </span>•{" "}
               <span className="font-medium text-base text-bgray-700 dark:text-bgray-50">
-                Precio: {price} HNL
+                {t('lots.price')}: {price} HNL
               </span>•{" "}
               <span className="font-medium text-base text-bgray-700 dark:text-bgray-50">
-                Balance: {balance} HNL
+                {t('contracts.balance')}: {balance} HNL
               </span>•{" "}
             </div>
           </div>
@@ -50,7 +52,7 @@ function LotData({ lotInfo, index }) {
               : "text-error-300"
           } font-medium rounded-lg py-1 px-3`}
         >
-          {status === "available" ? "Disponible" : "Reservado"}
+          {status === "available" ? t('lots.available') : t('lots.reserved')}
         </span>
       </td>
       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -59,10 +61,10 @@ function LotData({ lotInfo, index }) {
             to={`/projects/${project_id}/lots/${id}/contracts/create`} // Redirecciona al formulario para crear contrato
             className="bg-success-300 hover:bg-success-400 text-white font-bold py-2 px-4 rounded"
           >
-            Reservar
+            {t('lots.reserve')}
           </Link>
         ) : (
-          <span className="text-error-300">No disponible</span>
+          <span className="text-error-300">{t('lots.notAvailable')}</span>
         )}
       </td>
     </tr>

@@ -4,6 +4,7 @@ import { API_URL } from "../../../../config";
 import PaymentList from "../../../component/balance/PaymentList";
 import AuthContext from "../../../context/AuthContext";
 import SummaryWidgetCard from "../../../component/widget/SummaryWidgetCard";
+import { useLocale } from "../../../contexts/LocaleContext";
 
 // Images
 import totalEarn from "../../../assets/images/icons/total-earn.svg";
@@ -12,6 +13,7 @@ import memberImg from "../../../assets/images/avatar/members-2.png";
 function Summary() {
   const { user, token } = useContext(AuthContext);
   const { userId } = useParams();
+  const { t } = useLocale();
 
   const [summaryData, setSummaryData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -67,7 +69,7 @@ function Summary() {
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-success-300 border-opacity-25 border-t-success-400 mx-auto mb-4"></div>
-            <p className="text-lg text-bgray-600 dark:text-bgray-50">Cargando información del balance...</p>
+            <p className="text-lg text-bgray-600 dark:text-bgray-50">{t('payments.loadingBalance')}</p>
           </div>
         </div>
       </div>
@@ -85,8 +87,8 @@ function Summary() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold text-red-800 dark:text-red-300 mb-2">Error de conexión</h3>
-            <p className="text-red-600 dark:text-red-400">Ocurrió un error: {fetchError}</p>
+            <h3 className="text-lg font-semibold text-red-800 dark:text-red-300 mb-2">{t('payments.connectionError')}</h3>
+            <p className="text-red-600 dark:text-red-400">{t('common.error')}: {fetchError}</p>
           </div>
         </div>
       </div>
@@ -106,9 +108,9 @@ function Summary() {
               </svg>
             </div>
             <div>
-              <h1 className="text-2xl font-bold mb-1">Balance Dashboard</h1>
+              <h1 className="text-2xl font-bold mb-1">{t('payments.balanceDashboard')}</h1>
               <p className="text-success-50">
-                Bienvenido {user?.name || 'Usuario'}, aquí puedes ver tu resumen financiero
+                {t('payments.welcomeMessage', { name: user?.name || t('dashboard.user') })}
               </p>
             </div>
           </div>
@@ -122,7 +124,7 @@ function Summary() {
           <SummaryWidgetCard
             totalEarnImg={totalEarn}
             memberImg={memberImg}
-            title="Total Financiado"
+            title={t('payments.totalFinanced')}
             amount={formatCurrency(summaryData?.balance, summaryData?.currency)}
             id="totalBalance"
             type="financing"
@@ -134,7 +136,7 @@ function Summary() {
           <SummaryWidgetCard
             totalEarnImg={totalEarn}
             memberImg={memberImg}
-            title="Saldo Pendiente"
+            title={t('payments.pendingBalance')}
             amount={formatCurrency(summaryData?.totalDue, summaryData?.currency)}
             fee={formatCurrency(summaryData?.totalFees, summaryData?.currency)}
             id="totalDuePayment"
@@ -155,10 +157,10 @@ function Summary() {
               </div>
               <div>
                 <h3 className="text-xl font-semibold text-bgray-900 dark:text-white">
-                  Cronograma de Pagos
+                  {t('payments.paymentSchedule')}
                 </h3>
                 <p className="text-sm text-bgray-500 dark:text-bgray-300">
-                  Gestiona tus pagos pendientes
+                  {t('payments.managePayments')}
                 </p>
               </div>
             </div>
@@ -169,7 +171,7 @@ function Summary() {
             ) : (
               <div className="text-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-success-300 mx-auto mb-4"></div>
-                <p className="text-bgray-600 dark:text-bgray-50">Cargando pagos...</p>
+                <p className="text-bgray-600 dark:text-bgray-50">{t('payments.loadingPayments')}</p>
               </div>
             )}
           </div>

@@ -3,8 +3,10 @@ import { API_URL } from "../../../config";
 import AuthContext from "../../context/AuthContext";
 import userImg from "../../assets/images/avatar/user-1.png";
 import { Link } from "react-router-dom";
+import { useLocale } from "../../contexts/LocaleContext";
 
 function RightSidebar({ user, onClose, currentUser }) {
+  const { t } = useLocale();
   const [summary, setSummary] = useState(null);
   const [summaryError, setSummaryError] = useState("");
   const { token, user: loggedUser } = useContext(AuthContext);
@@ -132,14 +134,14 @@ function RightSidebar({ user, onClose, currentUser }) {
 
         {/* Show address prominently under header */}
         <p className="text-sm text-bgray-600 dark:text-bgray-200 mt-2">
-          {user.address ? user.address : "Dirección no proporcionada"}
+          {user.address ? user.address : t('personalInfo.addressNotProvided')}
         </p>
       </header>
 
       <ul className="py-7 border-t border-b border-gray-200 dark:border-darkblack-400 space-y-6">
         <li className="flex justify-between">
           <span className="font-medium text-gray-500 text-sm dark:text-white">
-            Correo
+            {t('personalInfo.email')}
           </span>
           <span className="text-sm font-semibold text-bgray-900 dark:text-white">
             {user.email}
@@ -147,7 +149,7 @@ function RightSidebar({ user, onClose, currentUser }) {
         </li>
         <li className="flex justify-between">
           <span className="font-medium text-gray-500 text-sm dark:text-white">
-            Dirección
+            {t('personalInfo.address')}
           </span>
           <span className="text-sm font-semibold text-bgray-900 dark:text-white">
             {user.address || "-"}
@@ -155,7 +157,7 @@ function RightSidebar({ user, onClose, currentUser }) {
         </li>
         <li className="flex justify-between">
           <span className="font-medium text-gray-500 text-sm dark:text-white">
-            Cédula
+            {t('personalInfo.identity')}
           </span>
           <span className="text-sm font-semibold text-bgray-900 dark:text-white">
             {user.identity || "-"}
@@ -163,7 +165,7 @@ function RightSidebar({ user, onClose, currentUser }) {
         </li>
         <li className="flex justify-between">
           <span className="font-medium text-gray-500 text-sm dark:text-white">
-            RTN
+            {t('personalInfo.rtn')}
           </span>
           <span className="text-sm font-semibold text-bgray-900 dark:text-white">
             {user.rtn || "-"}
@@ -171,7 +173,7 @@ function RightSidebar({ user, onClose, currentUser }) {
         </li>
         <li className="flex justify-between">
           <span className="font-medium text-gray-500 text-sm dark:text-white">
-            Teléfono
+            {t('personalInfo.phone')}
           </span>
           <span className="text-sm font-semibold text-bgray-900 dark:text-white">
             {user.phone}
@@ -184,14 +186,14 @@ function RightSidebar({ user, onClose, currentUser }) {
           String(viewer?.id) === String(user?.created_by)) ? (
           <li className="flex justify-between">
             <span className="font-medium text-gray-500 text-sm dark:text-white">
-              Balance
+              {t('contracts.balance')}
             </span>
             <span className="text-sm font-semibold text-bgray-900 dark:text-white">
               {summary
                 ? `${(Number(summary.balance) || 0).toLocaleString()} ${
                     summary.currency
                   }`
-                : summaryError || "Loading..."}
+                : summaryError || t('common.loading')}
             </span>
           </li>
         ) : null}
@@ -205,7 +207,7 @@ function RightSidebar({ user, onClose, currentUser }) {
         {user?.created_by ? (
           <li className="pt-2">
             <div className="text-xs text-gray-500 dark:text-bgray-300">
-              Creado por
+              {t('users.createdBy')}
             </div>
             <div className="text-sm font-semibold text-bgray-900 dark:text-white">
               {user.creator?.full_name}

@@ -2,10 +2,12 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import PaymentInfo from "./PaymentInfo"; // Component to render individual payment rows
+import { useLocale } from "../../../contexts/LocaleContext";
 
 function PaymentTab({ payments, userRole, pageSize, refreshPayments }) {
   const [sortField, setSortField] = useState(null);
   const [sortDirection, setSortDirection] = useState("asc");
+  const { t } = useLocale();
 
   /**
    * Handles sorting when a table header is clicked.
@@ -131,7 +133,7 @@ function PaymentTab({ payments, userRole, pageSize, refreshPayments }) {
             <th className="px-6 py-5 xl:px-0 text-left">
               <div className="flex items-center space-x-2.5">
                 <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  Descripción
+                  {t('payments.description')}
                 </span>
                 {/* Sorting Icon */}
                 {renderSortIcon('description')}
@@ -142,7 +144,7 @@ function PaymentTab({ payments, userRole, pageSize, refreshPayments }) {
             <th className="px-6 py-5 xl:px-0 text-left">
               <div className="flex items-center space-x-2.5">
                 <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  Solicitante
+                  {t('payments.applicant')}
                 </span>
               </div>
             </th>
@@ -151,7 +153,7 @@ function PaymentTab({ payments, userRole, pageSize, refreshPayments }) {
             <th className="px-6 py-5 xl:px-0 text-left">
               <div className="flex items-center space-x-2.5">
                 <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  Monto Total
+                  {t('payments.totalAmount')}
                 </span>
                 {/* Sorting Icon */}
                 {renderSortIcon('amount')}
@@ -162,7 +164,7 @@ function PaymentTab({ payments, userRole, pageSize, refreshPayments }) {
             <th className="px-6 py-5 xl:px-0 text-left">
               <div className="flex items-center space-x-2.5">
                 <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  Vencimiento
+                  {t('payments.dueDate')}
                 </span>
                 {/* Sorting Icon */}
                 {renderSortIcon('due_date')}
@@ -173,7 +175,7 @@ function PaymentTab({ payments, userRole, pageSize, refreshPayments }) {
             <th className="px-6 py-5 xl:px-0 text-left">
               <div className="flex items-center space-x-2.5">
                 <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  Estado
+                  {t('payments.status')}
                 </span>
                 {/* Sorting Icon */}
                 {renderSortIcon('status')}
@@ -184,7 +186,7 @@ function PaymentTab({ payments, userRole, pageSize, refreshPayments }) {
             <th className="px-6 py-5 xl:px-0 text-center">
               <div className="flex justify-center">
                 <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  Acciones
+                  {t('payments.actions')}
                 </span>
               </div>
             </th>

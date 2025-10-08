@@ -1,8 +1,10 @@
 import { useState } from "react";
 import AddWalletModal from "../modal/AddWalletModal";
+import { useLocale } from "../../contexts/LocaleContext";
 
 function AddWallet() {
   const [newWallet, setNewWallet] = useState(false);
+  const { t } = useLocale();
   return (
     <>
       <AddWalletModal isActive={newWallet} handleClose={setNewWallet} />
@@ -42,7 +44,7 @@ function AddWallet() {
             fill="#718096"
           />
         </svg>
-        <span className="text-lg text-bgray-600 font-medium">Add wallet</span>
+        <span className="text-lg text-bgray-600 font-medium">{t('settings.addWallet')}</span>
       </div>
     </>
   );

@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
 import PasswordResetModal from "../modal/PasswordResetModal";
 import LeftSide from "./LeftSide";
+import { useLocale } from "../../contexts/LocaleContext";
 
 function SignIn() {
   const [modalOpen, setModalOpen] = useState(false);
+  const { t } = useLocale();
 
   // Only auto-fill admin credentials during local development or staging.
   const hostname = typeof window !== "undefined" ? window.location.hostname : "";
@@ -29,12 +31,12 @@ function SignIn() {
     const newErrors = { email: "", password: "" };
 
     if (!email) {
-      newErrors.email = "Email is required";
+      newErrors.email = t('signin.emailRequired');
       valid = false;
     }
 
     if (!password) {
-      newErrors.password = "Password is required";
+      newErrors.password = t('signin.passwordRequired');
       valid = false;
     }
 

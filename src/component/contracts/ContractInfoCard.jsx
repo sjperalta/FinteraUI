@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { formatStatus } from '../../utils/formatStatus';
+import { useLocale } from '../../contexts/LocaleContext';
 
 export default function ContractInfoCard({ currentContract }) {
+  const { t } = useLocale();
   return (
     <div className="flex items-start space-x-3 mb-4">
       {/* Contract Avatar */}
@@ -23,20 +25,20 @@ export default function ContractInfoCard({ currentContract }) {
       <div className="flex-1 min-w-0">
         <div className="flex items-center space-x-2 mb-1">
           <h4 className="text-xl font-bold text-gray-900 dark:text-white">
-            Contrato #{currentContract?.id}
+            {t('contractInfo.contract')} #{currentContract?.id}
           </h4>
           <div className="px-2 py-1 bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-xs font-semibold rounded-full shadow-sm">
-            {formatStatus(currentContract?.status) || "ACTIVO"}
+            {formatStatus(currentContract?.status, t) || t('contractInfo.active')}
           </div>
         </div>
         <p className="text-base text-gray-700 dark:text-gray-200 font-medium mb-1">
-          {currentContract?.applicant_name || "Cliente"}
+          {currentContract?.applicant_name || t('contractInfo.client')}
         </p>
         <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
           <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4h3a2 2 0 012 2v1H3V9a2 2 0 012-2h3zM2 17a2 2 0 002 2h16a2 2 0 002-2v-7H2v7z" />
           </svg>
-          Creado {currentContract?.created_at ? new Date(currentContract.created_at).toLocaleDateString('es-ES', {
+          {t('contractInfo.created')} {currentContract?.created_at ? new Date(currentContract.created_at).toLocaleDateString('es-ES', {
             year: 'numeric',
             month: 'long',
             day: 'numeric'

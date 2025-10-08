@@ -5,9 +5,11 @@ import profile from "../../assets/images/avatar/profile-52x52.png";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import ResProfilePopup from "./ResProfilePopup";
+import { useLocale } from "../../contexts/LocaleContext";
 
 function HeaderTwo({ handleSidebar }) {
   const [activePopup, handleActivePopup] = useState(false);
+  const { t } = useLocale();
   return (
     <div>
       <header className="mobile-wrapper fixed z-20 block w-full md:hidden">
@@ -59,7 +61,7 @@ function HeaderTwo({ handleSidebar }) {
               <div className="hidden 2xl:block">
                 <div className="flex items-center space-x-2.5">
                   <h3 className="text-base font-bold leading-[28px] text-bgray-900">
-                    Administrador
+                    {t('header.administrator')}
                   </h3>
                   <span>
                     <svg
@@ -80,7 +82,7 @@ function HeaderTwo({ handleSidebar }) {
                   </span>
                 </div>
                 <p className="text-sm font-medium leading-[20px] text-bgray-600">
-                  Admin
+                  {t('header.admin')}
                 </p>
               </div>
             </div>
@@ -137,7 +139,7 @@ function HeaderTwo({ handleSidebar }) {
                             </div>
                             <div className="flex-1">
                               <span className="text-sm font-semibold">
-                                My Profile
+                                {t('dashboard.myProfile')}
                               </span>
                             </div>
                           </div>
@@ -166,7 +168,7 @@ function HeaderTwo({ handleSidebar }) {
                             </div>
                             <div className="flex-1">
                               <span className="text-sm font-semibold">
-                                Log Out 2
+                                {t('dashboard.logout')}
                               </span>
                             </div>
                           </div>
@@ -181,7 +183,7 @@ function HeaderTwo({ handleSidebar }) {
                         <Link to="/settings/user/1">
                           <div className="rounded-lg p-[14px] text-bgray-600 hover:bg-bgray-100 hover:text-bgray-900">
                             <span className="text-sm font-semibold">
-                              Configuración
+                              {t('dashboard.configuration')}
                             </span>
                           </div>
                         </Link>
@@ -189,7 +191,7 @@ function HeaderTwo({ handleSidebar }) {
                       <li className="w-full">
                         <Link to="/users">
                           <div className="rounded-lg p-[14px] text-bgray-600 hover:bg-bgray-100 hover:text-bgray-900">
-                            <span className="text-sm font-semibold">Usuarios</span>
+                            <span className="text-sm font-semibold">{t('users.title')}</span>
                           </div>
                         </Link>
                       </li>

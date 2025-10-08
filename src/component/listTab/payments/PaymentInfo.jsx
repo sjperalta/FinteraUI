@@ -4,6 +4,7 @@ import { getToken } from "../../../../auth";
 import { formatStatus } from "../../../utils/formatStatus";
 import { useContext, useState } from 'react';
 import AuthContext from '../../../context/AuthContext';
+import { useLocale } from "../../../contexts/LocaleContext";
 
 function PaymentInfo({
   description,
@@ -24,9 +25,12 @@ function PaymentInfo({
   const token = getToken();
   const { user } = useContext(AuthContext) || {};
   const currentUserRole = user?.role;
+  const { t } = useLocale();
 
   const statusLower = (status || '').toLowerCase();
-  const statusLabel = statusLower === 'submitted' ? 'Enviado' : statusLower === 'paid' ? 'Pagado' : formatStatus(status);
+  const statusLabel = statusLower === 'submitted' ? t('payments.statusOptions.submitted') :
+                     statusLower === 'paid' ? t('payments.statusOptions.paid') :
+                     formatStatus(status, t);
 
   const isOverdue = due_date ? (new Date(due_date).getTime() < Date.now()) && statusLower !== 'paid' : false;
   const totalAmount = Number(amount || 0) + Number(interest_amount || 0);
@@ -67,7 +71,7 @@ function PaymentInfo({
       });
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.errors.join(" ") || "Error Aprobando el pago");
+        throw new Error(errorData.errors.join(" ") || t('payments.approveError'));
       }
       if (typeof refreshPayments === "function") {
         refreshPayments({ page: 1 });
@@ -89,7 +93,7 @@ function PaymentInfo({
       });
   
       if (!response.ok) {
-        throw new Error('Error downloading receipt');
+        throw new Error(t('payments.downloadReceiptError'));
       }
   
       const blob = await response.blob();
@@ -141,7 +145,7 @@ function PaymentInfo({
         },
       });
       if (!response.ok) {
-        throw new Error('Error fetching receipt for preview');
+        throw new Error(t('payments.fetchReceiptError'));
       }
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
@@ -159,7 +163,7 @@ function PaymentInfo({
       <td className="px-6 py-5 xl:px-0">
         <div className="space-y-1">
           <p className="text-base font-semibold text-bgray-900 dark:text-white">
-            {description || "N/A"}
+            {description || t('common.notAvailable')}
           </p>
           {lot_name && (
             <p className="text-sm text-bgray-500 dark:text-bgray-400 flex items-center gap-1">
@@ -180,7 +184,7 @@ function PaymentInfo({
       <td className="px-6 py-5 xl:px-0">
         <div className="space-y-1">
           <p className="text-base font-semibold text-bgray-900 dark:text-white">
-            {applicant_name || "N/A"}
+            {applicant_name || t('common.notAvailable')}
           </p>
           {applicant_phone && (
             <p className="text-sm text-bgray-500 dark:text-bgray-400 flex items-center gap-1">
@@ -205,11 +209,11 @@ function PaymentInfo({
           </p>
           {interest_amount > 0 && (
             <p className="text-sm text-bgray-500 dark:text-bgray-400">
-              Base: {Number(amount).toLocaleString()} {currency}
+              {t('payments.base')}: {Number(amount).toLocaleString()} {currency}
             </p>
           )}
           {interest_amount > 0 && (
-            <p className="text-sm text-orange-600 dark:text-orange-400">
+            <p className="text-sm text-orange dark:text-orange">
               + {Number(interest_amount).toLocaleString()} {currency}
             </p>
           )}
@@ -224,11 +228,11 @@ function PaymentInfo({
               day: '2-digit', 
               month: '2-digit', 
               year: 'numeric' 
-            }) : 'N/A'}
+            }) : t('common.notAvailable')}
           </p>
           {isOverdue && (
             <span className="inline-block mt-1 rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 px-2 py-0.5 text-xs font-medium">
-              Vencido
+              {t('payments.overdue')}
             </span>
           )}
         </div>
@@ -257,7 +261,7 @@ function PaymentInfo({
             <button
               onClick={handleDownloadReceipt}
               className="inline-flex items-center px-2 py-1 text-xs font-medium rounded-md bg-amber-500 text-white hover:bg-amber-600 transition-colors duration-150 shadow-sm"
-              title="Descargar comprobante"
+              title={t('payments.downloadReceipt')}
             >
               📁
             </button>
@@ -269,17 +273,17 @@ function PaymentInfo({
               <button
                 onClick={() => setShowApproveModal(true)}
                 className="inline-flex items-center px-2 py-1 text-xs font-medium rounded-md bg-green-500 text-white hover:bg-green-600 transition-colors duration-150 shadow-sm"
-                title="Aprobar pago"
+                title={t('payments.approvePayment')}
               >
                 ✓
               </button>
               {showApproveModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
                   <div className="bg-white dark:bg-darkblack-600 rounded-lg shadow-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
-                    <h3 className="text-lg font-bold mb-2 text-bgray-900 dark:text-white">Confirmar aprobación</h3>
+                    <h3 className="text-lg font-bold mb-2 text-bgray-900 dark:text-white">{t('payments.confirmApproval')}</h3>
                     <div className="mb-4 space-y-2">
                       <div className="flex justify-between items-center text-bgray-700 dark:text-bgray-200">
-                        <label htmlFor="approve-amount" className="mr-2">Monto:</label>
+                        <label htmlFor="approve-amount" className="mr-2">{t('payments.amount')}:</label>
                         <input
                           id="approve-amount"
                           type="number"
@@ -293,7 +297,7 @@ function PaymentInfo({
                         <span className="ml-1">{currency}</span>
                       </div>
                       <div className="flex justify-between items-center text-bgray-700 dark:text-bgray-200">
-                        <label htmlFor="approve-interest" className="mr-2">Interés:</label>
+                        <label htmlFor="approve-interest" className="mr-2">{t('payments.interest')}:</label>
                         <input
                           id="approve-interest"
                           type="number"
@@ -307,7 +311,7 @@ function PaymentInfo({
                         <span className="ml-1">{currency}</span>
                       </div>
                       <div className="flex justify-between font-semibold mt-2 text-bgray-900 dark:text-white">
-                        <span>Total:</span>
+                        <span>{t('payments.total')}:</span>
                         <span>{(Number(editAmount || 0) + Number(editInterest || 0)).toLocaleString()} {currency}</span>
                       </div>
                     </div>
@@ -317,14 +321,14 @@ function PaymentInfo({
                         className="px-3 py-1.5 text-xs font-medium rounded bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-60"
                         disabled={previewLoading || approveLoading}
                       >
-                        {previewLoading ? 'Cargando...' : 'Vista previa del comprobante'}
+                        {previewLoading ? t('common.loading') : t('payments.previewReceipt')}
                       </button>
                       {previewUrl && (
                         <div className="mt-2">
                           <iframe
                             src={previewUrl}
                             className="w-full h-64 border border-bgray-300 dark:border-darkblack-400 rounded"
-                            title="Vista previa del comprobante"
+                            title={t('payments.previewReceipt')}
                           />
                         </div>
                       )}
@@ -341,14 +345,14 @@ function PaymentInfo({
                         className="px-3 py-1.5 text-xs font-medium rounded bg-bgray-200 dark:bg-darkblack-400 text-bgray-800 dark:text-bgray-100 hover:bg-bgray-300 dark:hover:bg-darkblack-300"
                         disabled={approveLoading}
                       >
-                        Cancelar
+                        {t('common.cancel')}
                       </button>
                       <button
                         onClick={handleApprove}
                         className="px-3 py-1.5 text-xs font-medium rounded bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 disabled:opacity-60"
                         disabled={approveLoading}
                       >
-                        {approveLoading ? 'Aprobando...' : 'Confirmar'}
+                        {approveLoading ? t('payments.approving') : t('common.confirm')}
                       </button>
                     </div>
                   </div>
@@ -369,11 +373,11 @@ function PaymentInfo({
                   if (!res.ok) throw new Error('Error undoing approval');
                   refreshPayments({ page: 1 });
                 } catch (err) {
-                  alert('No se pudo deshacer la aprobación');
+                  alert(t('payments.undoApprovalError'));
                 }
               }}
               className="inline-flex items-center px-2 py-1 text-xs font-medium rounded-md bg-red-500 text-white hover:bg-red-600 transition-colors duration-150 shadow-sm"
-              title="Deshacer aprobación"
+              title={t('payments.undoApproval')}
             >
               ↺
             </button>

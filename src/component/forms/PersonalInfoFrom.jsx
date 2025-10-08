@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { API_URL } from "./../../../config"; // Update the path as needed
 import { getToken } from "./../../../auth"; // Update the path as needed
 import PropTypes from "prop-types";
+import { useLocale } from "../../contexts/LocaleContext";
 
 // helper formatters (minimal, preserve digits and insert dashes)
 function formatCedula(raw) {
@@ -29,6 +30,7 @@ function formatRTN(raw) {
 }
 
 function PersonalInfoForm({ userId }) {
+  const { t, setLocale } = useLocale();
   const [user, setUser] = useState({
     full_name: "",
     phone: "",
@@ -36,6 +38,7 @@ function PersonalInfoForm({ userId }) {
     identity: "",
     rtn: "",
     address: "",
+    locale: "es", // default to Spanish
   });
 
   const [loading, setLoading] = useState(true);
@@ -45,7 +48,7 @@ function PersonalInfoForm({ userId }) {
 
   useEffect(() => {
     if (!userId) {
-      setError("User ID is not provided or invalid.");
+      setError(t("errors.userIdInvalid"));
       setLoading(false);
       return;
     }
@@ -61,27 +64,25 @@ function PersonalInfoForm({ userId }) {
         });
 
         if (!response.ok) {
-          throw new Error("Failed to fetch user data");
+          throw new Error(t("errors.fetchUserFailed"));
         }
 
         const data = await response.json();
         setUser({
-          full_name: data.full_name || "",
-          phone: data.phone || "",
-          email: data.email || "",
-          identity: formatCedula(data.identity || ""),
-          rtn: formatRTN(data.rtn || ""),
-          address: data.address || "",
+          ...data,
+          identity: formatCedula(data.identity),
+          rtn: formatRTN(data.rtn),
         });
+        setLocale(data.locale); // Load and set locale from user data
+        setLoading(false);
       } catch (err) {
         setError(err.message);
-      } finally {
         setLoading(false);
       }
     };
 
     fetchUser();
-  }, [token, userId]);
+  }, [userId, token, t, setLocale]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -98,43 +99,64 @@ function PersonalInfoForm({ userId }) {
     e.preventDefault();
 
     if (!userId) {
-      setError("Cannot update user without a valid User ID.");
+      setError(t("errors.updateWithoutId"));
       return;
     }
 
     try {
+      // Update main user data
       const response = await fetch(`${API_URL}/api/v1/users/${userId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        // send sanitized payload: server expects identity/rtn without formatting sometimes,
-        // but send as-is (formatted) unless you want raw digits. Adjust if needed.
-        body: JSON.stringify(user),
+        body: JSON.stringify({
+          full_name: user.full_name,
+          phone: user.phone,
+          email: user.email,
+          identity: user.identity.replace(/-/g, ''), // send raw digits
+          rtn: user.rtn.replace(/-/g, ''), // send raw digits
+          address: user.address,
+        }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update user data");
+        throw new Error(t("errors.updateUserFailed"));
       }
 
-      alert("Profile updated successfully");
+      // Update locale separately
+      const localeResponse = await fetch(`${API_URL}/api/v1/users/${userId}/update_locale`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ locale: user.locale }),
+      });
+
+      if (!localeResponse.ok) {
+        throw new Error(t("errors.updateLocaleFailed"));
+      }
+
+      setLocale(user.locale); // Update local locale state
+      alert(t("errors.profileUpdated"));
     } catch (err) {
       setError(err.message);
     }
   };
 
   if (!userId) {
-    return <p className="text-red-500">User ID is required to load data.</p>;
+    return <p className="text-red-500">{t("errors.userIdRequired")}</p>;
   }
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p className="text-red-500">Error: {error}</p>;
+  if (loading) return <p>{t("common.loading")}</p>;
+  if (error) return <p className="text-red-500">{t("common.error")}: {error}</p>;
 
   return (
     <div className="2xl:col-span-8 xl:col-span-7">
       <h3 className="text-2xl font-bold pb-5 text-bgray-900 dark:text-white dark:border-darkblack-400 border-b border-bgray-200">
-        Información Personal
+        {t("personalInfo.title")}
       </h3>
       <div className="mt-8">
         <form onSubmit={handleSubmit}>
@@ -144,7 +166,7 @@ function PersonalInfoForm({ userId }) {
                 htmlFor="full_name"
                 className="text-base text-bgray-600 dark:text-bgray-50 font-medium"
               >
-                Nombre Completo
+                {t("personalInfo.fullName")}
               </label>
               <input
                 type="text"
@@ -159,7 +181,7 @@ function PersonalInfoForm({ userId }) {
                 htmlFor="phone"
                 className="text-base text-bgray-600 dark:text-bgray-50 font-medium"
               >
-                Numero Telefonico (Opcional)
+                {t("personalInfo.phoneOptional")}
               </label>
               <input
                 type="text"
@@ -175,7 +197,7 @@ function PersonalInfoForm({ userId }) {
                 htmlFor="address"
                 className="text-base text-bgray-600 dark:text-bgray-50 font-medium"
               >
-                Dirección (opcional)
+                {t("personalInfo.addressOptional")}
               </label>
               <input
                 type="text"
@@ -191,7 +213,7 @@ function PersonalInfoForm({ userId }) {
                 htmlFor="email"
                 className="text-base text-bgray-600 dark:text-bgray-50 font-medium"
               >
-                Email
+                {t("personalInfo.email")}
               </label>
               <input
                 type="text"
@@ -204,7 +226,7 @@ function PersonalInfoForm({ userId }) {
             </div>
           </div>
           <h4 className="pt-8 pb-6 text-xl font-bold text-bgray-900 dark:text-white">
-            Información General
+            {t("personalInfo.generalInfo")}
           </h4>
           <div className="grid 2xl:grid-cols-2 grid-cols-1 gap-6">
             <div className="flex flex-col gap-2">
@@ -212,7 +234,7 @@ function PersonalInfoForm({ userId }) {
                 htmlFor="identity"
                 className="text-base text-bgray-600 dark:text-bgray-50 font-medium"
               >
-                Cedula
+                {t("personalInfo.identity")}
               </label>
               <input
                 type="text"
@@ -227,7 +249,7 @@ function PersonalInfoForm({ userId }) {
                 htmlFor="rtn"
                 className="text-base text-bgray-600 dark:text-bgray-50 font-medium"
               >
-                RTN
+                {t("personalInfo.rtn")}
               </label>
               <input
                 type="text"
@@ -237,13 +259,30 @@ function PersonalInfoForm({ userId }) {
                 className="bg-bgray-50 dark:bg-darkblack-500 dark:text-white p-4 rounded-lg h-14 border-0 focus:border focus:border-success-300 focus:ring-0"
               />
             </div>
+            <div className="flex flex-col gap-2">
+              <label
+                htmlFor="locale"
+                className="text-base text-bgray-600 dark:text-bgray-50 font-medium"
+              >
+                {t("personalInfo.language")}
+              </label>
+              <select
+                name="locale"
+                value={user.locale}
+                onChange={handleInputChange}
+                className="bg-bgray-50 dark:bg-darkblack-500 dark:text-white p-4 rounded-lg h-14 border-0 focus:border focus:border-success-300 focus:ring-0"
+              >
+                <option value="es">{t("personalInfo.spanish")}</option>
+                <option value="en">{t("personalInfo.english")}</option>
+              </select>
+            </div>
           </div>
           <div className="flex justify-end">
             <button
               aria-label="none"
               className="rounded-lg bg-success-300 text-white font-semibold mt-10 py-3.5 px-4"
             >
-              Save Profile
+              {t("personalInfo.saveProfile")}
             </button>
           </div>
         </form>

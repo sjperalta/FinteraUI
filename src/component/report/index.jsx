@@ -3,11 +3,13 @@ import { useState } from "react";
 import { API_URL } from "../../../config";  // e.g. "http://localhost:3000" or your prod URL
 import { getToken } from "../../../auth";   // If you use token-based auth
 import DatePicker from "../forms/DatePicker";
+import { useLocale } from "../../contexts/LocaleContext";
 
 function Report() {
   // Store the selected start/end dates in ISO format (e.g., "2025-01-15")
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const { t } = useLocale();
 
   /**
    * Utility function to open the CSV endpoint in a new tab,
@@ -20,13 +22,13 @@ function Report() {
   const downloadCSV = async (reportEndpoint) => {
     // Validate that both dates are selected
     if (!startDate || !endDate) {
-      alert("Por favor selecciona ambas fechas antes de descargar el reporte.");
+      alert(t('reports.selectBothDates'));
       return;
     }
 
     // Validate that start date is not after end date
     if (new Date(startDate) > new Date(endDate)) {
-      alert("La fecha inicial no puede ser posterior a la fecha final.");
+      alert(t('reports.startDateAfterEndDate'));
       return;
     }
 
@@ -49,7 +51,7 @@ function Report() {
       });
   
       if (!res.ok) {
-        throw new Error("Failed to fetch CSV");
+        throw new Error(t('reports.fetchCsvFailed'));
       }
   
       // 2) Convert response -> Blob
@@ -71,7 +73,7 @@ function Report() {
       URL.revokeObjectURL(link.href);
     } catch (err) {
       console.error("Error downloading CSV:", err);
-      alert("Error al descargar el reporte. Por favor intenta nuevamente.");
+      alert(t('reports.downloadError'));
     }
   };
 
@@ -87,10 +89,10 @@ function Report() {
           </div>
           <div>
             <h3 className="text-xl font-semibold text-bgray-900 dark:text-white">
-              Reportes Financieros
+              {t('reports.financialReports')}
             </h3>
             <p className="text-sm text-bgray-500 dark:text-bgray-300">
-              Descarga reportes por rango de fechas
+              {t('reports.downloadByDateRange')}
             </p>
           </div>
         </div>
@@ -101,22 +103,22 @@ function Report() {
         {/* Date Range Selection */}
         <div className="mb-6 space-y-4">
           <DatePicker
-            label="Fecha inicial"
+            label={t('reports.startDate')}
             value={startDate}
             onChange={(value) => {
               setStartDate(value);
             }}
-            placeholder="Seleccionar fecha inicial"
+            placeholder={t('reports.selectStartDate')}
             required
           />
 
           <DatePicker
-            label="Fecha final"
+            label={t('reports.endDate')}
             value={endDate}
             onChange={(value) => {
               setEndDate(value);
             }}
-            placeholder="Seleccionar fecha final"
+            placeholder={t('reports.selectEndDate')}
             required
           />
         </div>
@@ -125,11 +127,11 @@ function Report() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h4 className="font-semibold text-bgray-900 dark:text-white text-sm">
-              Reportes Disponibles
+              {t('reports.availableReports')}
             </h4>
             {(!startDate || !endDate) && (
               <span className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-2 py-1 rounded-full">
-                Selecciona fechas
+                {t('reports.selectDates')}
               </span>
             )}
           </div>
@@ -171,10 +173,10 @@ function Report() {
                 </span>
                 <div className="flex flex-col">
                   <h5 className="font-semibold text-bgray-900 dark:text-white text-sm">
-                    Comisiones.csv
+                    {t('reports.commissionsCsv')}
                   </h5>
                   <span className="text-xs text-bgray-500 dark:text-bgray-400 cursor-pointer hover:text-green-600 transition-colors" onClick={() => downloadCSV("commissions_csv")}>
-                    Click para descargar
+                    {t('reports.clickToDownload')}
                   </span>
                 </div>
               </div>
@@ -184,7 +186,7 @@ function Report() {
                     ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed opacity-50' 
                     : 'bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-900/50 group-hover:scale-105'
                 }`}
-                aria-label="Descargar Comisiones"
+                aria-label={t('reports.downloadCommissions')}
                 onClick={() => downloadCSV("commissions_csv")}
                 disabled={!startDate || !endDate}
               >
@@ -250,10 +252,10 @@ function Report() {
                 </span>
                 <div className="flex flex-col">
                   <h5 className="font-semibold text-bgray-900 dark:text-white text-sm">
-                    Flujo Ingreso.csv
+                    {t('reports.revenueFlowCsv')}
                   </h5>
                   <span className="text-xs text-bgray-500 dark:text-bgray-400 cursor-pointer hover:text-blue-600 transition-colors" onClick={() => downloadCSV("total_revenue_csv")}>
-                    Click para descargar
+                    {t('reports.clickToDownload')}
                   </span>
                 </div>
               </div>
@@ -263,7 +265,7 @@ function Report() {
                     ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed opacity-50' 
                     : 'bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-900/50 group-hover:scale-105'
                 }`}
-                aria-label="Descargar Flujo Ingreso"
+                aria-label={t('reports.downloadRevenueFlow')}
                 onClick={() => downloadCSV("total_revenue_csv")}
                 disabled={!startDate || !endDate}
               >
@@ -329,10 +331,10 @@ function Report() {
                 </span>
                 <div className="flex flex-col">
                   <h5 className="font-semibold text-bgray-900 dark:text-white text-sm">
-                    Morosidad.csv
+                    {t('reports.overduePaymentsCsv')}
                   </h5>
                   <span className="text-xs text-bgray-500 dark:text-bgray-400 cursor-pointer hover:text-red-600 transition-colors" onClick={() => downloadCSV("overdue_payments_csv")}>
-                    Click para descargar
+                    {t('reports.clickToDownload')}
                   </span>
                 </div>
               </div>
@@ -342,7 +344,7 @@ function Report() {
                     ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed opacity-50' 
                     : 'bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 group-hover:scale-105'
                 }`}
-                aria-label="Descargar Morosidad"
+                aria-label={t('reports.downloadOverdue')}
                 onClick={() => downloadCSV("overdue_payments_csv")}
                 disabled={!startDate || !endDate}
               >

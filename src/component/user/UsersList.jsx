@@ -1,9 +1,11 @@
 import { useState, useEffect, useContext } from "react";
 import UserData from "./UserData";
 import AuthContext from "../../context/AuthContext";
+import { useLocale } from "../../contexts/LocaleContext";
 import { API_URL } from "./../../../config";
 
 function UsersList({ searchTerm, role, onUserSelect }) {
+  const { t } = useLocale();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -104,7 +106,7 @@ function UsersList({ searchTerm, role, onUserSelect }) {
       <div className="flex justify-center items-center py-10">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
         <span className="ml-3 text-gray-600 dark:text-gray-400">
-          Cargando usuarios...
+          {t('users.loadingUsers')}
         </span>
       </div>
     );
@@ -137,13 +139,13 @@ function UsersList({ searchTerm, role, onUserSelect }) {
         <thead className="bg-gray-50 dark:bg-darkblack-500">
           <tr>
             <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">
-              Usuario
+              {t('users.user')}
             </th>
             <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 hidden sm:table-cell">
-              Estado
+              {t('common.status')}
             </th>
             <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">
-              Acciones
+              {t('common.actions')}
             </th>
           </tr>
         </thead>
@@ -180,11 +182,11 @@ function UsersList({ searchTerm, role, onUserSelect }) {
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          Anterior
+          {t('common.previous')}
         </button>
 
         <span className="text-sm text-gray-600 dark:text-gray-400">
-          Página {currentPage} de {totalPages}
+          {t('common.page')} {currentPage} {t('common.of')} {totalPages}
         </span>
 
         <button
@@ -192,7 +194,7 @@ function UsersList({ searchTerm, role, onUserSelect }) {
           disabled={currentPage >= totalPages}
           className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed transition"
         >
-          Siguiente
+          {t('common.next')}
           <svg
             className="w-4 h-4 ml-2"
             fill="none"

@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import * as Sentry from "@sentry/react";
-import ErrorBoundary from "./component/error/ErrorBoundary.jsx";
 import App from "./App.jsx";
 import "./assets/css/style.css";
 import "./assets/css/font-awesome-all.min.css";
@@ -38,9 +37,7 @@ if (_sentryDsn) {
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
       <AuthProvider>
-        <ErrorBoundary fallback={<div>Something went wrong.</div>}>
-          <App />
-        </ErrorBoundary>
+        <App />
       </AuthProvider>
   </React.StrictMode>
 );

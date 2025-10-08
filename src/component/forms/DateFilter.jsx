@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ProtoTypes from "prop-types";
-function DateFilter({ options }) {
+function DateFilter({ options, onChange }) {
   const [activeFilter, setActiveFilter] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
 
@@ -51,6 +51,7 @@ function DateFilter({ options }) {
               onClick={(e) => {
                 setShowFilter(!showFilter);
                 handleActiveFilter(e);
+                if (onChange) onChange(e.target.innerText);
               }}
               className="text-sm  text-bgray-90 dark:text-white cursor-pointer px-5 py-2 hover:bg-bgray-100 font-semibold hover:dark:bg-darkblack-600"
             >
@@ -65,6 +66,7 @@ function DateFilter({ options }) {
 
 DateFilter.propTypes = {
   options: ProtoTypes.array,
+  onChange: ProtoTypes.func,
 };
 
 export default DateFilter;

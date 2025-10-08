@@ -1,10 +1,12 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import { useLocale } from "../../contexts/LocaleContext";
 import { API_URL } from "../../../config";
 import inbox1 from "../../assets/images/avatar/profile.png";
 
 function UserData({ userInfo, index, token, onClick}) {
+  const { t } = useLocale();
   const { id, full_name, phone, email, status: initialStatus, role, created_at, created_by, creator } = userInfo;
   const [status, setStatus] = useState(initialStatus); // Use local state for status
 
@@ -108,14 +110,14 @@ function UserData({ userInfo, index, token, onClick}) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <span className="text-sm text-gray-500">
-                  Creado: {formattedDate}
+                  {t('users.created')}: {formattedDate}
                 </span>
               </div>
               <div className="flex items-center gap-1 text-sm text-gray-500">
                 <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
-                <span className="font-medium text-bgray-700 dark:text-bgray-50">Creado por: </span>
+                <span className="font-medium text-bgray-700 dark:text-bgray-50">{t('users.createdBy')}: </span>
                 <span className="ml-1">{creatorLabel}</span>
               </div>
             </div>
@@ -150,13 +152,13 @@ function UserData({ userInfo, index, token, onClick}) {
             to={`/settings/user/${id}`}
             className="text-sm font-medium text-success-300"
           >
-            Editar
+            {t('common.edit')}
           </Link>
           <button
             onClick={resendConfirmation}
             className="text-sm font-medium text-success-300"
           >
-            Invitar
+            {t('users.invite')}
           </button>
         </div>
       </td>

@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useLocale } from '../../contexts/LocaleContext';
 
 export default function ProjectLotCards({ currentContract }) {
+  const { t } = useLocale();
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-stretch">
       {/* Project Card */}
@@ -13,14 +15,14 @@ export default function ProjectLotCards({ currentContract }) {
             </svg>
           </div>
           <div className="flex-1">
-            <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Proyecto</p>
+            <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('contracts.project')}</p>
             <p className="font-bold text-gray-900 dark:text-white leading-tight text-sm">
-              {currentContract?.project_name || currentContract?.project?.name || "Sin nombre"}
+              {currentContract?.project_name || currentContract?.project?.name || t('contracts.noName')}
             </p>
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0">
                 <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                  ID: {currentContract?.project_id || "N/A"} · {currentContract?.project_address || currentContract?.project?.address || "Sin dirección"}
+                  {t('contracts.id')}: {currentContract?.project_id || "N/A"} · {currentContract?.project_address || currentContract?.project?.address || t('contracts.noAddress')}
                 </p>
               </div>
             </div>
@@ -38,19 +40,19 @@ export default function ProjectLotCards({ currentContract }) {
             </svg>
           </div>
           <div className="flex-1">
-            <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Lote</p>
+            <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('contracts.lot')}</p>
             <p className="font-bold text-gray-900 dark:text-white leading-tight text-sm">
-              {currentContract?.lot_name || currentContract?.lot?.name || `#${currentContract?.lot_id}` || "Sin nombre"}
+              {currentContract?.lot_name || currentContract?.lot?.name || `#${currentContract?.lot_id}` || t('contracts.noName')}
             </p>
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0">
                 <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                  ID: {currentContract?.lot_id || "N/A"} · {currentContract?.lot_address || currentContract?.lot?.address || "Sin dirección"}
+                  {t('contracts.id')}: {currentContract?.lot_id || "N/A"} · {currentContract?.lot_address || currentContract?.lot?.address || t('contracts.noAddress')}
                 </p>
               </div>
               {currentContract?.lot_area && (
                 <span className="text-xs font-medium px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded-full">
-                  {currentContract.lot_area} m²
+                  {currentContract.lot_area} {t('projects.squareMeters')}
                 </span>
               )}
             </div>

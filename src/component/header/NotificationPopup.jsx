@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import { useLocale } from "../../contexts/LocaleContext";
 
 function NotificationPopup({ active, loading, notifications, onMarkAllAsRead }) {
+  const { t } = useLocale();
 
   return (
     <div className="notification-popup-wrapper text-left overflow-y-hidden">
@@ -19,7 +21,7 @@ function NotificationPopup({ active, loading, notifications, onMarkAllAsRead }) 
           <div className="absolute left-0 top-0 flex h-[66px] w-full items-center justify-between px-8">
             
             <h3 className="text-xl font-bold text-bgray-900 dark:text-white">
-              Notificaciones
+              {t('notifications.title')}
             </h3>
             {/* Optional: an icon or close button */}
             <span>
@@ -44,7 +46,7 @@ function NotificationPopup({ active, loading, notifications, onMarkAllAsRead }) 
           <div>
             <div className="flex items-center border-b border-bgray-200 dark:border-darkblack-400">
               <button aria-label="none" type="button" className="flex space-x-2 border-b-2 border-success-300 px-6 py-4 text-sm font-semibold capitalize text-success-300">
-                <span>All</span>
+                <span>{t('notifications.all')}</span>
                 <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-success-50 text-[10px] text-success-300">{notifications.length}</span>
               </button>
             </div>
@@ -52,13 +54,13 @@ function NotificationPopup({ active, loading, notifications, onMarkAllAsRead }) 
             <ul className="scroll-style-1 h-[335px] w-full overflow-y-scroll ">
               {loading && (
                 <li className="py-4 pl-6 pr-[50px] text-sm text-bgray-600 dark:text-bgray-50">
-                  Cargando notificaciones...
+                  {t('notifications.loading')}
                 </li>
               )}
 
               {!loading && notifications.length === 0 && (
                 <li className="py-4 pl-6 pr-[50px] text-sm text-bgray-600 dark:text-bgray-50">
-                  No hay notificaciones
+                  {t('notifications.noNotifications')}
                 </li>
               )}
 
@@ -112,7 +114,7 @@ function NotificationPopup({ active, loading, notifications, onMarkAllAsRead }) 
                     </svg>
                   </span>
                   <span className="text-sm font-semibold text-success-300">
-                    Marcar Todo Como Leido
+                    {t('notifications.markAllAsRead')}
                   </span>
                 </div>
               </button>

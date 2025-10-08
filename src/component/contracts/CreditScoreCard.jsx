@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useLocale } from '../../contexts/LocaleContext';
 
 export default function CreditScoreCard({ creditScore }) {
+  const { t } = useLocale();
   const score = creditScore || 0;
   const scorePercentage = Math.round(score);
   
@@ -12,9 +14,9 @@ export default function CreditScoreCard({ creditScore }) {
   };
   
   const getScoreLabel = (percentage) => {
-    if (percentage >= 80) return "★★★ EXCELENTE";
-    if (percentage >= 60) return "★★ BUENO";
-    return "★ NECESITA MEJORA";
+    if (percentage >= 80) return t('creditScore.excellent');
+    if (percentage >= 60) return t('creditScore.good');
+    return t('creditScore.needsImprovement');
   };
   
   return (
@@ -26,8 +28,8 @@ export default function CreditScoreCard({ creditScore }) {
           </svg>
         </div>
         <div>
-          <h4 className="text-xs font-bold text-gray-900 dark:text-white">Calificación Crediticia</h4>
-          <p className="text-[10px] text-gray-500 dark:text-gray-400">basada en el comportamiento de pago</p>
+          <h4 className="text-xs font-bold text-gray-900 dark:text-white">{t('creditScore.title')}</h4>
+          <p className="text-[10px] text-gray-500 dark:text-gray-400">{t('creditScore.description')}</p>
         </div>
       </div>
 
@@ -47,7 +49,7 @@ export default function CreditScoreCard({ creditScore }) {
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
               <div className="text-lg font-bold text-gray-900 dark:text-white">{scorePercentage}%</div>
-              <div className="text-[10px] text-gray-500 dark:text-gray-400">de 100%</div>
+              <div className="text-[10px] text-gray-500 dark:text-gray-400">{t('creditScore.outOf100')}</div>
             </div>
           </div>
         </div>

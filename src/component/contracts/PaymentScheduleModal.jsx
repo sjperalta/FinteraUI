@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import { API_URL } from "../../../config";
 import { getToken } from "../../../auth";
+import { useLocale } from "../../contexts/LocaleContext";
 import ProjectLotCards from "./ProjectLotCards";
 import CreditScoreCard from "./CreditScoreCard";
 import ContractInfoCard from "./ContractInfoCard";
@@ -26,6 +27,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
   const [ledgerEntries, setLedgerEntries] = useState([]); // Ensure ledgerEntries is always initialized as an array
   const [ledgerLoading, setLedgerLoading] = useState(false);
   const token = getToken();
+  const { t } = useLocale();
 
   // Build synthetic schedule (fallback when no payment_schedule present)
   const buildSynthetic = (c) => {
@@ -253,10 +255,10 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
   const translatePaymentType = (type) => {
     const normalizedType = type?.toLowerCase().replace(/\s+/g, '_');
     switch (normalizedType) {
-      case "reservation": return "Reserva";
-      case "down_payment": return "Prima";
-      case "installment": return "Cuota";
-      default: return type || "Cuota";
+      case "reservation": return t('payments.statusOptions.reservation');
+      case "down_payment": return t('payments.statusOptions.down_payment');
+      case "installment": return t('payments.statusOptions.installment');
+      default: return type || t('payments.statusOptions.installment');
     }
   };
 
@@ -279,8 +281,8 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
           {/* Close Button */}
           <button
             onClick={onClose}
-            aria-label="Cerrar modal"
-            title="Cerrar"
+            aria-label={t('common.cancel')}
+            title={t('common.cancel')}
             className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full flex items-center justify-center text-white transform transition-all duration-200 shadow-2xl
               bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500
               hover:scale-105 hover:rotate-6
@@ -300,10 +302,10 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
             {/* Title */}
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                {activeTab === 'payments' ? 'Plan de Pagos' : activeTab === 'ledger' ? 'Asientos Contables' : 'Notas del Contrato'}
+                {activeTab === 'payments' ? t('contracts.paymentSchedule') : activeTab === 'ledger' ? t('contracts.ledgerEntries') : t('contracts.contractNotes')}
                 {isReadOnly && (
                   <span className="ml-2 text-sm font-normal text-gray-500 dark:text-gray-400">
-                    (Solo lectura)
+                    ({t('contracts.readOnly')})
                   </span>
                 )}
               </h3>
@@ -312,7 +314,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                   <svg className="w-4 h-4 mr-1 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
-                  <span className="text-xs font-medium text-gray-600 dark:text-gray-300">CERRADO</span>
+                  <span className="text-xs font-medium text-gray-600 dark:text-gray-300">{t('contracts.closed')}</span>
                 </div>
               )}
             </div>
@@ -343,7 +345,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                   : 'bg-gray-100 dark:bg-darkblack-500 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-darkblack-400'
               }`}
             >
-              📋 Plan de Pagos
+              📋 {t('contracts.paymentSchedule')}
             </button>
             <button
               onClick={() => setActiveTab('ledger')}
@@ -353,7 +355,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                   : 'bg-gray-100 dark:bg-darkblack-500 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-darkblack-400'
               }`}
             >
-              📊 Asientos Contables
+              📊 {t('contracts.ledgerEntries')}
             </button>
             <button
               onClick={() => setActiveTab('notes')}
@@ -363,7 +365,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                   : 'bg-gray-100 dark:bg-darkblack-500 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-darkblack-400'
               }`}
             >
-              📝 Notas del Contrato
+              📝 {t('contracts.contractNotes')}
             </button>
           </div>
         </div>
@@ -422,7 +424,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
               className="px-4 py-2 text-sm font-medium rounded-lg bg-green-500 hover:bg-green-600 text-white shadow-sm transition-all duration-200 flex items-center gap-2"
             >
               <span>🏦</span>
-              Abono a Capital
+              {t('contracts.capitalPayment')}
             </button>
           ) : (
             <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
@@ -431,21 +433,21 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                   </svg>
-                  {(Array.isArray(ledgerEntries) ? ledgerEntries : []).length} asientos registrados | Asientos contables Solo lectura
+                  {(Array.isArray(ledgerEntries) ? ledgerEntries : []).length} {t('contracts.entriesRegistered')} | {t('contracts.ledgerReadOnly')}
                 </>
               ) : activeTab === 'notes' ? (
                 <>
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
-                  Notas del contrato | Información adicional del contrato
+                  {t('contracts.contractNotesInfo')}
                 </>
               ) : (
                 <>
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
-                  Contrato cerrado - Solo lectura
+                  {t('contracts.contractClosedReadOnly')}
                 </>
               )}
             </div>
@@ -454,7 +456,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
             onClick={onClose}
             className="px-5 py-2 text-sm font-medium rounded-lg bg-bgray-200 hover:bg-bgray-300 dark:bg-darkblack-500 dark:hover:bg-darkblack-400 text-bgray-800 dark:text-bgray-100"
           >
-            Cerrar
+            {t('common.cancel')}
           </button>
         </div>
       </div>
@@ -464,18 +466,18 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
         <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-10">
           <div className="bg-white dark:bg-darkblack-600 rounded-lg p-6 w-full max-w-md mx-4">
             <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
-              {selectedPayment?.isCapitalPayment ? "Abono a Capital" : "Aplicar Pago"}
+              {selectedPayment?.isCapitalPayment ? t('contracts.capitalPayment') : t('contracts.applyPayment')}
             </h4>
             <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
               {selectedPayment?.isCapitalPayment 
-                ? "Pago adicional que se aplicará directamente al capital del contrato"
-                : `Pago #${selectedPayment.id} - ${translatePaymentType(selectedPayment.payment_type)}`
+                ? t('contracts.capitalPaymentDescription')
+                : `${t('contracts.paymentFor')} #${selectedPayment.id} - ${translatePaymentType(selectedPayment.payment_type)}`
               }
             </p>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  {selectedPayment?.isCapitalPayment ? "Monto del Abono" : "Monto a Pagar"}
+                  {selectedPayment?.isCapitalPayment ? t('contracts.capitalPaymentAmount') : t('contracts.paymentAmount')}
                 </label>
                 <input
                   type="number"
@@ -490,7 +492,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                       setEditableTotal((amount + interest).toString());
                     }
                   }}
-                  placeholder={selectedPayment?.isCapitalPayment ? "Ingrese el monto del abono" : ""}
+                  placeholder={selectedPayment?.isCapitalPayment ? t('contracts.enterCapitalPaymentAmount') : ""}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white focus:ring-2 focus:ring-blue-300"
                 />
               </div>
@@ -498,7 +500,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                 <>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Interés/Mora
+                      {t('contracts.interestMoratory')}
                     </label>
                     <input
                       type="number"
@@ -516,7 +518,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Total a Pagar (Monto + Interés)
+                      {t('contracts.totalPaymentAmount')}
                     </label>
                     <input
                       type="number"
@@ -531,7 +533,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                       <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                       Modificar el monto o interés afecta directamente el balance del contrato.
+                       {t('contracts.amountInterestWarning')}
                     </p>
                   </div>
                 </>
@@ -542,7 +544,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                     <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    Este monto se aplicará directamente al capital, reduciendo el balance del contrato.
+                    {t('contracts.capitalPaymentInfo')}
                   </p>
                 </div>
               )}
@@ -558,7 +560,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                 }}
                 className="px-4 py-2 text-sm font-medium rounded-lg bg-gray-200 hover:bg-gray-300 dark:bg-darkblack-500 dark:hover:bg-darkblack-400 text-gray-800 dark:text-gray-100"
               >
-                Cancelar
+                {t('common.cancel')}
               </button>
               <button
                 onClick={async () => {
@@ -569,7 +571,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                     if (selectedPayment?.isCapitalPayment) {
                       // Handle capital payment (abono a capital)
                       if (paymentAmount <= 0) {
-                        alert("El monto del abono debe ser mayor a 0");
+                        alert(t('contracts.capitalPaymentAmountRequired'));
                         setActionLoading(false);
                         return;
                       }
@@ -627,7 +629,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                       const paidAmount = parseFloat(editableTotal) || 0;
 
                       if (paidAmount <= 0) {
-                        alert("El monto total debe ser mayor a 0");
+                        alert(t('contracts.totalAmountRequired'));
                         setActionLoading(false);
                         return;
                       }
@@ -680,8 +682,8 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                     }
                     
                     // Show success feedback
-                    const paymentType = selectedPayment?.isCapitalPayment ? "Abono a capital" : "Pago";
-                    alert(`${paymentType} aplicado exitosamente`);
+                    const paymentType = selectedPayment?.isCapitalPayment ? t('contracts.capitalPayment') : t('contracts.payment');
+                    alert(`${paymentType} ${t('contracts.appliedSuccessfully')}`);
                     
                     setTimeout(() => {
                       setApplyPaymentModal(false);
@@ -693,8 +695,8 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                     }, 500);
                   } catch (error) {
                     console.error('Error applying payment:', error);
-                    const paymentType = selectedPayment?.isCapitalPayment ? "abono a capital" : "pago";
-                    alert(`Error al aplicar ${paymentType}: ${error.message}`);
+                    const paymentType = selectedPayment?.isCapitalPayment ? t('contracts.capitalPayment').toLowerCase() : t('contracts.payment').toLowerCase();
+                    alert(`${t('contracts.errorApplying')} ${paymentType}: ${error.message}`);
                     setActionLoading(false);
                   }
                 }}
@@ -706,8 +708,8 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                 }`}
               >
                 {actionLoading 
-                  ? (selectedPayment?.isCapitalPayment ? "Aplicando Abono..." : "Aplicando...")
-                  : (selectedPayment?.isCapitalPayment ? "Aplicar Abono" : "Aplicar Pago")
+                  ? (selectedPayment?.isCapitalPayment ? t('contracts.applyingCapitalPayment') : t('contracts.applyingPayment'))
+                  : (selectedPayment?.isCapitalPayment ? t('contracts.applyCapitalPayment') : t('contracts.applyPayment'))
                 }
               </button>
             </div>
@@ -720,11 +722,11 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
         <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-10">
           <div className="bg-white dark:bg-darkblack-600 rounded-lg p-6 w-full max-w-md mx-4">
             <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
-              Editar Mora
+              {t('contracts.editMoratory')}
             </h4>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Monto de Mora
+                {t('contracts.moratoryAmount')}
               </label>
               <input
                 type="number"
@@ -742,7 +744,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                 }}
                 className="px-4 py-2 text-sm font-medium rounded-lg bg-gray-200 hover:bg-gray-300 dark:bg-darkblack-500 dark:hover:bg-darkblack-400 text-gray-800 dark:text-gray-100"
               >
-                Cancelar
+                {t('common.cancel')}
               </button>
               <button
                 onClick={() => {
@@ -764,7 +766,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                 }}
                 className="px-4 py-2 text-sm font-medium rounded-lg bg-yellow-500 hover:bg-yellow-600 text-white"
               >
-                Actualizar Mora
+                {t('contracts.updateMoratory')}
               </button>
             </div>
           </div>

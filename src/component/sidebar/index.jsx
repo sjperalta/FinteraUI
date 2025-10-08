@@ -5,10 +5,12 @@ import logoW from "../../assets/images/logo/logo-white.svg";
 import profileImg from "../../assets/images/avatar/profile-xs.png";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
+import { useLocale } from "../../contexts/LocaleContext";
 
 function Sidebar({ handleActive, user, handleLogout }) {
   const [activeDashboard, setActiveDashboard] = useState(false);
   const { pathname: location } = useLocation();
+  const { t } = useLocale();
 
   // A small helper to check user role
   const isAdmin = user.role === "admin";
@@ -60,7 +62,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
           {/* Menu */}
           <div className="item-wrapper mb-5">
             <h4 className="border-b border-bgray-200 text-sm font-medium leading-7 text-bgray-700 dark:border-darkblack-400 dark:text-bgray-50">
-              Menu
+              {t('dashboard.menu')}
             </h4>
             <ul className="mt-2.5">
               {/* Dashboard: Only Admin */}
@@ -89,7 +91,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                         />
                       </svg>
                       <span className="item-text text-lg font-medium leading-none">
-                        Dashboard
+                        {t('dashboard.dashboard')}
                       </span>
                     </div>
                   </Link>
@@ -117,7 +119,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                         />
                       </svg>
                       <span className="item-text text-lg font-medium leading-none">
-                        Balance
+                        {t('dashboard.balance')}
                       </span>
                     </div>
                   </Link>
@@ -142,7 +144,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                         </svg>
                       </span>
                       <span className="item-text text-lg font-medium leading-none">
-                        Pagos
+                        {t('dashboard.payments')}
                       </span>
                     </div>
                   </Link>
@@ -181,7 +183,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                         </svg>
                       </span>
                       <span className="item-text text-lg font-medium leading-none">
-                        Contratos
+                        {t('dashboard.contracts')}
                       </span>
                     </div>
                   </Link>
@@ -228,7 +230,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                         </svg>
                       </span>
                       <span className="item-text text-lg font-medium leading-none">
-                        Proyectos
+                        {t('dashboard.projects')}
                       </span>
                     </div>
                   </Link>
@@ -266,7 +268,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                         />
                       </svg>
                       <span className="item-text text-lg font-medium leading-none">
-                        Usuarios
+                        {t('users.title')}
                       </span>
                     </div>
                   </Link>
@@ -311,7 +313,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                         />
                       </svg>
                       <span className="item-text text-lg font-medium leading-none">
-                        Auditoria
+                        {t('dashboard.audits')}
                       </span>
                     </div>
                   </Link>
@@ -354,7 +356,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                       />
                     </svg>
                     <span className="item-text text-lg font-medium leading-none">
-                      Iniciar Sesión
+                      {t('dashboard.signIn')}
                     </span>
                   </div>
                 </Link>
@@ -391,7 +393,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                       />
                     </svg>
                     <span className="item-text text-lg font-medium leading-none">
-                      Salir
+                      {t('dashboard.logout')}
                     </span>
                   </div>
                 </Link>
@@ -401,16 +403,16 @@ function Sidebar({ handleActive, user, handleLogout }) {
         </div>
         {/* Footer */}
         <div className="copy-write-text">
-          <p className="text-sm text-[#969BA0]">© 2025 All Rights Reserved</p>
+          <p className="text-sm text-[#969BA0]">{t('footer.copyright')}</p>
           <p className="text-sm font-medium text-bgray-700">
-            Hecho por
+            {t('footer.madeBy')}
             <a
               href="http://www.securexapp.com"
               target="_blank"
               rel="noreferrer"
               className="border-b font-semibold hover:text-blue-600 ml-1"
             >
-              SecureX
+              {t('footer.securex')}
             </a>
           </p>
         </div>

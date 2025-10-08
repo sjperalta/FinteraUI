@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useLocale } from '../../contexts/LocaleContext';
 
 const PaymentScheduleTab = ({
   loading,
@@ -20,31 +21,33 @@ const PaymentScheduleTab = ({
   onPaymentSuccess,
   currentContract
 }) => {
+  const { t } = useLocale();
   return (
     <>
       {loading ? (
         <div className="flex justify-center items-center py-8">
-          <div className="text-bgray-500 dark:text-bgray-300">Cargando plan de pagos...</div>
+          <div className="text-bgray-500 dark:text-bgray-300">{t('paymentSchedule.loading')}</div>
         </div>
       ) : (
         <table className="w-full text-xs md:text-sm">
           <thead className="sticky top-0 bg-white dark:bg-darkblack-600">
             <tr className="text-left text-bgray-500 dark:text-bgray-300 border-b border-bgray-200 dark:border-darkblack-400">
               <th className="py-3 pr-3 font-medium">#</th>
-              <th className="py-3 pr-3 font-medium">Fecha</th>
-              <th className="py-3 pr-3 font-medium">Tipo</th>
-              <th className="py-3 pr-3 font-medium text-right">Monto</th>
-              <th className="py-3 pr-3 font-medium text-right">Interés</th>
-              <th className="py-3 pr-3 font-medium text-center">Días Mora</th>
-              <th className="py-3 pr-3 font-medium">Estado</th>
-              <th className="py-3 pr-3 font-medium text-center">Acciones</th>
+              <th className="py-3 pr-3 font-medium">{t('paymentSchedule.id')}</th>
+              <th className="py-3 pr-3 font-medium">{t('paymentSchedule.date')}</th>
+              <th className="py-3 pr-3 font-medium">{t('paymentSchedule.type')}</th>
+              <th className="py-3 pr-3 font-medium text-right">{t('paymentSchedule.amount')}</th>
+              <th className="py-3 pr-3 font-medium text-right">{t('paymentSchedule.interest')}</th>
+              <th className="py-3 pr-3 font-medium text-center">{t('paymentSchedule.moratoryDays')}</th>
+              <th className="py-3 pr-3 font-medium">{t('paymentSchedule.status')}</th>
+              <th className="py-3 pr-3 font-medium text-center">{t('paymentSchedule.actions')}</th>
             </tr>
           </thead>
           <tbody>
             {(!Array.isArray(schedule) || schedule.length === 0) && (
               <tr>
-                <td colSpan="8" className="py-6 text-center text-bgray-500 dark:text-bgray-300">
-                  No hay plan disponible.
+                <td colSpan="9" className="py-6 text-center text-bgray-500 dark:text-bgray-300">
+                  {t('paymentSchedule.noScheduleAvailable')}
                 </td>
               </tr>
             )}
@@ -64,7 +67,7 @@ const PaymentScheduleTab = ({
               const getMoratoryDaysColor = (days) => {
                 const d = Number(days) || 0;
                 if (d >= 90) return "text-red-600 bg-red-100 dark:bg-red-900 dark:text-red-300";
-                if (d >= 60) return "text-orange-600 bg-orange-100 dark:bg-orange-900 dark:text-orange-300";
+                if (d >= 60) return "text-orange bg-[rgba(255,120,75,0.08)] dark:bg-[rgba(255,120,75,0.12)] dark:text-orange";
                 if (d >= 30) return "text-yellow-600 bg-yellow-100 dark:bg-yellow-900 dark:text-yellow-300";
                 return "text-green-600 bg-green-100 dark:bg-green-900 dark:text-green-300";
               };
@@ -75,6 +78,7 @@ const PaymentScheduleTab = ({
                   className="border-b border-bgray-100 dark:border-darkblack-500 last:border-b-0 hover:bg-bgray-50 dark:hover:bg-darkblack-500"
                 >
                   <td className="py-3 pr-3 font-medium text-bgray-900 dark:text-white">{row.number || idx + 1}</td>
+                  <td className="py-3 pr-3 text-bgray-900 dark:text-white font-mono text-xs">{row.id || 'N/A'}</td>
                   <td className="py-3 pr-3 text-bgray-900 dark:text-white">
                     {row.due_date ? new Date(row.due_date).toLocaleDateString() : "—"}
                   </td>
@@ -87,7 +91,7 @@ const PaymentScheduleTab = ({
                   <td className="py-3 pr-3 text-right font-medium text-bgray-900 dark:text-white">{fmt(interest)}</td>
                   <td className="py-3 pr-3 text-center">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${getMoratoryDaysColor(moratoryDays)}`}>
-                      {moratoryDays} días
+                      {moratoryDays} {t('paymentSchedule.days')}
                     </span>
                   </td>
                   <td className="py-3 pr-3">
@@ -101,7 +105,7 @@ const PaymentScheduleTab = ({
                           : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300")
                       }
                     >
-                      {isPaid ? "Pagado" : isOverdue ? "Vencido" : "Pendiente"}
+                      {isPaid ? t('paymentSchedule.paid') : isOverdue ? t('paymentSchedule.overdue') : t('paymentSchedule.pending')}
                     </span>
                   </td>
                   <td className="py-3 pr-3 text-center">
@@ -116,7 +120,7 @@ const PaymentScheduleTab = ({
                             setApplyPaymentModal(true);
                           }}
                           className="px-2 py-1 text-xs font-medium bg-blue-100 hover:bg-blue-200 text-blue-700 rounded transition-colors"
-                          title="Aplicar Pago"
+                          title={t('paymentSchedule.applyPayment')}
                         >
                           💰
                         </button>
@@ -128,7 +132,7 @@ const PaymentScheduleTab = ({
                             setMoratoryAmount(interest?.toString() || "0");
                           }}
                           className="px-2 py-1 text-xs font-medium bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded transition-colors"
-                          title="Editar Mora"
+                          title={t('paymentSchedule.editMoratory')}
                         >
                           ⚠️
                         </button>
@@ -186,7 +190,7 @@ const PaymentScheduleTab = ({
 
                               }}
                               className="px-2 py-1 text-xs font-medium bg-red-100 hover:bg-red-200 text-red-700 rounded transition-colors"
-                              title="Deshacer Pago"
+                              title={t('paymentSchedule.undoPayment')}
                             >
                               ↩️
                             </button>
@@ -206,13 +210,13 @@ const PaymentScheduleTab = ({
 
             {/* Totals Row */}
             <tr className="border-t-2 border-bgray-300 dark:border-darkblack-300 bg-bgray-50 dark:bg-darkblack-500">
-              <td colSpan="3" className="py-3 pr-3 font-bold text-right text-bgray-900 dark:text-white">Subtotal:</td>
+              <td colSpan="4" className="py-3 pr-3 font-bold text-right text-bgray-900 dark:text-white">Subtotal:</td>
               <td className="py-3 pr-3 text-right font-bold text-bgray-900 dark:text-white">{fmt(totals.subtotal)}</td>
               <td className="py-3 pr-3 text-right font-bold text-success-600 dark:text-success-400">{fmt(totals.totalInterest)}</td>
               <td colSpan="3"></td>
             </tr>
             <tr className="bg-bgray-100 dark:bg-darkblack-400">
-              <td colSpan="3" className="py-3 pr-3 font-bold text-right text-lg text-bgray-900 dark:text-white">TOTAL:</td>
+              <td colSpan="4" className="py-3 pr-3 font-bold text-right text-lg text-bgray-900 dark:text-white">TOTAL:</td>
               <td colSpan="2" className="py-3 pr-3 text-right font-bold text-lg text-bgray-900 dark:text-white">
                 {fmt(totals.total)}
               </td>

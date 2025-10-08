@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import * as Sentry from "@sentry/react";
+import { useLocale } from "../../contexts/LocaleContext";
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -58,9 +59,10 @@ class ErrorBoundary extends React.Component {
   }
 
   renderFallback() {
+    const { t } = this.props.localeContext || { t: (key) => key };
     const fallback = this.props.fallback ?? (
       <div>
-        <p>Something went wrong.</p>
+        <p>{t('errors.somethingWentWrong')}</p>
       </div>
     );
 
@@ -75,11 +77,11 @@ class ErrorBoundary extends React.Component {
             onClick={this.handleRetry}
             className="px-3 py-1 mr-2 bg-gray-200 rounded"
           >
-            Retry
+            {t('common.retry')}
           </button>
           {this.state.eventId && (
             <button onClick={this.handleReport} className="px-3 py-1 bg-blue-600 text-white rounded">
-              Report feedback
+              {t('errors.reportFeedback')}
             </button>
           )}
         </div>
@@ -100,4 +102,10 @@ ErrorBoundary.propTypes = {
   children: PropTypes.node,
 };
 
-export default ErrorBoundary;
+// Wrapper component to provide locale context to class component
+const ErrorBoundaryWithLocale = (props) => {
+  const localeContext = useLocale();
+  return <ErrorBoundary {...props} localeContext={localeContext} />;
+};
+
+export default ErrorBoundaryWithLocale;

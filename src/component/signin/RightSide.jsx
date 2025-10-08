@@ -1,6 +1,8 @@
 import { useMemo } from "react";
+import { useLocale } from "../../contexts/LocaleContext";
 
 function RightSide() {
+  const { t } = useLocale();
   // Generate deterministic decorative dot positions once per mount
   const dots = useMemo(() => {
     const seed = 12345; // deterministic seed
@@ -88,13 +90,13 @@ function RightSide() {
               />
             </svg>
           </div>
-          <h1 className="text-4xl font-bold mb-3 text-white">Fintera</h1>
+          <h1 className="text-4xl font-bold mb-3 text-white">{t('signin.brandName')}</h1>
           <p className="text-xl text-white opacity-90">
-            Tu plataforma inmobiliaria de confianza
+            {t('signin.brandTagline')}
           </p>
         </div>
 
-        {/* Main Features - Rápido, Fácil y Seguro */}
+        {/* Main Features - Fast, Easy and Secure */}
         <div className="space-y-8 mb-16">
           <div className="flex items-center space-x-6 bg-white/15 rounded-2xl p-6 border border-white/20">
             <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
@@ -113,9 +115,9 @@ function RightSide() {
               </svg>
             </div>
             <div className="text-left">
-              <h3 className="text-2xl font-bold text-white mb-1">Rápido</h3>
+              <h3 className="text-2xl font-bold text-white mb-1">{t('signin.fast')}</h3>
               <p className="text-white opacity-80 text-lg">
-                Transacciones instantáneas y eficientes
+                {t('signin.fastDescription')}
               </p>
             </div>
           </div>
@@ -137,9 +139,9 @@ function RightSide() {
               </svg>
             </div>
             <div className="text-left">
-              <h3 className="text-2xl font-bold text-white mb-1">Fácil</h3>
+              <h3 className="text-2xl font-bold text-white mb-1">{t('signin.easy')}</h3>
               <p className="text-white opacity-80 text-lg">
-                Interface intuitiva y user-friendly
+                {t('signin.easyDescription')}
               </p>
             </div>
           </div>
@@ -161,9 +163,9 @@ function RightSide() {
               </svg>
             </div>
             <div className="text-left">
-              <h3 className="text-2xl font-bold text-white mb-1">Seguro</h3>
+              <h3 className="text-2xl font-bold text-white mb-1">{t('signin.secure')}</h3>
               <p className="text-white opacity-80 text-lg">
-                Máxima protección para tus datos
+                {t('signin.secureDescription')}
               </p>
             </div>
           </div>
@@ -173,15 +175,15 @@ function RightSide() {
         <div className="grid grid-cols-3 gap-8 pt-8 border-t border-white/30 w-full max-w-md">
           <div className="text-center">
             <div className="text-3xl font-bold text-white mb-2">2K+</div>
-            <div className="text-white/80">Lotes</div>
+            <div className="text-white/80">{t('signin.lots')}</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-white mb-2">99.9%</div>
-            <div className="text-white/80">Uptime</div>
+            <div className="text-white/80">{t('signin.uptime')}</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-white mb-2">24/7</div>
-            <div className="text-white/80">Soporte</div>
+            <div className="text-white/80">{t('signin.support')}</div>
           </div>
         </div>
         {/* Random decorative dots - purely visual */}

@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { API_URL } from './../../../../config';
 import { getToken } from './../../../../auth';
+import { useLocale } from "../../../contexts/LocaleContext";
 
 function EditProject() {
+  const { t } = useLocale();
   const { id } = useParams();
   const navigate = useNavigate();
   const token = getToken();
@@ -32,7 +34,7 @@ function EditProject() {
             Authorization: `Bearer ${token}`,
           },
         });
-        if (!res.ok) throw new Error("Failed to load project");
+        if (!res.ok) throw new Error(t('projects.failedToLoadProject'));
         const data = await res.json();
         setName(data.name || "");
         setDescription(data.description || "");
@@ -80,7 +82,7 @@ function EditProject() {
 
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || "Error updating project");
+        throw new Error(errData.error || t('projects.errorUpdatingProject'));
       }
 
       navigate("/projects");
@@ -92,77 +94,77 @@ function EditProject() {
   };
 
   if (loadingProject) {
-    return <main className="w-full xl:px-[48px] px-6 pb-6 sm:pt-[156px] pt-[100px]">Loading project...</main>;
+    return <main className="w-full xl:px-[48px] px-6 pb-6 sm:pt-[156px] pt-[100px]">{t('projects.loadingProject')}</main>;
   }
 
   return (
     <main className="w-full xl:px-[48px] px-6 pb-6 xl:pb-[48px] sm:pt-[156px] pt-[100px]">
       <div className="max-w-2xl mx-auto bg-white dark:bg-darkblack-600 p-8 rounded-lg">
-        <h2 className="text-2xl font-bold text-bgray-900 dark:text-white mb-6">Editar Proyecto</h2>
+        <h2 className="text-2xl font-bold text-bgray-900 dark:text-white mb-6">{t('projects.editProject')}</h2>
 
         {error && <p className="text-red-500 mb-4">{error}</p>}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-6">
-            <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">Nombre del Proyecto</label>
+            <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">{t('projects.name')}</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
               className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
-              placeholder="Ingrese el nombre del proyecto"
+              placeholder={t('projects.enterProjectName')}
             />
           </div>
 
           <div className="mb-6">
-            <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">Descripción</label>
+            <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">{t('projects.description')}</label>
             <input
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
-              placeholder="Ingrese una descripción"
+              placeholder={t('projects.enterDescription')}
             />
           </div>
 
           <div className="mb-6">
-            <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">Dirección</label>
+            <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">{t('projects.address')}</label>
             <input
               type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
-              placeholder="Ingrese la dirección del proyecto"
+              placeholder={t('projects.enterAddress')}
             />
           </div>
 
           <div className="mb-6 grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">Cantidad de Lotes</label>
+              <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">{t('projects.lotsCount')}</label>
               <input
                 type="number"
                 value={lotCount}
                 onChange={(e) => setLotCount(Number(e.target.value))}
                 required
                 className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
-                placeholder="Ingrese la cantidad de lotes"
+                placeholder={t('projects.enterLotsCount')}
               />
             </div>
 
             {/* Measurement Unit */}
             <div>
               <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">
-                Unidad de Medida
+                {t('projects.measurementUnit')}
               </label>
               <select
                 value={measurementUnit}
                 onChange={(e) => setMeasurementUnit(e.target.value)}
                 className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
               >
-                <option value="m2">m²</option>
-                <option value="ft2">ft²</option>
-                <option value="vara2">v²</option>
+                <option value="m2">{t('projects.squareMeters')}</option>
+                <option value="ft2">{t('projects.squareFeet')}</option>
+                <option value="vara2">{t('projects.squareVaras')}</option>
               </select>
             </div>
           </div>
@@ -170,7 +172,7 @@ function EditProject() {
           {/* Precio por Unidad */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">
-              Precio por {measurementUnit === 'm2' ? 'm²' : measurementUnit === 'ft2' ? 'ft²' : 'v²'}
+              {t('projects.pricePerUnit')} ({measurementUnit === 'm2' ? t('projects.squareMeters') : measurementUnit === 'ft2' ? t('projects.squareFeet') : t('projects.squareVaras')})
             </label>
             <input
               type="number"
@@ -178,32 +180,32 @@ function EditProject() {
               onChange={(e) => setPricePerSquareUnit(e.target.value)}
               required
               className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
-              placeholder="Ingrese el precio por unidad"
+              placeholder={t('projects.enterPricePerUnit')}
             />
           </div>
 
           <div className="mb-6 grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">Tasa de Interés Anual</label>
+              <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">{t('projects.interestRate')}</label>
               <input
                 type="number"
                 value={interestRate}
                 onChange={(e) => setInterestRate(Number(e.target.value))}
                 required
                 className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
-                placeholder="Ingrese la tasa de interés"
+                placeholder={t('projects.enterInterestRate')}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">Tasa de Comisión (%)</label>
+              <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">{t('projects.commissionRate')}</label>
               <input
                 type="number"
                 value={commissionRate}
                 onChange={(e) => setCommissionRate(Number(e.target.value))}
                 required
                 className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
-                placeholder="Ingrese la tasa de comisión"
+                placeholder={t('projects.enterCommissionRate')}
               />
             </div>
           </div>
@@ -214,14 +216,14 @@ function EditProject() {
               onClick={() => navigate(-1)}
               className="bg-gray-500 hover:bg-gray-600 text-white mt-4 py-3.5 px-4 rounded-lg"
             >
-              Volver
+              {t('common.back')}
             </button>
             <button
               type="submit"
               className="bg-success-300 hover:bg-success-400 text-white font-bold mt-4 py-3.5 px-4 rounded-lg"
               disabled={loading}
             >
-              {loading ? "Guardando..." : "Guardar Cambios"}
+              {loading ? t('projects.saving') : t('projects.saveChanges')}
             </button>
           </div>
         </form>

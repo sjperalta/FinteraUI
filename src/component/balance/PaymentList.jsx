@@ -6,12 +6,14 @@ import { API_URL } from '../../../config'; // Ensure the base URL is correctly s
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import './PaymentList.css'; // Import the CSS for transitions
 import WhiteBtn from "../button/WhiteBtn";
+import { useLocale } from "../../contexts/LocaleContext";
 
 function PaymentList({ user, token }) {
   const [payments, setPayments] = useState([]);
   const [showAll, setShowAll] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { t } = useLocale();
 
   useEffect(() => {
     if (!user || !user.id || !token) {
@@ -71,7 +73,7 @@ function PaymentList({ user, token }) {
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-success-300 mx-auto mb-4"></div>
-          <p className="text-bgray-600 dark:text-bgray-50">Cargando pagos...</p>
+          <p className="text-bgray-600 dark:text-bgray-50">{t('payments.loadingPayments')}</p>
         </div>
       </div>
     );
@@ -86,8 +88,8 @@ function PaymentList({ user, token }) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-red-800 dark:text-red-300 mb-2">Error de conexión</h3>
-          <p className="text-red-600 dark:text-red-400">Error: {error}</p>
+          <h3 className="text-lg font-semibold text-red-800 dark:text-red-300 mb-2">{t('payments.connectionError')}</h3>
+          <p className="text-red-600 dark:text-red-400">{t('common.error')}: {error}</p>
         </div>
       </div>
     );
@@ -103,10 +105,10 @@ function PaymentList({ user, token }) {
             </svg>
           </div>
           <h3 className="text-lg font-semibold text-bgray-700 dark:text-bgray-200 mb-2">
-            No hay pagos pendientes
+            {t('payments.noPayments')}
           </h3>
           <p className="text-bgray-500 dark:text-bgray-400">
-            No tienes ningún contrato de financiamiento activo.
+            {t('payments.noContracts')}
           </p>
         </div>
       </div>
@@ -134,14 +136,14 @@ function PaymentList({ user, token }) {
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
                 </svg>
-                Mostrar Menos
+                {t('payments.showLess')}
               </>
             ) : (
               <>
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
-                Mostrar todo ({payments.length} pagos)
+                {t('payments.showAll')} ({payments.length} {t('dashboard.payments').toLowerCase()})
               </>
             )}
           </button>

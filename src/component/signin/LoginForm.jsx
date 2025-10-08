@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import { useLocale } from "../../contexts/LocaleContext";
 
 function LoginForm({
   email,
@@ -11,6 +12,7 @@ function LoginForm({
   apiError,
   setModalOpen,
 }) {
+  const { t } = useLocale();
   return (
     <div className="mx-auto w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-3xl">
       <div
@@ -45,7 +47,7 @@ function LoginForm({
                     d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
                   />
                 </svg>
-                Correo electrónico
+                {t("auth.email")}
               </label>
               <div className="relative">
                 <input
@@ -64,7 +66,7 @@ function LoginForm({
                     transitionProperty:
                       "box-shadow, border-color, background-color, transform",
                   }}
-                  placeholder="tu@email.com"
+                  placeholder={t("auth.email")}
                   disabled={loading}
                 />
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -120,7 +122,7 @@ function LoginForm({
                     d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                   />
                 </svg>
-                Contraseña
+                {t("auth.password")}
               </label>
               <div className="relative">
                 <input
@@ -209,7 +211,7 @@ function LoginForm({
                 className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
               />
               <span className="ml-2 text-gray-600 dark:text-gray-400">
-                Recordarme
+                {t("auth.rememberMe")}
               </span>
             </label>
           </div>
@@ -248,7 +250,7 @@ function LoginForm({
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   ></path>
                 </svg>
-                Iniciando sesión...
+                {t("common.loading")}
               </div>
             ) : (
               <div className="flex items-center justify-center relative z-10">
@@ -265,7 +267,7 @@ function LoginForm({
                     d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
                   />
                 </svg>
-                Iniciar sesión
+                {t("auth.signIn")}
               </div>
             )}
           </button>
@@ -273,7 +275,7 @@ function LoginForm({
           {/* Forgot Password Link */}
           <div className="text-center pt-4 border-t border-gray-200/50 dark:border-gray-700/50">
             <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-              ¿Necesitas ayuda con tu cuenta?
+              {t("auth.needHelp")}
             </p>
             <button
               type="button"
@@ -293,7 +295,7 @@ function LoginForm({
                   d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              Recuperar contraseña
+              {t("auth.forgotPassword")}
             </button>
           </div>
         </form>

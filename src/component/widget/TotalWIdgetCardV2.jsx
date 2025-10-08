@@ -2,9 +2,11 @@ import ProtoTypes from "prop-types";
 import BarChart from "../chart/BarChart";
 import { useContext } from "react";
 import { ThemeContext } from "../layout";
+import { useLocale } from "../../contexts/LocaleContext";
 
 function TotalWIdgetCardV2({ logo, activeMember }) {
   let { theme } = useContext(ThemeContext);
+  const { t } = useLocale();
   const data = {
     labels: ["Jan", "Feb", "Mar", "Afril", "May", "Jan"],
     datasets: [
@@ -94,7 +96,7 @@ function TotalWIdgetCardV2({ logo, activeMember }) {
             </span>
           </div>
           <span className="text-lg text-bgray-900 font-semibold dark:text-white">
-            Total earnings
+            {t('dashboard.totalEarnings')}
           </span>
         </div>
         <div>

@@ -8,6 +8,7 @@ import Project from "../../component/project";
 
 // Import the new reusable component
 import GenericFilter from "../../component/forms/GenericFilter";
+import { useLocale } from "../../contexts/LocaleContext";
 
 function Projects() {
   const [projects, setProjects] = useState([]);
@@ -15,6 +16,7 @@ function Projects() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { user, token } = useContext(AuthContext);
+  const { t } = useLocale();
 
   // States for filtering/sorting/pagination
   const [searchTerm, setSearchTerm] = useState("");
@@ -125,10 +127,10 @@ function Projects() {
 
       // Refresh projects after successful import
       await fetchProjects();
-      alert("Importación completada");
+      alert(t('projectsPage.importCompleted'));
     } catch (err) {
       console.error(err);
-      alert(`Import error: ${err.message}`);
+      alert(`${t('projectsPage.importErrorPrefix')} ${err.message}`);
     } finally {
       setImporting(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -146,11 +148,11 @@ function Projects() {
   };
 
   if (loading) {
-    return <div>Loading projects...</div>;
+    return <div>{t('projectsPage.loadingProjects')}</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div>{t('projectsPage.errorPrefix')} {error}</div>;
   }
 
   return (
@@ -173,8 +175,8 @@ function Projects() {
         ]}
         onSearchChange={handleSearchChange}
         onFilterChange={handleSortChange}
-        searchPlaceholder="Buscar Proyectos..."
-        filterPlaceholder="Ordenar..."
+        searchPlaceholder={t('projectsPage.searchPlaceholder')}
+        filterPlaceholder={t('projectsPage.sortPlaceholder')}
         minSearchLength={3}
       />
 
@@ -220,7 +222,7 @@ function Projects() {
                       onChange={(e) => setUpdateExisting(e.target.checked)}
                       className="mr-2 h-4 w-4"
                     />
-                    Actualizar existentes
+                    {t('projectsPage.updateExisting')}
                   </label>
                   <label className="flex items-center text-sm text-bgray-700 dark:text-bgray-50">
                     <input
@@ -229,7 +231,7 @@ function Projects() {
                       onChange={(e) => setSkipDuplicates(e.target.checked)}
                       className="mr-2 h-4 w-4"
                     />
-                    Omitir duplicados
+                    {t('projectsPage.skipDuplicates')}
                   </label>
                 </div>
               </div>
@@ -241,7 +243,7 @@ function Projects() {
 
       {isAdmin && (
         <div className="px-4 py-2 mb-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700">
-          <p className="text-sm text-bgray-600 dark:text-bgray-400">Las acciones "Agregar" y "Importar CSV" están disponibles sólo para administradores.</p>
+          <p className="text-sm text-bgray-600 dark:text-bgray-400">{t('projectsPage.adminActionsNotice')}</p>
         </div>
       )}
 
@@ -269,17 +271,17 @@ function Projects() {
             disabled={page <= 1}
             className="bg-gray-200 px-3 py-1 rounded disabled:opacity-50 hover:bg-gray-300 transition-colors duration-200"
           >
-            Prev
+            {t('projectsPage.prev')}
           </button>
           <span>
-            Page {page} of {pagination.pages}
+            {t('projectsPage.page')} {page} {t('projectsPage.of')} {pagination.pages}
           </span>
           <button
             onClick={handleNextPage}
             disabled={page >= pagination.pages}
             className="bg-gray-200 px-3 py-1 rounded disabled:opacity-50 hover:bg-gray-300 transition-colors duration-200"
           >
-            Next
+            {t('projectsPage.next')}
           </button>
         </div>
       )}

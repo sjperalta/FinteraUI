@@ -1,20 +1,13 @@
 // src/component/contracts/ContractDetailsModal.jsx
 import { createPortal } from "react-dom";
+import { formatStatus } from "../../utils/formatStatus";
+import { useLocale } from "../../contexts/LocaleContext";
 
 const formatCurrency = (v) => {
   if (v === null || v === undefined || v === "") return "—";
   const num = Number(v);
   if (isNaN(num)) return v;
   return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " HNL";
-};
-
-const translateFinancingType = (type) => {
-  switch (type?.toLowerCase()) {
-    case "direct": return "Directo";
-    case "cash": return "Contado";
-    case "bank": return "Bancario";
-    default: return "N/A";
-  }
 };
 
 // Calculate monthly payment
@@ -37,6 +30,7 @@ const calculateMonthlyPayment = (contract) => {
 
 // Contract Details Modal Component
 const ContractDetailsModal = ({ isOpen, onClose, contract }) => {
+  const { t } = useLocale();
   if (!isOpen || !contract) return null;
 
   return createPortal(
@@ -50,16 +44,16 @@ const ContractDetailsModal = ({ isOpen, onClose, contract }) => {
               <span className="text-white text-xl">📋</span>
             </div>
             <div>
-              <h3 className="text-xl font-bold text-white">Detalles del Contrato</h3>
+              <h3 className="text-xl font-bold text-white">{t('contractDetailsModal.title')}</h3>
               <p className="text-sm text-indigo-100">
-                Información completa del contrato #{contract.contract_id || 'N/A'}
+                {t('contractDetailsModal.subtitle', { contractId: contract.contract_id || 'N/A' })}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
             className="w-8 h-8 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/30 text-white hover:text-indigo-200 transition-all duration-200 text-xl font-light"
-            aria-label="Cerrar"
+            aria-label={t('contractDetailsModal.close')}
           >
             ×
           </button>
@@ -75,27 +69,27 @@ const ContractDetailsModal = ({ isOpen, onClose, contract }) => {
                 <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
                   <span className="text-white text-sm">🏢</span>
                 </div>
-                <h4 className="text-lg font-semibold text-blue-800 dark:text-blue-200">Proyecto</h4>
+                <h4 className="text-lg font-semibold text-blue-800 dark:text-blue-200">{t('contractDetailsModal.project')}</h4>
               </div>
               <div className="space-y-3">
                 <div className="flex items-start space-x-2">
                   <span className="text-blue-600 dark:text-blue-400 mt-0.5">📍</span>
                   <div>
-                    <p className="text-sm font-medium text-blue-800 dark:text-blue-200">Nombre</p>
+                    <p className="text-sm font-medium text-blue-800 dark:text-blue-200">{t('contractDetailsModal.name')}</p>
                     <p className="text-sm text-blue-700 dark:text-blue-300">{contract.project_name || 'N/A'}</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-2">
                   <span className="text-blue-600 dark:text-blue-400 mt-0.5">🏠</span>
                   <div>
-                    <p className="text-sm font-medium text-blue-800 dark:text-blue-200">Dirección</p>
+                    <p className="text-sm font-medium text-blue-800 dark:text-blue-200">{t('contractDetailsModal.address')}</p>
                     <p className="text-sm text-blue-700 dark:text-blue-300">{contract.project_address || 'N/A'}</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-2">
                   <span className="text-blue-600 dark:text-blue-400 mt-0.5">🆔</span>
                   <div>
-                    <p className="text-sm font-medium text-blue-800 dark:text-blue-200">ID</p>
+                    <p className="text-sm font-medium text-blue-800 dark:text-blue-200">{t('contractDetailsModal.id')}</p>
                     <p className="text-sm text-blue-700 dark:text-blue-300 font-mono">{contract.project_id || 'N/A'}</p>
                   </div>
                 </div>
@@ -108,27 +102,27 @@ const ContractDetailsModal = ({ isOpen, onClose, contract }) => {
                 <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
                   <span className="text-white text-sm">🏡</span>
                 </div>
-                <h4 className="text-lg font-semibold text-green-800 dark:text-green-200">Lote</h4>
+                <h4 className="text-lg font-semibold text-green-800 dark:text-green-200">{t('contractDetailsModal.lot')}</h4>
               </div>
               <div className="space-y-3">
                 <div className="flex items-start space-x-2">
                   <span className="text-green-600 dark:text-green-400 mt-0.5">🏠</span>
                   <div>
-                    <p className="text-sm font-medium text-green-800 dark:text-green-200">Nombre</p>
+                    <p className="text-sm font-medium text-green-800 dark:text-green-200">{t('contractDetailsModal.name')}</p>
                     <p className="text-sm text-green-700 dark:text-green-300">{contract.lot_name || 'N/A'}</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-2">
                   <span className="text-green-600 dark:text-green-400 mt-0.5">📍</span>
                   <div>
-                    <p className="text-sm font-medium text-green-800 dark:text-green-200">Dirección</p>
+                    <p className="text-sm font-medium text-green-800 dark:text-green-200">{t('contractDetailsModal.address')}</p>
                     <p className="text-sm text-green-700 dark:text-green-300">{contract.lot_address || 'N/A'}</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-2">
                   <span className="text-green-600 dark:text-green-400 mt-0.5">🆔</span>
                   <div>
-                    <p className="text-sm font-medium text-green-800 dark:text-green-200">ID</p>
+                    <p className="text-sm font-medium text-green-800 dark:text-green-200">{t('contractDetailsModal.id')}</p>
                     <p className="text-sm text-green-700 dark:text-green-300 font-mono">{contract.lot_id || 'N/A'}</p>
                   </div>
                 </div>
@@ -141,13 +135,13 @@ const ContractDetailsModal = ({ isOpen, onClose, contract }) => {
                 <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
                   <span className="text-white text-sm">👤</span>
                 </div>
-                <h4 className="text-lg font-semibold text-purple-800 dark:text-purple-200">Solicitante</h4>
+                <h4 className="text-lg font-semibold text-purple-800 dark:text-purple-200">{t('contractDetailsModal.applicant')}</h4>
               </div>
               <div className="space-y-3">
                 <div className="flex items-start space-x-2">
                   <span className="text-purple-600 dark:text-purple-400 mt-0.5">👤</span>
                   <div>
-                    <p className="text-sm font-medium text-purple-800 dark:text-purple-200">Nombre</p>
+                    <p className="text-sm font-medium text-purple-800 dark:text-purple-200">{t('contractDetailsModal.name')}</p>
                     <p className="text-sm text-purple-700 dark:text-purple-300">{contract.applicant_name || 'N/A'}</p>
                   </div>
                 </div>
@@ -155,7 +149,7 @@ const ContractDetailsModal = ({ isOpen, onClose, contract }) => {
                   <div className="flex items-start space-x-2">
                     <span className="text-purple-600 dark:text-purple-400 mt-0.5">🆔</span>
                     <div>
-                      <p className="text-sm font-medium text-purple-800 dark:text-purple-200">Identidad</p>
+                      <p className="text-sm font-medium text-purple-800 dark:text-purple-200">{t('contractDetailsModal.identity')}</p>
                       <p className="text-sm text-purple-700 dark:text-purple-300 font-mono">{contract.applicant_identity}</p>
                     </div>
                   </div>
@@ -164,16 +158,16 @@ const ContractDetailsModal = ({ isOpen, onClose, contract }) => {
                   <div className="flex items-start space-x-2">
                     <span className="text-purple-600 dark:text-purple-400 mt-0.5">📞</span>
                     <div>
-                      <p className="text-sm font-medium text-purple-800 dark:text-purple-200">Teléfono</p>
+                      <p className="text-sm font-medium text-purple-800 dark:text-purple-200">{t('contractDetailsModal.phone')}</p>
                       <p className="text-sm text-purple-700 dark:text-purple-300">{contract.applicant_phone}</p>
                     </div>
                   </div>
                 )}
-                {contract.applicant_credit_score || contract.applicant_credit_score >= 0 && (
+                {(contract.applicant_credit_score || contract.applicant_credit_score >= 0) && (
                   <div className="flex items-start space-x-2">
                     <span className="text-purple-600 dark:text-purple-400 mt-0.5">📊</span>
                     <div>
-                      <p className="text-sm font-medium text-purple-800 dark:text-purple-200">Puntuación Crediticia</p>
+                      <p className="text-sm font-medium text-purple-800 dark:text-purple-200">{t('contractDetailsModal.creditScore')}</p>
                       <p className="text-sm text-purple-700 dark:text-purple-300 font-semibold">{contract.applicant_credit_score}</p>
                     </div>
                   </div>
@@ -188,13 +182,13 @@ const ContractDetailsModal = ({ isOpen, onClose, contract }) => {
               <div className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
                 <span className="text-white text-sm">💰</span>
               </div>
-              <h4 className="text-lg font-semibold text-emerald-800 dark:text-emerald-200">Información Financiera</h4>
+              <h4 className="text-lg font-semibold text-emerald-800 dark:text-emerald-200">{t('contractDetailsModal.financialInfo')}</h4>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="flex items-start space-x-2">
                 <span className="text-emerald-600 dark:text-emerald-400 mt-0.5">💵</span>
                 <div>
-                  <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">Precio Total</p>
+                  <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">{t('contractDetailsModal.totalPrice')}</p>
                   <p className="text-lg font-bold text-emerald-700 dark:text-emerald-300">
                     {contract.amount ? formatCurrency(contract.amount) : 'N/A'}
                   </p>
@@ -203,21 +197,21 @@ const ContractDetailsModal = ({ isOpen, onClose, contract }) => {
               <div className="flex items-start space-x-2">
                 <span className="text-emerald-600 dark:text-emerald-400 mt-0.5">💳</span>
                 <div>
-                  <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">Tipo de Financiamiento</p>
-                  <p className="text-sm text-emerald-700 dark:text-emerald-300">{translateFinancingType(contract.financing_type)}</p>
+                  <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">{t('contractDetailsModal.financingType')}</p>
+                  <p className="text-sm text-emerald-700 dark:text-emerald-300">{t(`contractDetailsModal.financingTypes.${contract.financing_type?.toLowerCase()}`) || 'N/A'}</p>
                 </div>
               </div>
               <div className="flex items-start space-x-2">
                 <span className="text-emerald-600 dark:text-emerald-400 mt-0.5">📅</span>
                 <div>
-                  <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">Plazo de Pago</p>
-                  <p className="text-sm text-emerald-700 dark:text-emerald-300">{contract.payment_term || 'N/A'} meses</p>
+                  <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">{t('contractDetailsModal.paymentTerm')}</p>
+                  <p className="text-sm text-emerald-700 dark:text-emerald-300">{contract.payment_term || 'N/A'} {t('contractDetailsModal.months')}</p>
                 </div>
               </div>
               <div className="flex items-start space-x-2">
                 <span className="text-emerald-600 dark:text-emerald-400 mt-0.5">💰</span>
                 <div>
-                  <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">Monto de Reserva</p>
+                  <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">{t('contractDetailsModal.reserveAmount')}</p>
                   <p className="text-sm text-emerald-700 dark:text-emerald-300">
                     {contract.reserve_amount ? formatCurrency(contract.reserve_amount) : 'N/A'}
                   </p>
@@ -226,7 +220,7 @@ const ContractDetailsModal = ({ isOpen, onClose, contract }) => {
               <div className="flex items-start space-x-2">
                 <span className="text-emerald-600 dark:text-emerald-400 mt-0.5">💵</span>
                 <div>
-                  <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">Pago Inicial</p>
+                  <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">{t('contractDetailsModal.downPayment')}</p>
                   <p className="text-sm text-emerald-700 dark:text-emerald-300">
                     {contract.down_payment ? formatCurrency(contract.down_payment) : 'N/A'}
                   </p>
@@ -235,7 +229,7 @@ const ContractDetailsModal = ({ isOpen, onClose, contract }) => {
               <div className="flex items-start space-x-2">
                 <span className="text-emerald-600 dark:text-emerald-400 mt-0.5">📅</span>
                 <div>
-                  <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">Pago Mensual</p>
+                  <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">{t('contractDetailsModal.monthlyPayment')}</p>
                   <p className="text-sm text-emerald-700 dark:text-emerald-300 font-semibold">
                     {calculateMonthlyPayment(contract)}
                   </p>
@@ -252,27 +246,27 @@ const ContractDetailsModal = ({ isOpen, onClose, contract }) => {
                 <div className="w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center">
                   <span className="text-white text-sm">📊</span>
                 </div>
-                <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Estado del Contrato</h4>
+                <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">{t('contractDetailsModal.contractStatus')}</h4>
               </div>
               <div className="space-y-3">
                 <div className="flex items-start space-x-2">
                   <span className="text-gray-600 dark:text-gray-400 mt-0.5">📋</span>
                   <div>
-                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200">Estado</p>
-                    <p className="text-sm text-gray-700 dark:text-gray-300 capitalize">{contract.status || 'N/A'}</p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{t('contractDetailsModal.status')}</p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 capitalize">{formatStatus(contract.status, t) || t('common.notAvailable')}</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-2">
                   <span className="text-gray-600 dark:text-gray-400 mt-0.5">🆔</span>
                   <div>
-                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200">ID del Contrato</p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{t('contractDetailsModal.contractId')}</p>
                     <p className="text-sm text-gray-700 dark:text-gray-300 font-mono">{contract.contract_id || 'N/A'}</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-2">
                   <span className="text-gray-600 dark:text-gray-400 mt-0.5">📅</span>
                   <div>
-                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200">Fecha de Creación</p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{t('contractDetailsModal.creationDate')}</p>
                     <p className="text-sm text-gray-700 dark:text-gray-300">{contract.created_at ? new Date(contract.created_at).toLocaleDateString() : 'N/A'}</p>
                   </div>
                 </div>
@@ -280,7 +274,7 @@ const ContractDetailsModal = ({ isOpen, onClose, contract }) => {
                   <div className="flex items-start space-x-2">
                     <span className="text-gray-600 dark:text-gray-400 mt-0.5">✅</span>
                     <div>
-                      <p className="text-sm font-medium text-gray-800 dark:text-gray-200">Fecha de Aprobación</p>
+                      <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{t('contractDetailsModal.approvalDate')}</p>
                       <p className="text-sm text-gray-700 dark:text-gray-300">{new Date(contract.approved_at).toLocaleDateString()}</p>
                     </div>
                   </div>
@@ -294,21 +288,21 @@ const ContractDetailsModal = ({ isOpen, onClose, contract }) => {
                 <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
                   <span className="text-white text-sm">📝</span>
                 </div>
-                <h4 className="text-lg font-semibold text-orange-800 dark:text-orange-200">Información Adicional</h4>
+                <h4 className="text-lg font-semibold text-orange-800 dark:text-orange-200">{t('contractDetailsModal.additionalInfo')}</h4>
               </div>
               <div className="space-y-3">
                 {contract.rejection_reason && (
                   <div className="flex items-start space-x-2">
-                    <span className="text-orange-600 dark:text-orange-400 mt-0.5">❌</span>
+                    <span className="text-orange dark:text-orange mt-0.5">❌</span>
                     <div>
-                      <p className="text-sm font-medium text-orange-800 dark:text-orange-200">Razón de Rechazo</p>
+                      <p className="text-sm font-medium text-orange-800 dark:text-orange-200">{t('contractDetailsModal.rejectionReason')}</p>
                       <p className="text-sm text-orange-700 dark:text-orange-300">{contract.rejection_reason}</p>
                     </div>
                   </div>
                 )}
                 {!contract.rejection_reason && (
                   <div className="text-center py-4">
-                    <p className="text-sm text-orange-600 dark:text-orange-400">No hay información adicional</p>
+                    <p className="text-sm text-orange dark:text-orange">{t('contractDetailsModal.noAdditionalInfo')}</p>
                   </div>
                 )}
               </div>
@@ -322,7 +316,7 @@ const ContractDetailsModal = ({ isOpen, onClose, contract }) => {
                 <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
                   <span className="text-white text-sm">📝</span>
                 </div>
-                <h4 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200">Notas del Contrato</h4>
+                <h4 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200">{t('contractDetailsModal.contractNotes')}</h4>
               </div>
               <div className="bg-white/50 dark:bg-yellow-900/10 rounded-lg p-4 border border-yellow-200 dark:border-yellow-600">
                 <div 
@@ -340,7 +334,7 @@ const ContractDetailsModal = ({ isOpen, onClose, contract }) => {
             onClick={onClose}
             className="px-6 py-2 text-sm font-semibold rounded-lg bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
           >
-            Cerrar
+            {t('contractDetailsModal.close')}
           </button>
         </div>
       </div>

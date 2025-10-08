@@ -5,9 +5,11 @@ import Report from "../../component/report";
 import AuthContext from "../../context/AuthContext";
 import { getToken } from "../../../auth";
 import { API_URL } from "../../../config";
+import { useLocale } from "../../contexts/LocaleContext";
 
 // A MonthSelector component with prev/next buttons and a dropdown for month selection
 function MonthSelector({ selectedMonth, onChange }) {
+  const { t } = useLocale();
   // Handler to go to the previous month
   const handlePrev = () => {
     const newDate = new Date(
@@ -38,10 +40,10 @@ function MonthSelector({ selectedMonth, onChange }) {
         </div>
         <div>
           <h3 className="text-lg font-semibold text-bgray-900 dark:text-white">
-            Período de Análisis
+            {t('home.analysisPeriod')}
           </h3>
           <p className="text-sm text-bgray-500 dark:text-bgray-300">
-            Selecciona el mes y año para ver los datos
+            {t('home.selectMonthYear')}
           </p>
         </div>
       </div>
@@ -54,7 +56,7 @@ function MonthSelector({ selectedMonth, onChange }) {
           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          Anterior
+          {t('home.previous')}
         </button>
         
         <div className="flex items-center space-x-2 bg-gray-50 dark:bg-darkblack-700 p-2 rounded-lg">
@@ -85,7 +87,7 @@ function MonthSelector({ selectedMonth, onChange }) {
           onClick={handleNext}
           className="inline-flex items-center px-3 py-2 bg-white dark:bg-darkblack-700 border border-gray-300 dark:border-darkblack-500 rounded-lg text-sm font-medium text-bgray-700 dark:text-bgray-200 hover:bg-gray-50 dark:hover:bg-darkblack-600 transition-colors duration-200"
         >
-          Siguiente
+          {t('home.next')}
           <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
@@ -97,14 +99,15 @@ function MonthSelector({ selectedMonth, onChange }) {
 
 function Home() {
   const { user } = useContext(AuthContext);
+  const { t } = useLocale();
   const token = getToken();
 
   // Function to get dynamic greeting based on time of day
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return "Buenos días";
-    if (hour < 18) return "Buenas tardes";
-    return "Buenas noches";
+    if (hour < 12) return t('home.goodMorning');
+    if (hour < 18) return t('home.goodAfternoon');
+    return t('home.goodEvening');
   };
 
   const [statistics, setStatistics] = useState({
@@ -232,17 +235,17 @@ function Home() {
           }
 
           // Show success message
-          alert('Estadísticas actualizadas correctamente');
+          alert(t('home.statisticsUpdated'));
         } catch (err) {
           console.error('Error fetching updated statistics:', err);
-          alert('Error al obtener las estadísticas actualizadas');
+          alert(t('home.errorFetchingUpdatedStats'));
         } finally {
           setRefreshing(false);
         }
       }, 3000); // Wait 3 seconds
     } catch (err) {
       console.error('Error refreshing statistics:', err);
-      alert('Error al actualizar las estadísticas');
+      alert(t('home.errorUpdatingStats'));
       setRefreshing(false);
     }
   };
@@ -260,9 +263,9 @@ function Home() {
                 </svg>
               </div>
               <div>
-                <h1 className="text-3xl font-bold mb-1">Dashboard Principal</h1>
+                <h1 className="text-3xl font-bold mb-1">{t('home.mainDashboard')}</h1>
                 <p className="text-blue-100">
-                  {getGreeting()} {user?.full_name || 'Usuario'}, aquí está tu resumen ejecutivo
+                  {getGreeting()} {user?.full_name || t('home.user')}, {t('home.executiveSummary')}
                 </p>
               </div>
             </div>
@@ -284,14 +287,14 @@ function Home() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Actualizando Estadísticas...
+                {t('home.updatingStatistics')}
               </>
             ) : (
               <>
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
-                Actualizar Estadísticas
+                {t('home.updateStatistics')}
               </>
             )}
           </button>
@@ -313,8 +316,8 @@ function Home() {
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 border-opacity-25 border-t-blue-600 mx-auto mb-6"></div>
-            <h3 className="text-xl font-semibold text-bgray-900 dark:text-white mb-2">Cargando Dashboard</h3>
-            <p className="text-bgray-600 dark:text-bgray-50">Obteniendo la información más reciente...</p>
+            <h3 className="text-xl font-semibold text-bgray-900 dark:text-white mb-2">{t('home.loadingDashboard')}</h3>
+            <p className="text-bgray-600 dark:text-bgray-50">{t('home.gettingLatestInfo')}</p>
           </div>
         </div>
       )}
@@ -328,7 +331,7 @@ function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-red-800 dark:text-red-300 mb-3">Error de conexión</h3>
+            <h3 className="text-xl font-semibold text-red-800 dark:text-red-300 mb-3">{t('home.connectionError')}</h3>
             <p className="text-red-600 dark:text-red-400 mb-6">{error}</p>
             <button
               onClick={() => window.location.reload()}
@@ -337,7 +340,7 @@ function Home() {
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-              Reintentar
+              {t('home.retry')}
             </button>
           </div>
         </div>
@@ -359,17 +362,17 @@ function Home() {
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold text-bgray-900 dark:text-white">
-                      Proyección de Ingresos
+                      {t('home.revenueProjection')}
                     </h3>
                     <p className="text-sm text-bgray-500 dark:text-bgray-300">
-                      Análisis comparativo de proyección de ingresos por tipo de pago
+                      {t('home.revenueProjectionDescription')}
                     </p>
                   </div>
                 </div>
               </div>
               <div className="p-6">
                 <div className="h-[400px]">
-                  <RevenueFlow selectedYear={selectedMonth.getFullYear()} />
+                  <RevenueFlow selectedYear={selectedMonth.getFullYear()} currentMonth={selectedMonth.getMonth() + 1} />
                 </div>
               </div>
             </div>

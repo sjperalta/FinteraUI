@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import ProtoTypes from "prop-types";
 import { Link } from "react-router-dom";
+import { useLocale } from "../../contexts/LocaleContext";
 import logoColor from "../../assets/images/logo/logo-color.svg";
 import logoWhite from "../../assets/images/logo/logo-white.svg";
 import { API_URL } from "../../../config";
@@ -41,50 +42,53 @@ export const HeadingLogo = () => (
   </Link>
 );
 
-export const ResetPass = ({ email, setEmail, error, loading, onSubmit, onClose }) => (
-  <div className="step-content step-1">
-    <div className="relative max-w-[492px] transform overflow-hidden rounded-lg bg-white dark:bg-darkblack-600 p-8 text-left transition-all">
-      <CrossBtn close={onClose} />
-      <div>
-        <HeadingLogo />
-        <h3 className="text-2xl font-bold text-bgray-900 dark:text-white mb-3">
-          Restablecer tu contraseña
-        </h3>
-        <p className="text-base font-medium text-bgray-600 dark:text-darkblack-300 mb-7">
-        Ingresa el correo electrónico asociado a tu cuenta
-        </p>
+export const ResetPass = ({ email, setEmail, error, loading, onSubmit, onClose }) => {
+  const { t } = useLocale();
+  return (
+    <div className="step-content step-1">
+      <div className="relative max-w-[492px] transform overflow-hidden rounded-lg bg-white dark:bg-darkblack-600 p-8 text-left transition-all">
+        <CrossBtn close={onClose} />
+        <div>
+          <HeadingLogo />
+          <h3 className="text-2xl font-bold text-bgray-900 dark:text-white mb-3">
+            {t('auth.resetPassword')}
+          </h3>
+          <p className="text-base font-medium text-bgray-600 dark:text-darkblack-300 mb-7">
+            {t('auth.enterEmailAssociated')}
+          </p>
 
-        {error && <p className="text-red-500 mb-3" aria-live="assertive">{error}</p>}
+          {error && <p className="text-red-500 mb-3" aria-live="assertive">{error}</p>}
 
-        <form onSubmit={onSubmit}>
-          <div className="mb-8">
-            <input
-              type="email"
-              required
-              className="rounded-lg bg-[#F5F5F5] dark:bg-darkblack-500 dark:text-white p-4 border-0 focus:border focus:ring-0 focus:border-success-300 w-full placeholder:font-medium text-base h-14"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <Link
-            to="/signin"
-            className="block text-sm font-bold text-success-300 mb-8 underline"
-          >
-            Volver al inicio de sesión
-          </Link>
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex w-full py-4 text-white bg-success-300 hover:bg-success-400 transition-all justify-center text-base font-medium rounded-lg disabled:opacity-50"
-          >
-            {loading ? 'Sending...' : 'Continue'}
-          </button>
-        </form>
+          <form onSubmit={onSubmit}>
+            <div className="mb-8">
+              <input
+                type="email"
+                required
+                className="rounded-lg bg-[#F5F5F5] dark:bg-darkblack-500 dark:text-white p-4 border-0 focus:border focus:ring-0 focus:border-success-300 w-full placeholder:font-medium text-base h-14"
+                placeholder={t('auth.email')}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <Link
+              to="/signin"
+              className="block text-sm font-bold text-success-300 mb-8 underline"
+            >
+              {t('auth.backToSignIn')}
+            </Link>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex w-full py-4 text-white bg-success-300 hover:bg-success-400 transition-all justify-center text-base font-medium rounded-lg disabled:opacity-50"
+            >
+              {loading ? t('auth.sending') : t('common.continue')}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export const CodeVerify = ({ 
   email,
@@ -97,6 +101,7 @@ export const CodeVerify = ({
   onResend,
   onClose
 }) => {
+  const { t } = useLocale();
   const inputs = useRef([]);
 
   const handleChange = (index, value) => {
@@ -129,10 +134,10 @@ export const CodeVerify = ({
         <div>
           <HeadingLogo />
           <h3 className="text-2xl font-bold text-bgray-900 dark:text-white mb-3">
-            Ingresa el código de verificación
+            {t('auth.enterVerificationCode')}
           </h3>
           <p className="text-base font-medium text-bgray-600 dark:text-darkblack-300 mb-7">
-            Enviado a {maskedEmail}
+            {t('auth.sentTo')} {maskedEmail}
           </p>
 
           {error && <p className="text-red-500 mb-3" aria-live="assertive">{error}</p>}
@@ -160,14 +165,14 @@ export const CodeVerify = ({
               disabled={resending}
               className="block text-sm font-bold text-success-300 mb-8 disabled:opacity-50"
             >
-              {resending ? 'Sending...' : 'Resend code'}
+              {resending ? t('auth.sending') : t('auth.resendCode')}
             </button>
             <button
               type="submit"
               disabled={loading}
               className="flex w-full py-4 text-white bg-success-300 hover:bg-success-400 transition-all justify-center text-base font-medium rounded-lg disabled:opacity-50"
             >
-              {loading ? 'Verifying...' : 'Verify'}
+              {loading ? t('auth.verifying') : t('auth.verify')}
             </button>
           </form>
         </div>
@@ -186,6 +191,7 @@ export const NewPass = ({
   onSubmit,
   onClose
 }) => {
+  const { t } = useLocale();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -196,10 +202,10 @@ export const NewPass = ({
         <div>
           <HeadingLogo />
           <h3 className="text-2xl font-bold text-bgray-900 dark:text-white mb-3">
-            Crear nueva contraseña
+            {t('auth.createNewPassword')}
           </h3>
           <p className="text-base font-medium text-bgray-600 dark:text-darkblack-300 mb-7">
-            Ingresa una nueva contraseña a continuación
+            {t('auth.enterNewPassword')}
           </p>
 
           {error && <p className="text-red-500 mb-3" aria-live="assertive">{error}</p>}
@@ -209,7 +215,7 @@ export const NewPass = ({
               <input
                 type={showPassword ? "text" : "password"}
                 className="text-bgray-800 text-base border border-bgray-300 h-14 w-full focus:border-success-300 focus:ring-0 rounded-lg px-4 py-3.5 placeholder:text-bgray-500 placeholder:text-base dark:text-white dark:bg-darkblack-500 dark:border-0"
-                placeholder="Password"
+                placeholder={t('auth.password')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -226,7 +232,7 @@ export const NewPass = ({
               <input
                 type={showConfirm ? "text" : "password"}
                 className="text-bgray-800 text-base border border-bgray-300 h-14 w-full focus:border-success-300 focus:ring-0 rounded-lg px-4 py-3.5 placeholder:text-bgray-500 placeholder:text-base dark:bg-darkblack-500 dark:border-0"
-                placeholder="Confirm password"
+                placeholder={t('auth.confirmPassword')}
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
                 required
@@ -244,7 +250,7 @@ export const NewPass = ({
               disabled={loading}
               className="flex w-full py-4 text-white bg-success-300 hover:bg-success-400 transition-all justify-center text-base font-medium rounded-lg disabled:opacity-50"
             >
-              {loading ? 'Updating...' : 'Confirm Password'}
+              {loading ? t('auth.updating') : t('auth.confirmPassword')}
             </button>
           </form>
         </div>
@@ -253,30 +259,34 @@ export const NewPass = ({
   );
 };
 
-export const SuccessFull = ({ onClose }) => (
-  <div className="step-content step-4">
-    <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-darkblack-600 p-8 text-left transition-all">
-      <CrossBtn close={onClose} />
-      <div className="text-center mt-4">
-        <h3 className="text-2xl font-bold text-bgray-900 dark:text-white mb-3">
-          ¡Contraseña actualizada con éxito!
-        </h3>
-        <p className="text-base font-medium text-bgray-600 dark:text-darkblack-300 mb-7">
-          Has restablecido tu contraseña correctamente
-        </p>
-        <Link
-          to="/signin"
-          onClick={onClose}
-          className="flex w-full py-4 text-white bg-success-300 hover:bg-success-400 transition-all justify-center text-base font-semibold rounded-lg"
-        >
-          Volver al inicio de sesión
-        </Link>
+export const SuccessFull = ({ onClose }) => {
+  const { t } = useLocale();
+  return (
+    <div className="step-content step-4">
+      <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-darkblack-600 p-8 text-left transition-all">
+        <CrossBtn close={onClose} />
+        <div className="text-center mt-4">
+          <h3 className="text-2xl font-bold text-bgray-900 dark:text-white mb-3">
+            {t('auth.passwordUpdatedSuccessfully')}
+          </h3>
+          <p className="text-base font-medium text-bgray-600 dark:text-darkblack-300 mb-7">
+            {t('auth.passwordResetCorrectly')}
+          </p>
+          <Link
+            to="/signin"
+            onClick={onClose}
+            className="flex w-full py-4 text-white bg-success-300 hover:bg-success-400 transition-all justify-center text-base font-semibold rounded-lg"
+          >
+            {t('auth.backToSignIn')}
+          </Link>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 function PasswordResetModal({ isActive, handleActive }) {
+  const { t } = useLocale();
   const [step, setStep] = useState('reset');
   const [email, setEmail] = useState('');
   const [digits, setDigits] = useState(Array(5).fill(''));
@@ -370,16 +380,16 @@ function PasswordResetModal({ isActive, handleActive }) {
     
     try {
       if (password !== confirm) {
-        throw new Error('Las contraseñas no coinciden');
+        throw new Error(t('auth.passwordsDoNotMatch'));
       }
       if (password.length < 8) {
-        throw new Error('La contraseña debe tener al menos 8 caracteres');
+        throw new Error(t('auth.passwordMinLength'));
       }
       if (!/[A-Z]/.test(password)) {
-        throw new Error('La contraseña debe contener al menos una letra mayúscula');
+        throw new Error(t('auth.passwordUppercaseRequired'));
       }
       if (!/\d/.test(password)) {
-        throw new Error('La contraseña debe contener al menos un número');
+        throw new Error(t('auth.passwordNumberRequired'));
       }
 
       const response = await fetch(`${API_URL}/api/v1/users/update_password_with_code`, {

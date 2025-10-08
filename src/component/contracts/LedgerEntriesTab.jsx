@@ -1,6 +1,9 @@
 import PropTypes from 'prop-types';
+import { formatStatus } from '../../utils/formatStatus';
+import { useLocale } from '../../contexts/LocaleContext';
 
 const LedgerEntriesTab = ({ ledgerLoading, ledgerEntries, fmt }) => {
+  const { t } = useLocale();
   return (
     <>
       {ledgerLoading ? (
@@ -20,6 +23,7 @@ const LedgerEntriesTab = ({ ledgerLoading, ledgerEntries, fmt }) => {
                   <tr className="text-left text-bgray-500 dark:text-bgray-300 border-b border-bgray-200 dark:border-darkblack-400">
                     <th className="py-3 pr-3 font-medium">#</th>
                     <th className="py-3 pr-3 font-medium">Fecha</th>
+                    <th className="py-3 pr-3 font-medium">Tipo</th>
                     <th className="py-3 pr-3 font-medium">Descripción</th>
                     <th className="py-3 pr-3 font-medium">Referencia</th>
                     <th className="py-3 pr-3 font-medium text-right">Debe</th>
@@ -61,6 +65,11 @@ const LedgerEntriesTab = ({ ledgerLoading, ledgerEntries, fmt }) => {
                               return `${month}/${day}/${year}`;
                             })() : "—"}
                           </td>
+                          <td className="py-3 pr-3">
+                            <span className="px-2 py-1 bg-bgray-100 dark:bg-darkblack-400 text-bgray-900 dark:text-white rounded text-xs capitalize">
+                              {formatStatus(entry.entry_type, t) || 'N/A'}
+                            </span>
+                          </td>
                           <td className="py-3 pr-3 text-bgray-900 dark:text-white max-w-xs truncate" title={entry.description}>
                             {entry.description || "Sin descripción"}
                           </td>
@@ -83,7 +92,7 @@ const LedgerEntriesTab = ({ ledgerLoading, ledgerEntries, fmt }) => {
                 </tbody>
                 <tfoot>
                   <tr className="border-t-2 border-bgray-300 dark:border-darkblack-300 bg-bgray-50 dark:bg-darkblack-500">
-                    <td colSpan="4" className="py-3 pr-3 font-bold text-right text-bgray-900 dark:text-white">TOTALES:</td>
+                    <td colSpan="5" className="py-3 pr-3 font-bold text-right text-bgray-900 dark:text-white">TOTALES:</td>
                     <td className="py-3 pr-3 text-right font-bold text-red-600 dark:text-red-400">
                       {Number((Array.isArray(ledgerEntries) ? ledgerEntries : [])
                         .filter(entry => Number(entry.amount) > 0)

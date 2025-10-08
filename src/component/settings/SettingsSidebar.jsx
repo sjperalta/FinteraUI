@@ -3,9 +3,11 @@ import { useContext } from "react";
 import AuthContext from "../../context/AuthContext";
 import Progressbar from "../chart/Progressbar";
 import TabBtn from "../button/TabBtn";
+import { useLocale } from "../../contexts/LocaleContext";
 
 function SettingsSidebar() {
   const { user: loggedUser } = useContext(AuthContext);
+  const { t } = useLocale();
   return (
     <aside className="col-span-3 border-r border-bgray-200 dark:border-darkblack-400">
       {/* Sidebar Tabs */}
@@ -13,8 +15,8 @@ function SettingsSidebar() {
       <div className="px-4 py-6">
         <TabBtn
           link=""
-          title="Personal"
-          text="Información General del usuario"
+          title={t('settings.personal')}
+          text={t('settings.personalDescription')}
         >
           <svg
             width="24"
@@ -44,8 +46,8 @@ function SettingsSidebar() {
         </TabBtn>
         <TabBtn
           link="security"
-          title="Seguridad"
-          text="Gestiona tu contraseña"
+          title={t('settings.security')}
+          text={t('settings.securityDescription')}
         >
           <svg
             width="24"
@@ -65,8 +67,8 @@ function SettingsSidebar() {
         </TabBtn>
         <TabBtn
           link="terms&conditions"
-          title="Terminos y condiciones"
-          text="Información Legal de las condiciones de uso de la plataforma"
+          title={t('settings.terms')}
+          text={t('settings.termsDescription')}
         >
           <svg
             width="24"

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../../../config";
 import { getToken } from "../../../../auth";
 import { formatStatus } from "../../../utils/formatStatus";
+import { useLocale } from '../../../contexts/LocaleContext';
 import DocumentSelect from "../../forms/ReportSelect";
 import PaymentScheduleModal from "../../contracts/PaymentScheduleModal";
 import RejectionModal from "../../contracts/RejectionModal";
@@ -90,6 +91,7 @@ function ContractInfo({
   const [showRejectionModal, setShowRejectionModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const { t } = useLocale();
 
   // Navigation handlers
   const handleNavigateToClient = () => {
@@ -311,7 +313,7 @@ function ContractInfo({
                 {status?.toLowerCase() === "submitted" && "📋"}
                 {(status?.toLowerCase() === "cancelled" || status?.toLowerCase() === "canceled") && "🚫"}
                 {status?.toLowerCase() === "closed" && "🔒"}
-                <span className="ml-1">{formatStatus(status?.toLowerCase())}</span>
+                <span className="ml-1">{formatStatus(status?.toLowerCase(), t)}</span>
               </span>
             </div>
             

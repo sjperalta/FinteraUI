@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { API_URL } from "../../../config";
 import { getToken } from "../../../auth";
+import { useLocale } from "../../contexts/LocaleContext";
 
 const truncateText = (text, maxLength) => {
   if (typeof text !== "string") return "";
@@ -10,6 +11,7 @@ const truncateText = (text, maxLength) => {
 };
 
 function Project({ project, user, onDeleted }) {
+  const { t } = useLocale();
   const {
     id,
     available,
@@ -18,20 +20,20 @@ function Project({ project, user, onDeleted }) {
     total_lots,
     total_area,
     price_per_square_unit,
-    measurement_unit,
+    measurement_unit
   } = project;
 
   const unitLabel = (u) => {
     switch ((u || "").toLowerCase()) {
-      case "m2": return "m²";
-      case "ft2": return "ft²";
-      case "vara2": return "v²";
-      default: return "m²";
+      case "m2": return t('projects.squareMeters');
+      case "ft2": return t('projects.squareFeet');
+      case "vara2": return t('projects.squareVaras');
+      default: return t('projects.squareMeters');
     }
   };
 
   const handleDelete = async () => {
-    if (!window.confirm(`¿Eliminar proyecto "${name}"? Esta acción no se puede deshacer.`)) return;
+    if (!window.confirm(t('projects.confirmDelete', { name }))) return;
     try {
       const token = getToken();
       const res = await fetch(`${API_URL}/api/v1/projects/${id}`, {
@@ -44,16 +46,16 @@ function Project({ project, user, onDeleted }) {
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || "Error eliminando el proyecto");
+        throw new Error(err.error || t('projects.deleteError'));
       }
 
-      alert("Proyecto eliminado correctamente");
+      alert(t('projects.deleteSuccess'));
       if (typeof onDeleted === "function") {
         onDeleted();
       }
     } catch (err) {
       console.error(err);
-      alert(`Error: ${err.message}`);
+      alert(`${t('common.error')}: ${err.message}`);
     }
   };
 
@@ -76,9 +78,15 @@ function Project({ project, user, onDeleted }) {
 
       {/* Project Description */}
       <p className="pt-5 pb-8 text-lg text-bgray-600 dark:text-bgray-50">
-        {name} tiene un área total de {total_area} {unitLabel(measurement_unit)}, posee {available}/
-        {total_lots} lotes disponibles, con un precio por {unitLabel(measurement_unit)} de{" "}
-        {price_per_square_unit} LPS.
+        {t('projects.projectDescription', {
+          name,
+          total_area,
+          unit: unitLabel(measurement_unit),
+          available,
+          total_lots,
+          price_per_square_unit,
+          currency: 'HNL'
+        })}
       </p>
 
       {/* Action Links */}
@@ -86,9 +94,9 @@ function Project({ project, user, onDeleted }) {
         <Link
           to={`/projects/${id}/lots`}
           className="bg-success-300 hover:bg-success-400 text-white text-sm font-medium px-3 py-1 rounded"
-          aria-label={`Ver lotes del proyecto ${name}`}
+          aria-label={t('projects.viewLots', { name })}
         >
-          Lotes ({total_lots})
+          {t('projects.lots')} ({total_lots})
         </Link>
         {/* Only render Editar and Eliminar if user is admin */}
         {user && user.role === "admin" && (
@@ -97,14 +105,14 @@ function Project({ project, user, onDeleted }) {
               to={`/projects/${id}/edit`}
               className="text-sm font-medium text-success-300"
             >
-              Editar
+              {t('projects.editLink')}
             </Link>
             <button
               type="button"
               onClick={handleDelete}
               className="text-sm font-medium text-red-500"
             >
-              Eliminar
+              {t('projects.delete')}
             </button>
           </>
         )}

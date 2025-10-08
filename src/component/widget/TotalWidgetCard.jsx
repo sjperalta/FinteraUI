@@ -1,4 +1,4 @@
-import ProtoTypes from "prop-types";
+import PropTypes from "prop-types";
 import LineChart from "../chart/LineChart";
 import { useEffect } from "react";
 import { useRef } from "react";
@@ -35,7 +35,7 @@ function TotalWidgetCard({ title, amount, growth, memberImg, totalEarnImg, curre
           shadow: 'shadow-blue-100 dark:shadow-blue-900/20',
           borderColor: 'border-blue-200 dark:border-blue-800'
         };
-      case 'interest':
+      case 'ontimepayments':
         return {
           gradient: 'from-green-500 to-green-600',
           iconBg: 'bg-green-100 dark:bg-green-900/30',
@@ -111,6 +111,12 @@ function TotalWidgetCard({ title, amount, growth, memberImg, totalEarnImg, curre
         return (
           <svg className={`w-6 h-6 ${cardStyles.iconColor}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+          </svg>
+        );
+      case 'ontimepayments':
+        return (
+          <svg className={`w-6 h-6 ${cardStyles.iconColor}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         );
       default:
@@ -221,36 +227,46 @@ function TotalWidgetCard({ title, amount, growth, memberImg, totalEarnImg, curre
             <p className="text-3xl font-bold leading-tight text-bgray-900 dark:text-white mb-3">
               {type === "money" && currency}{amount}
             </p>
-            <div className="flex items-center space-x-2">
-              <span className={growth >= 0 ? "text-success-300" : "text-red-400"}>
-                <svg
-                  width="16"
-                  height="14"
-                  viewBox="0 0 16 14"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className={growth < 0 ? "rotate-180" : ""}
-                >
-                  <path
-                    d="M13.4318 0.522827L12.4446 0.522827L8.55575 0.522827L7.56859 0.522827C6.28227 0.522827 5.48082 1.91818 6.12896 3.02928L9.06056 8.05489C9.7037 9.1574 11.2967 9.1574 11.9398 8.05489L14.8714 3.02928C15.5196 1.91818 14.7181 0.522828 13.4318 0.522827Z"
-                    fill="currentColor"
-                  />
-                  <path
-                    opacity="0.4"
-                    d="M2.16878 13.0485L3.15594 13.0485L7.04483 13.0485L8.03199 13.0485C9.31831 13.0485 10.1198 11.6531 9.47163 10.542L6.54002 5.5164C5.89689 4.41389 4.30389 4.41389 3.66076 5.5164L0.729153 10.542C0.0810147 11.6531 0.882466 13.0485 2.16878 13.0485Z"
-                    fill="currentColor"
-                  />
-                </svg>
-              </span>
-              <span className={`text-sm font-medium ${growth >= 0 ? "text-success-300" : "text-red-400"}`}>
-                {Math.abs(growth)}%
-              </span>
-              <span className="text-sm font-medium text-bgray-700 dark:text-bgray-50">
-                {growth >= 0 ? "Aumento" : "Disminución"}
-              </span>
-            </div>
+            {typeof growth === 'number' ? (
+              <div className="flex items-center space-x-2">
+                <span className={growth >= 0 ? "text-success-300" : "text-red-400"}>
+                  <svg
+                    width="16"
+                    height="14"
+                    viewBox="0 0 16 14"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className={growth < 0 ? "rotate-180" : ""}
+                  >
+                    <path
+                      d="M13.4318 0.522827L12.4446 0.522827L8.55575 0.522827L7.56859 0.522827C6.28227 0.522827 5.48082 1.91818 6.12896 3.02928L9.06056 8.05489C9.7037 9.1574 11.2967 9.1574 11.9398 8.05489L14.8714 3.02928C15.5196 1.91818 14.7181 0.522828 13.4318 0.522827Z"
+                      fill="currentColor"
+                    />
+                    <path
+                      opacity="0.4"
+                      d="M2.16878 13.0485L3.15594 13.0485L7.04483 13.0485L8.03199 13.0485C9.31831 13.0485 10.1198 11.6531 9.47163 10.542L6.54002 5.5164C5.89689 4.41389 4.30389 4.41389 3.66076 5.5164L0.729153 10.542C0.0810147 11.6531 0.882466 13.0485 2.16878 13.0485Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </span>
+                <span className={`text-sm font-medium ${growth >= 0 ? "text-success-300" : "text-red-400"}`}>
+                  {Math.abs(growth)}%
+                </span>
+                <span className="text-sm font-medium text-bgray-700 dark:text-bgray-50">
+                  {growth >= 0 ? "Aumento" : "Disminución"}
+                </span>
+              </div>
+            ) : (
+              // Spacer to keep card height/alignment consistent when growth is absent
+              <div aria-hidden="false">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-success-300" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
+                </div>
+              </div>
+            )}
           </div>
-          <div className="w-[120px] h-[80px] ml-4">
+          <div className="w-[100px] h-[70px] lg:w-[80px] lg:h-[68px] ml-4">
             <LineChart option={options} dataSet={data} refer={chartRef} />
           </div>
         </div>
@@ -260,11 +276,11 @@ function TotalWidgetCard({ title, amount, growth, memberImg, totalEarnImg, curre
 }
 
 TotalWidgetCard.propTypes = {
-  title: ProtoTypes.string,
-  amount: ProtoTypes.string,
-  growth: ProtoTypes.number,
-  memberImg: ProtoTypes.string,
-  totalEarnImg: ProtoTypes.string,
+  title: PropTypes.string,
+  amount: PropTypes.string,
+  growth: PropTypes.number,
+  memberImg: PropTypes.string,
+  totalEarnImg: PropTypes.string,
 };
 
 export default TotalWidgetCard;

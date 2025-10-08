@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import debounce from 'lodash.debounce';
 import { formatStatus } from "../../utils/formatStatus";
+import { useLocale } from "../../contexts/LocaleContext";
 
 function TransactionFilter({ searchTerm, status, onSearchChange, onStatusChange }) {
   const [activeFilter, setActiveFilter] = useState("");
   const [showFilter, setShowFilter] = useState(false);
   const [term, setTerm] = useState(searchTerm);
   const [selectedStatus, setSelectedStatus] = useState(status);
+  const { t } = useLocale();
   // Payment status options (value for API). Labels come from formatStatus for consistency.
   const statuses = [
     { value: "" },
@@ -54,7 +56,7 @@ function TransactionFilter({ searchTerm, status, onSearchChange, onStatusChange 
   // Initialize visible label from incoming prop `status`
   useEffect(() => {
     setSelectedStatus(status);
-    setActiveFilter(status ? formatStatus(status) : "Todos");
+    setActiveFilter(status ? formatStatus(status, t) : t('filters.all'));
   }, [status]);
 
   return (
@@ -87,7 +89,7 @@ function TransactionFilter({ searchTerm, status, onSearchChange, onStatusChange 
         <input
           type="text"
           className="border-0 w-full dark:bg-darkblack-600 dark:text-white focus:outline-none focus:ring-0 focus:border-none"
-          placeholder="Descripción, Monto, ID de Pago"
+          placeholder={t('filters.searchPlaceholder')}
           value={term}
           onChange={handleTermChange}
         />
@@ -119,7 +121,7 @@ function TransactionFilter({ searchTerm, status, onSearchChange, onStatusChange 
           <input
             type="text"
             className="border-0 dark:bg-darkblack-600 focus:outline-none focus:ring-0 focus:border-none"
-            placeholder="Estado del Pago"
+            placeholder={t('filters.statusPlaceholder')}
             value={activeFilter ? activeFilter : ""}
             readOnly
           />
@@ -153,12 +155,12 @@ function TransactionFilter({ searchTerm, status, onSearchChange, onStatusChange 
                 onClick={() => {
                   setShowFilter(false);
                   // set the visible label (use central helper)
-                  setActiveFilter(formatStatus(statusOption.value || ""));
+                  setActiveFilter(formatStatus(statusOption.value || "", t));
                   handleStatusSelect(statusOption.value);
                 }}
                 className="text-sm text-bgray-900 dark:text-bgray-50 hover:dark:bg-darkblack-600 cursor-pointer px-5 py-2 hover:bg-bgray-100 font-semibold"
               >
-                {formatStatus(statusOption.value)}
+                {formatStatus(statusOption.value, t)}
               </li>
             ))}
           </ul>

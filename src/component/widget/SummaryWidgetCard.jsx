@@ -2,6 +2,7 @@ import ProtoTypes from "prop-types";
 import LineChart from "../chart/LineChart";
 import { useEffect } from "react";
 import { useRef } from "react";
+import { useLocale } from "../../contexts/LocaleContext";
 
 const createGradient = (ctx) => {
   const gradient = ctx.createLinearGradient(0, 0, 0, 450);
@@ -12,6 +13,7 @@ const createGradient = (ctx) => {
 
 function SummaryWidgetCard({ title, amount, fee, memberImg, totalEarnImg, currency, type }) {
   const chartRef = useRef(null);
+  const { t } = useLocale();
 
   useEffect(() => {
     // Get canvas context and create gradient
@@ -138,7 +140,7 @@ function SummaryWidgetCard({ title, amount, fee, memberImg, totalEarnImg, curren
                 {title}
               </span>
               <span className="text-sm text-bgray-500 dark:text-bgray-300">
-                Estado actual
+                {t('dashboard.currentStatus')}
               </span>
             </div>
           </div>
@@ -174,7 +176,7 @@ function SummaryWidgetCard({ title, amount, fee, memberImg, totalEarnImg, curren
                     {currency}{fee}
                   </span>
                   <span className="text-xs text-red-500 dark:text-red-300 ml-1">
-                    Interés Moratorio
+                    {t('payments.lateInterest')}
                   </span>
                 </div>
               </div>

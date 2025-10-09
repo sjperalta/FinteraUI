@@ -29,7 +29,7 @@ function UsersList({ searchTerm, role, onUserSelect }) {
       // Build query params
       const params = new URLSearchParams();
       if (searchTerm) params.append("search_term", searchTerm);
-      if (role) params.append("search_term", role);
+      if (role) params.append("role", role);
 
       // Add sort parameter
       params.append("sort", "created_at-desc");

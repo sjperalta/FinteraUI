@@ -10,7 +10,8 @@ const AuthContext = createContext({
   error: null,
   login: () => {},
   logout: () => {},
-  refresh: () => {}
+  refresh: () => {},
+  setUser: () => {}
 });
 
 export const AuthProvider = ({ children }) => {
@@ -139,6 +140,7 @@ export const AuthProvider = ({ children }) => {
       value={{
         user,
         token,
+        setUser,
         loading,
         error,
         login,

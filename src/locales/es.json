@@ -270,14 +270,11 @@
     "selectStartDate": "Seleccionar fecha de inicio",
     "selectEndDate": "Seleccionar fecha de fin"
   },
-  "userFilter": {
-    "searchPlaceholder": "Nombre del Cliente, Teléfono, Vendedor",
-    "selectType": "Seleccionar Tipo",
-    "addUser": "Agregar Usuario",
-    "all": "Todos",
-    "user": "Usuario",
-    "seller": "Vendedor",
-    "admin": "Administrador"
+  "profile": {
+    "myProfile": "Mi Perfil",
+    "settings": "Configuración",
+    "users": "Usuarios",
+    "logout": "Salir"
   },
   "users": {
     "title": "Usuarios",
@@ -296,7 +293,40 @@
     "passwordNoMatch": "Las contraseñas no coinciden",
     "created": "Creado",
     "invite": "Invitar",
-    "loadingUsers": "Cargando usuarios..."
+    "loadingUsers": "Cargando usuarios...",
+    "createUserTitle": "Crear Usuario",
+    "userCreatedSuccess": "Usuario creado exitosamente. Redirigiendo...",
+    "fullNameRequired": "Nombre completo es requerido.",
+    "invalidIdentity": "Cédula inválida. Formato esperado: 0999-1999-00999",
+    "invalidRTN": "RTN inválido. Formato esperado: 0999-1999-00999-0",
+    "passwordMinLength": "La contraseña debe tener al menos 8 caracteres.",
+    "fullName": "Nombre Completo",
+    "identity": "Cédula",
+    "rtn": "RTN",
+    "phone": "Teléfono",
+    "address": "Dirección",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "roleLabel": "Rol",
+    "userRole": "Usuario",
+    "adminRole": "Administrador",
+    "sellerRole": "Vendedor",
+    "createdByLabel": "Creado por",
+    "adminOnlyRoleNote": "Solo los administradores pueden elegir otro rol; se asignará 'Usuario'.",
+    "back": "Volver",
+    "createUser": "Crear Usuario",
+    "identityPlaceholder": "0999-1999-00999",
+    "rtnPlaceholder": "0999-1999-00999-0",
+    "addressOptional": "Dirección (opcional)",
+    "passwordStrength": "Contraseña: {label}",
+    "chars": "caracteres",
+    "passwordsMatch": "Las contraseñas coinciden",
+    "passwordsDoNotMatch": "Las contraseñas no coinciden",
+    "weak": "Débil",
+    "medium": "Media",
+    "strong": "Fuerte",
+    "errorCreatingUser": "Error creando usuario"
   },
   "settings": {
     "personal": "Personal",
@@ -545,5 +575,23 @@
       "bank": "Bancario"
     },
     "months": "meses"
+  },
+  "progressbar": {
+    "completeInfo": "Completa Información",
+    "percentComplete": "{percent}% completado • {count} campos evaluados",
+    "verifyIdentity": "Verificar Identidad",
+    "resending": "Reenviando...",
+    "invalidUser": "Usuario inválido",
+    "resendError": "Error al reenviar confirmación",
+    "verificationEmailSent": "Correo de verificación reenviado"
+  }
+  "userFilter": {
+    "all": "Todos",
+    "user": "Usuario",
+    "seller": "Vendedor",
+    "admin": "Administrador",
+    "searchPlaceholder": "Buscar usuarios por nombre, correo o ID...",
+    "selectType": "Selecciona rol",
+    "addUser": "Agregar Usuario"
   }
 }

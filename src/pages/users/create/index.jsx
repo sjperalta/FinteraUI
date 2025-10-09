@@ -3,6 +3,7 @@ import { API_URL } from "./../../../../config";
 import { getToken } from "./../../../../auth";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "./../../../context/AuthContext";
+import { useLocale } from "./../../../contexts/LocaleContext";
 
 function formatCedula(raw) {
   const d = raw.replace(/\D/g, "");
@@ -28,27 +29,28 @@ function formatRTN(raw) {
   return out;
 }
 
-function evaluatePasswordStrength(pw) {
-  const criteria = {
-    length: pw.length >= 8,
-    upper: /[A-Z]/.test(pw),
-    lower: /[a-z]/.test(pw),
-    number: /[0-9]/.test(pw),
-    symbol: /[^A-Za-z0-9]/.test(pw),
-  };
-
-  const score = Object.values(criteria).reduce((s, ok) => s + (ok ? 1 : 0), 0);
-  let label = "";
-  if (score <= 2) label = "Weak";
-  else if (score <= 4) label = "Medium";
-  else label = "Strong";
-
-  return { label, score, criteria };
-}
-
 function CreateUser() {
   const navigate = useNavigate();
   const { user: creator } = useContext(AuthContext);
+  const { t } = useLocale();
+
+  function evaluatePasswordStrength(pw) {
+    const criteria = {
+      length: pw.length >= 8,
+      upper: /[A-Z]/.test(pw),
+      lower: /[a-z]/.test(pw),
+      number: /[0-9]/.test(pw),
+      symbol: /[^A-Za-z0-9]/.test(pw),
+    };
+
+    const score = Object.values(criteria).reduce((s, ok) => s + (ok ? 1 : 0), 0);
+    let label = "";
+    if (score <= 2) label = t('users.weak');
+    else if (score <= 4) label = t('users.medium');
+    else label = t('users.strong');
+
+    return { label, score, criteria };
+  }
   const [formData, setFormData] = useState({
     full_name: "",
     phone: "",
@@ -89,23 +91,23 @@ function CreateUser() {
     setError(null);
 
     if (!formData.full_name.trim()) {
-      setError("Nombre completo es requerido.");
+      setError(t('users.fullNameRequired'));
       return;
     }
     if (!(formData.identity.replace(/\D/g, "").length === 13)) {
-      setError("Cédula inválida. Formato esperado: 0999-1999-00999");
+      setError(t('users.invalidIdentity'));
       return;
     }
     if (!(formData.rtn.replace(/\D/g, "").length === 14)) {
-      setError("RTN inválido. Formato esperado: 0999-1999-00999-0");
+      setError(t('users.invalidRTN'));
       return;
     }
     if (formData.password.length < 8) {
-      setError("La contraseña debe tener al menos 8 caracteres.");
+      setError(t('users.passwordMinLength'));
       return;
     }
     if (!pwMatch) {
-      setError("Las contraseñas no coinciden.");
+      setError(t('users.passwordsDoNotMatch'));
       return;
     }
 
@@ -132,7 +134,7 @@ function CreateUser() {
         const body = contentType.includes("application/json")
           ? await response.json().catch(() => ({}))
           : await response.text().catch(() => (response.statusText || ""));
-        const msg = body?.errors ? body.errors.join(", ") : body?.error || String(body) || "Error creando usuario";
+        const msg = body?.errors ? body.errors.join(", ") : body?.error || String(body) || t('users.errorCreatingUser');
         throw new Error(msg);
       }
 
@@ -153,16 +155,16 @@ function CreateUser() {
 
   return (
     <main className="w-full xl:px-[48px] px-6 pb-6 xl:pb-[48px] sm:pt-[156px] pt-[100px]">
-      <div className="max-w-2xl mx-auto bg-white p-8 shadow-lg rounded-lg">
-        <h2 className="text-2xl font-bold pb-5 text-bgray-900 dark:text-white border-b border-bgray-200">
-          Crear Usuario
+      <div className="max-w-2xl mx-auto bg-white dark:bg-darkblack-600 p-8 shadow-lg dark:shadow-xl rounded-lg">
+        <h2 className="text-2xl font-bold pb-5 text-bgray-900 dark:text-white border-b border-bgray-200 dark:border-bgray-700">
+          {t('users.createUserTitle')}
         </h2>
-        {success && <p className="text-green-500">Usuario creado exitosamente. Redirigiendo...</p>}
-        {error && <p className="text-red-500">{error}</p>}
+        {success && <p className="text-green-500 dark:text-green-400">{t('users.userCreatedSuccess')}</p>}
+        {error && <p className="text-red-500 dark:text-red-400">{error}</p>}
         <form onSubmit={handleSubmit} className="mt-5 space-y-6">
           <div className="flex flex-col gap-2">
-            <label htmlFor="full_name" className="text-base font-medium">
-              Nombre Completo
+            <label htmlFor="full_name" className="text-base font-medium text-bgray-900 dark:text-white">
+              {t('users.fullName')}
             </label>
             <input
               type="text"
@@ -171,13 +173,13 @@ function CreateUser() {
               value={formData.full_name}
               onChange={handleChange}
               required
-              className="bg-bgray-50 dark:bg-darkblack-500 p-4 rounded-lg border-0 focus:ring-2 focus:ring-success-300"
+              className="bg-bgray-50 dark:bg-darkblack-500 p-4 rounded-lg border-0 focus:ring-2 focus:ring-success-300 dark:text-white"
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="identity" className="text-base font-medium">
-              Cedula
+            <label htmlFor="identity" className="text-base font-medium text-bgray-900 dark:text-white">
+              {t('users.identity')}
             </label>
             <input
               type="text"
@@ -185,15 +187,15 @@ function CreateUser() {
               name="identity"
               value={formData.identity}
               onChange={handleChange}
-              placeholder="0999-1999-00999"
+              placeholder={t('users.identityPlaceholder')}
               required
-              className="bg-bgray-50 dark:bg-darkblack-500 p-4 rounded-lg border-0 focus:ring-2 focus:ring-success-300"
+              className="bg-bgray-50 dark:bg-darkblack-500 p-4 rounded-lg border-0 focus:ring-2 focus:ring-success-300 dark:text-white"
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="rtn" className="text-base font-medium">
-              RTN
+            <label htmlFor="rtn" className="text-base font-medium text-bgray-900 dark:text-white">
+              {t('users.rtn')}
             </label>
             <input
               type="text"
@@ -201,15 +203,15 @@ function CreateUser() {
               name="rtn"
               value={formData.rtn}
               onChange={handleChange}
-              placeholder="0999-1999-00999-0"
+              placeholder={t('users.rtnPlaceholder')}
               required
-              className="bg-bgray-50 dark:bg-darkblack-500 p-4 rounded-lg border-0 focus:ring-2 focus:ring-success-300"
+              className="bg-bgray-50 dark:bg-darkblack-500 p-4 rounded-lg border-0 focus:ring-2 focus:ring-success-300 dark:text-white"
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="phone" className="text-base font-medium">
-              Telefono
+            <label htmlFor="phone" className="text-base font-medium text-bgray-900 dark:text-white">
+              {t('users.phone')}
             </label>
             <input
               type="phone"
@@ -218,13 +220,13 @@ function CreateUser() {
               value={formData.phone}
               onChange={handleChange}
               required
-              className="bg-bgray-50 dark:bg-darkblack-500 p-4 rounded-lg border-0 focus:ring-2 focus:ring-success-300"
+              className="bg-bgray-50 dark:bg-darkblack-500 p-4 rounded-lg border-0 focus:ring-2 focus:ring-success-300 dark:text-white"
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="address" className="text-base font-medium">
-              Dirección
+            <label htmlFor="address" className="text-base font-medium text-bgray-900 dark:text-white">
+              {t('users.address')}
             </label>
             <input
               type="text"
@@ -232,14 +234,14 @@ function CreateUser() {
               name="address"
               value={formData.address}
               onChange={handleChange}
-              placeholder="Dirección (opcional)"
-              className="bg-bgray-50 dark:bg-darkblack-500 p-4 rounded-lg border-0 focus:ring-2 focus:ring-success-300"
+              placeholder={t('users.addressOptional')}
+              className="bg-bgray-50 dark:bg-darkblack-500 p-4 rounded-lg border-0 focus:ring-2 focus:ring-success-300 dark:text-white"
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="email" className="text-base font-medium">
-              Correo Electrónico
+            <label htmlFor="email" className="text-base font-medium text-bgray-900 dark:text-white">
+              {t('users.email')}
             </label>
             <input
               type="email"
@@ -248,13 +250,13 @@ function CreateUser() {
               value={formData.email}
               onChange={handleChange}
               required
-              className="bg-bgray-50 dark:bg-darkblack-500 p-4 rounded-lg border-0 focus:ring-2 focus:ring-success-300"
+              className="bg-bgray-50 dark:bg-darkblack-500 p-4 rounded-lg border-0 focus:ring-2 focus:ring-success-300 dark:text-white"
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="password" className="text-base font-medium">
-              Contraseña
+            <label htmlFor="password" className="text-base font-medium text-bgray-900 dark:text-white">
+              {t('users.password')}
             </label>
             <input
               type="password"
@@ -263,11 +265,11 @@ function CreateUser() {
               value={formData.password}
               onChange={handleChange}
               required
-              className="bg-bgray-50 dark:bg-darkblack-500 p-4 rounded-lg border-0 focus:ring-2 focus:ring-success-300"
+              className="bg-bgray-50 dark:bg-darkblack-500 p-4 rounded-lg border-0 focus:ring-2 focus:ring-success-300 dark:text-white"
             />
             <div className="mt-2">
               <div className="mb-2">
-                <div className="w-full bg-bgray-100 dark:bg-darkblack-500 rounded-full h-2 overflow-hidden">
+                <div className="w-full bg-bgray-100 dark:bg-darkblack-400 rounded-full h-2 overflow-hidden">
                   <div
                     className={`h-2 rounded-full transition-all duration-200 ${
                       pwFeedback.score >= 5
@@ -283,11 +285,11 @@ function CreateUser() {
 
               <div className="flex items-center justify-between text-sm mb-2">
                 <div className="flex items-center gap-2">
-                  <span className={`font-medium ${pwFeedback.label === 'Strong' ? 'text-green-600' : pwFeedback.label === 'Medium' ? 'text-yellow-500' : 'text-red-600'}`}>
-                    Contraseña: {pwFeedback.label || '—'}
+                  <span className={`font-medium ${pwFeedback.label === t('users.strong') ? 'text-green-600 dark:text-green-400' : pwFeedback.label === t('users.medium') ? 'text-yellow-500 dark:text-yellow-400' : 'text-red-600 dark:text-red-400'}`}>
+                    {t('users.passwordStrength', { label: pwFeedback.label || '—' })}
                   </span>
                 </div>
-                <div className="text-xs text-bgray-500 dark:text-bgray-400">{formData.password.length} / 8 chars</div>
+                <div className="text-xs text-gray-500 dark:text-white">{formData.password.length} / 8 {t('users.chars')}</div>
               </div>
 
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
@@ -295,42 +297,42 @@ function CreateUser() {
                   <span className={`w-4 h-4 flex items-center justify-center rounded-full text-white text-[10px] ${pwFeedback.criteria?.length ? 'bg-green-500' : 'bg-bgray-300 dark:bg-darkblack-400'}`}>
                     {pwFeedback.criteria?.length ? '✓' : ''}
                   </span>
-                  <span className="text-bgray-700 dark:text-gray-300">Al menos 8 caracteres</span>
+                  <span className="text-gray-700 dark:text-white">{t('users.minChars')}</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className={`w-4 h-4 flex items-center justify-center rounded-full text-white text-[10px] ${pwFeedback.criteria?.upper ? 'bg-green-500' : 'bg-bgray-300 dark:bg-darkblack-400'}`}>
                     {pwFeedback.criteria?.upper ? '✓' : ''}
                   </span>
-                  <span className="text-bgray-700 dark:text-gray-300">Una letra mayúscula (A-Z)</span>
+                  <span className="text-gray-700 dark:text-white">{t('users.uppercase')}</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className={`w-4 h-4 flex items-center justify-center rounded-full text-white text-[10px] ${pwFeedback.criteria?.lower ? 'bg-green-500' : 'bg-bgray-300 dark:bg-darkblack-400'}`}>
                     {pwFeedback.criteria?.lower ? '✓' : ''}
                   </span>
-                  <span className="text-bgray-700 dark:text-gray-300">Una letra minúscula (a-z)</span>
+                  <span className="text-gray-700 dark:text-white">{t('users.lowercase')}</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className={`w-4 h-4 flex items-center justify-center rounded-full text-white text-[10px] ${pwFeedback.criteria?.number ? 'bg-green-500' : 'bg-bgray-300 dark:bg-darkblack-400'}`}>
                     {pwFeedback.criteria?.number ? '✓' : ''}
                   </span>
-                  <span className="text-bgray-700 dark:text-gray-300">Al menos un número (0-9)</span>
+                  <span className="text-gray-700 dark:text-white">{t('users.number')}</span>
                 </li>
                 <li className="flex items-center gap-2 col-span-1 sm:col-span-2">
                   <span className={`w-4 h-4 flex items-center justify-center rounded-full text-white text-[10px] ${pwFeedback.criteria?.symbol ? 'bg-green-500' : 'bg-bgray-300 dark:bg-darkblack-400'}`}>
                     {pwFeedback.criteria?.symbol ? '✓' : ''}
                   </span>
-                  <span className="text-bgray-700 dark:text-gray-300">Al menos un carácter especial (ej. !@#$%)</span>
+                  <span className="text-gray-700 dark:text-white">{t('users.symbol')}</span>
                 </li>
               </ul>
               <div className="sr-only" aria-live="polite">
-                {pwFeedback.label ? `Password strength ${pwFeedback.label}` : ''}
+                {pwFeedback.label ? `${t('users.passwordStrength', { label: pwFeedback.label })}` : ''}
               </div>
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="password_confirmation" className="text-base font-medium">
-              Confirmar Contraseña
+            <label htmlFor="password_confirmation" className="text-base font-medium text-bgray-900 dark:text-white">
+              {t('users.confirmPassword')}
             </label>
             <input
               type="password"
@@ -339,44 +341,44 @@ function CreateUser() {
               value={formData.password_confirmation}
               onChange={handleChange}
               required
-              className="bg-bgray-50 dark:bg-darkblack-500 p-4 rounded-lg border-0 focus:ring-2 focus:ring-success-300"
+              className="bg-bgray-50 dark:bg-darkblack-500 p-4 rounded-lg border-0 focus:ring-2 focus:ring-success-300 dark:text-white"
             />
             <div className="mt-2 text-sm">
               {formData.password_confirmation ? (
                 pwMatch ? (
-                  <span className="text-green-600">Las contraseñas coinciden</span>
+                  <span className="text-green-600 dark:text-green-400">{t('users.passwordsMatch')}</span>
                 ) : (
-                  <span className="text-red-600">Las contraseñas no coinciden</span>
+                  <span className="text-red-600 dark:text-red-400">{t('users.passwordsDoNotMatch')}</span>
                 )
               ) : null}
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="role" className="text-base font-medium">
-              Rol
+            <label htmlFor="role" className="text-base font-medium text-bgray-900 dark:text-white">
+              {t('users.roleLabel')}
             </label>
               <select
                 id="role"
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
-                className="bg-bgray-50 dark:bg-darkblack-500 p-4 rounded-lg border-0 focus:ring-2 focus:ring-success-300"
+                className="bg-bgray-50 dark:bg-darkblack-500 p-4 rounded-lg border-0 focus:ring-2 focus:ring-success-300 dark:text-white"
                 disabled={creator?.role !== 'admin'}
               >
-                <option value="user">Usuario</option>
-                {creator?.role === 'admin' && <option value="admin">Administrador</option>}
-                {creator?.role === 'admin' && <option value="seller">Vendedor</option>}
+                <option value="user">{t('users.userRole')}</option>
+                {creator?.role === 'admin' && <option value="admin">{t('users.adminRole')}</option>}
+                {creator?.role === 'admin' && <option value="seller">{t('users.sellerRole')}</option>}
               </select>
               {creator?.role !== 'admin' && (
-                <p className="text-xs text-gray-500 mt-1">Solo los administradores pueden elegir otro rol; se asignará 'Usuario'.</p>
+                <p className="text-xs text-gray-500 dark:text-white mt-1">{t('users.adminOnlyRoleNote')}</p>
               )}
           </div>
 
           {/* Creator read-only field */}
           <div className="flex flex-col gap-2">
-            <label htmlFor="created_by" className="text-base font-medium">
-              Creado por
+            <label htmlFor="created_by" className="text-base font-medium text-bgray-900 dark:text-white">
+              {t('users.createdByLabel')}
             </label>
             <input
               type="text"
@@ -385,7 +387,7 @@ function CreateUser() {
               value={creator?.full_name || ""}
               readOnly
               disabled
-              className="bg-bgray-100 dark:bg-darkblack-500 p-4 rounded-lg border-0 text-bgray-700"
+              className="bg-bgray-100 dark:bg-darkblack-500 p-4 rounded-lg border-0 text-gray-700 dark:text-white"
             />
           </div>
 
@@ -394,15 +396,15 @@ function CreateUser() {
               aria-label="none"
               type="button"
               onClick={() => navigate(-1)}
-              className="bg-gray-500 hover:bg-gray-600 text-white mt-10 py-3.5 px-4 rounded-lg"
+              className="bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white mt-10 py-3.5 px-4 rounded-lg transition-colors"
             >
-              Volver
+              {t('users.back')}
             </button>
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-600 text-white font-bold mt-10 py-3.5 px-4 rounded-lg"
+              className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold mt-10 py-3.5 px-4 rounded-lg transition-colors"
             >
-              Crear Usuario
+              {t('users.createUser')}
             </button>
           </div>
         </form>

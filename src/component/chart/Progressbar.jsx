@@ -3,8 +3,10 @@ import { useMemo, useState } from "react";
 import { API_URL } from "../../../config";
 import { getToken } from "../../../auth";
 import Toast from "../ui/Toast";
+import { useLocale } from "../../contexts/LocaleContext";
 
 function Progressbar({ className, user }) {
+  const { t } = useLocale();
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
 
@@ -16,8 +18,9 @@ function Progressbar({ className, user }) {
     const missing = [];
     const filled = fields.reduce((acc, key) => {
       const v = user[key];
-      // consider field filled if it's not null/undefined and its string representation isn't empty
-      const isFilled = v !== null && v !== undefined && String(v).trim() !== "";
+      // consider field filled if it exists and has a meaningful value
+      const hasValue = v !== null && v !== undefined && v !== "";
+      const isFilled = hasValue && String(v).trim().length > 0;
       if (!isFilled) missing.push(key);
       return isFilled ? acc + 1 : acc;
     }, 0);
@@ -28,14 +31,7 @@ function Progressbar({ className, user }) {
 
     if (clamped < 100) {
       // minimal debug so you can inspect why it's not 100%
-      console.debug("Progressbar missing fields:", missing, "user snapshot:", {
-        full_name: user.full_name,
-        email: user.email,
-        identity: user.identity,
-        rtn: user.rtn,
-        phone: user.phone,
-        address: user.address,
-      });
+      console.debug("Progressbar missing fields:", missing, "filled count:", filled, "total fields:", total, "user object keys:", Object.keys(user));
     }
 
     return clamped;
@@ -45,7 +41,7 @@ function Progressbar({ className, user }) {
 
   const handleVerifyIdentity = async () => {
     if (!user || !user.id) {
-      setToast({ visible: true, message: "Usuario inválido", type: "error" });
+      setToast({ visible: true, message: t("progressbar.invalidUser"), type: "error" });
       return;
     }
     setLoading(true);
@@ -64,13 +60,13 @@ function Progressbar({ className, user }) {
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || "Error al reenviar confirmación");
+        throw new Error(err.error || t("progressbar.resendError"));
       }
 
-      setToast({ visible: true, message: "Correo de verificación reenviado", type: "success" });
+      setToast({ visible: true, message: t("progressbar.verificationEmailSent"), type: "success" });
     } catch (err) {
       console.error(err);
-      setToast({ visible: true, message: `Error: ${err.message}`, type: "error" });
+      setToast({ visible: true, message: `${t("common.error")}: ${err.message}`, type: "error" });
     } finally {
       setLoading(false);
     }
@@ -112,10 +108,10 @@ function Progressbar({ className, user }) {
           </div>
           <div className="flex flex-col md:items-center xl:items-start items-start">
             <h4 className="text-bgray-900 dark:text-white text-base font-bold">
-              Completa Información
+              {t("progressbar.completeInfo")}
             </h4>
             <span className="text-sm font-medium text-bgray-700 dark:text-darkblack-300">
-              {percent}% completado • {fields.length} campos evaluados
+              {t("progressbar.percentComplete", { percent, count: fields.length })}
             </span>
           </div>
         </div>
@@ -125,7 +121,7 @@ function Progressbar({ className, user }) {
           disabled={loading}
           className="w-full mt-4 bg-success-300 hover:bg-success-400 text-white font-bold text-xs py-3 rounded-lg disabled:opacity-50"
         >
-          {loading ? "Reenviando..." : "Verificar identidad"}
+          {loading ? t("progressbar.resending") : t("progressbar.verifyIdentity")}
         </button>
       </div>
 

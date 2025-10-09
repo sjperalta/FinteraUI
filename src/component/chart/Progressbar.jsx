@@ -13,7 +13,6 @@ function Progressbar({ className, user }) {
   const fields = ["full_name", "email", "identity", "rtn", "phone", "address"];
 
   const percent = useMemo(() => {
-
     if (!user || typeof user !== "object") return 0;
 
     const missing = [];

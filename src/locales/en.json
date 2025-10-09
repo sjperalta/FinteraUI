@@ -574,7 +574,6 @@
     "resendError": "Error resending confirmation",
     "verificationEmailSent": "Verification email sent"
   }
-  ,
   "userFilter": {
     "all": "All",
     "user": "User",

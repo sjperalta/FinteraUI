@@ -584,7 +584,7 @@
     "invalidUser": "Usuario inválido",
     "resendError": "Error al reenviar confirmación",
     "verificationEmailSent": "Correo de verificación reenviado"
-  }
+  },
   "userFilter": {
     "all": "Todos",
     "user": "Usuario",

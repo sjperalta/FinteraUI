@@ -1,14 +1,37 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import debounce from 'lodash.debounce';
+import AuthContext from "../../context/AuthContext";
+import { useLocale } from "../../contexts/LocaleContext";
 
 function UserFilter({ searchTerm, role, onSearchChange, onRoleChange }) {
   const [activeFilter, setActiveFilter] = useState("");
   const [showFilter, setShowFilter] = useState(false);
   const [term, setTerm] = useState(searchTerm);
   const [selectedRole, setSelectedRole] = useState(role);
-  const roles = ["All", "User", "Seller", "Admin"]; // Include "All" as a role option
+  const { user } = useContext(AuthContext);
+  const { t } = useLocale();
+
+  // Filter roles based on current user's role
+  const getAvailableRoles = () => {
+    const allRoles = [
+      { value: "All", label: t('userFilter.all') },
+      { value: "User", label: t('userFilter.user') },
+      { value: "Seller", label: t('userFilter.seller') },
+      { value: "Admin", label: t('userFilter.admin') }
+    ];
+    
+    if (user?.role === 'admin') {
+      return allRoles; // Admin can see all roles
+    } else if (user?.role === 'seller') {
+      return [allRoles[0], allRoles[1]]; // Seller can only see "All" and "User"
+    }
+    
+    return [allRoles[0]]; // Default fallback
+  };
+
+  const roles = getAvailableRoles();
 
   const navigate = useNavigate();
 
@@ -21,12 +44,10 @@ function UserFilter({ searchTerm, role, onSearchChange, onRoleChange }) {
     debouncedSearch(e.target.value);
   };
 
-  const handleRoleSelect = (role) => {
-    setSelectedRole(role);
-    onRoleChange(role === "All" ? "" : role); // Update parent with selected role
-    // Optionally, reset the search term when role changes
-    // setTerm("");
-    // onSearchChange("");
+  const handleRoleSelect = (roleOption) => {
+    setSelectedRole(roleOption.value);
+    onRoleChange(roleOption.value === "All" ? "" : roleOption.value); // Update parent with selected role value
+    setActiveFilter(roleOption.label); // Set the display text to the translated label
   };
 
   // Create a debounced version of onSearchChange
@@ -78,7 +99,7 @@ function UserFilter({ searchTerm, role, onSearchChange, onRoleChange }) {
         <input
           type="text"
           className="border-0 w-full dark:bg-darkblack-600 dark:text-white focus:outline-none focus:ring-0 focus:border-none"
-          placeholder="Nombre Cliente, Teléfono, Vendedor"
+          placeholder={t('userFilter.searchPlaceholder')}
           value={term}
           onChange={handleTermChange}
         />
@@ -117,7 +138,7 @@ function UserFilter({ searchTerm, role, onSearchChange, onRoleChange }) {
           <input
             type="text"
             className="border-0 dark:bg-darkblack-600 focus:outline-none focus:ring-0 focus:border-none"
-            placeholder="Selecciona Tipo"
+            placeholder={t('userFilter.selectType')}
             value={activeFilter ? activeFilter : ""}
             readOnly
           />
@@ -147,7 +168,7 @@ function UserFilter({ searchTerm, role, onSearchChange, onRoleChange }) {
           <ul>
             {roles.map((roleOption) => (
               <li
-                key={roleOption}
+                key={roleOption.value}
                 onClick={(e) => {
                   setShowFilter(false);     
                   handleActiveFilter(e);
@@ -155,7 +176,7 @@ function UserFilter({ searchTerm, role, onSearchChange, onRoleChange }) {
                 }}
                 className="text-sm text-bgray-900 dark:text-bgray-50 hover:dark:bg-darkblack-600 cursor-pointer px-5 py-2 hover:bg-bgray-100 font-semibold"
               >
-                {roleOption}
+                {roleOption.label}
               </li>
             ))}
           </ul>
@@ -196,7 +217,7 @@ function UserFilter({ searchTerm, role, onSearchChange, onRoleChange }) {
           className="py-3 px-10 bg-success-300 text-white font-bold rounded-lg hover:bg-success-400 transition-all"
           onClick={() => navigate("/users/create")}
         >
-          Agregar Usuario
+          {t('userFilter.addUser')}
         </button>
       </div>
     </div>

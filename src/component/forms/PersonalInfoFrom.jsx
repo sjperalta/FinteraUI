@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { API_URL } from "./../../../config"; // Update the path as needed
 import { getToken } from "./../../../auth"; // Update the path as needed
 import PropTypes from "prop-types";
 import { useLocale } from "../../contexts/LocaleContext";
+import AuthContext from "../../context/AuthContext";
 
 // helper formatters (minimal, preserve digits and insert dashes)
 function formatCedula(raw) {
@@ -45,6 +46,7 @@ function PersonalInfoForm({ userId }) {
   const [error, setError] = useState(null);
 
   const token = getToken(); // Retrieve token from auth helper
+  const { setUser: setAuthUser } = useContext(AuthContext);
 
   useEffect(() => {
     if (!userId) {
@@ -122,24 +124,40 @@ function PersonalInfoForm({ userId }) {
       });
 
       if (!response.ok) {
-        throw new Error(t("errors.updateUserFailed"));
+        // Try to parse server message
+        const contentType = response.headers.get("content-type") || "";
+        const body = contentType.includes("application/json") ? await response.json().catch(() => ({})) : await response.text().catch(() => (response.statusText || ""));
+        const msg = body?.errors ? body.errors.join(", ") : body?.error || String(body) || t("errors.updateUserFailed");
+        throw new Error(msg);
       }
 
-      // Update locale separately
-      const localeResponse = await fetch(`${API_URL}/api/v1/users/${userId}/update_locale`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ locale: user.locale }),
-      });
+      // parse returned user and update global auth user and local state
+      const returned = await response.json().catch(() => ({}));
+      const returnedUser = returned?.user || returned;
+      if (returnedUser) {
+        // update component state (format identity/rtn for display)
+        setUser((u) => ({
+          ...u,
+          ...returnedUser,
+          identity: formatCedula(returnedUser.identity),
+          rtn: formatRTN(returnedUser.rtn),
+        }));
 
-      if (!localeResponse.ok) {
-        throw new Error(t("errors.updateLocaleFailed"));
+        // update global auth context and localStorage if this is the logged-in user
+        try {
+          const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+          if (storedUser && storedUser.id === returnedUser.id) {
+            const merged = { ...storedUser, ...returnedUser };
+            localStorage.setItem("user", JSON.stringify(merged));
+            if (typeof setAuthUser === "function") setAuthUser(merged);
+          }
+        } catch (e) {
+          // ignore localStorage issues
+        }
+
+        if (returnedUser.locale) setLocale(returnedUser.locale);
       }
 
-      setLocale(user.locale); // Update local locale state
       alert(t("errors.profileUpdated"));
     } catch (err) {
       setError(err.message);

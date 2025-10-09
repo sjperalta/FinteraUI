@@ -259,14 +259,11 @@
     "selectStartDate": "Select start date",
     "selectEndDate": "Select end date"
   },
-  "userFilter": {
-    "searchPlaceholder": "Client Name, Phone, Seller",
-    "selectType": "Select Type",
-    "addUser": "Add User",
-    "all": "All",
-    "user": "User",
-    "seller": "Seller",
-    "admin": "Admin"
+  "profile": {
+    "myProfile": "My Profile",
+    "settings": "Settings",
+    "users": "Users",
+    "logout": "Log Out"
   },
   "users": {
     "title": "Users",
@@ -285,7 +282,40 @@
     "passwordNoMatch": "Passwords don't match",
     "created": "Created",
     "invite": "Invite",
-    "loadingUsers": "Loading users..."
+    "loadingUsers": "Loading users...",
+    "createUserTitle": "Create User",
+    "userCreatedSuccess": "User created successfully. Redirecting...",
+    "fullNameRequired": "Full name is required.",
+    "invalidIdentity": "Invalid identity number. Expected format: 0999-1999-00999",
+    "invalidRTN": "Invalid RTN. Expected format: 0999-1999-00999-0",
+    "passwordMinLength": "Password must be at least 8 characters.",
+    "fullName": "Full Name",
+    "identity": "Identity Number",
+    "rtn": "RTN",
+    "phone": "Phone",
+    "address": "Address",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "roleLabel": "Role",
+    "userRole": "User",
+    "adminRole": "Administrator",
+    "sellerRole": "Seller",
+    "createdByLabel": "Created by",
+    "adminOnlyRoleNote": "Only administrators can choose another role; 'User' will be assigned.",
+    "back": "Back",
+    "createUser": "Create User",
+    "identityPlaceholder": "0999-1999-00999",
+    "rtnPlaceholder": "0999-1999-00999-0",
+    "addressOptional": "Address (Optional)",
+    "passwordStrength": "Password: {label}",
+    "chars": "chars",
+    "passwordsMatch": "Passwords match",
+    "passwordsDoNotMatch": "Passwords don't match",
+    "weak": "Weak",
+    "medium": "Medium",
+    "strong": "Strong",
+    "errorCreatingUser": "Error creating user"
   },
   "settings": {
     "personal": "Personal",
@@ -534,5 +564,24 @@
       "bank": "Bank"
     },
     "months": "months"
+  },
+  "progressbar": {
+    "completeInfo": "Complete Information",
+    "percentComplete": "{percent}% complete • {count} fields evaluated",
+    "verifyIdentity": "Verify Identity",
+    "resending": "Resending...",
+    "invalidUser": "Invalid user",
+    "resendError": "Error resending confirmation",
+    "verificationEmailSent": "Verification email sent"
+  }
+  ,
+  "userFilter": {
+    "all": "All",
+    "user": "User",
+    "seller": "Seller",
+    "admin": "Admin",
+    "searchPlaceholder": "Search users by name, email or ID...",
+    "selectType": "Select role",
+    "addUser": "Add User"
   }
 }

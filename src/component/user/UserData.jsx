@@ -195,7 +195,7 @@ function UserData({ userInfo, index, token, onClick}) {
               ? "text-green-600 dark:text-green-400" 
               : "text-gray-500 dark:text-gray-400"
           }`}>
-            {status === "active" ? "Active" : "Inactive"}
+            {status === "active" ? t('common.active') : t('common.inactive')}
           </span>
         </div>
       </td>

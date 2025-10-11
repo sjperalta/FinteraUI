@@ -483,6 +483,14 @@
     "statusPlaceholder": "Filtrar por estado",
     "all": "Todos"
   },
+  "contracts": {
+    "balance": "Saldo",
+    "noContracts": "Sin Contratos",
+    "contactInformation": "Información de Contacto",
+    "note": "Nota",
+    "documents": "Documentos",
+    "accountStatement": "Estado de Cuenta"
+  },
   "contractNotes": {
     "generalNotes": "Notas Generales",
     "rejectionReason": "Razón de Rechazo",

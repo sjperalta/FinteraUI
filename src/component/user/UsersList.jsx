@@ -135,16 +135,16 @@ function UsersList({ searchTerm, role, onUserSelect }) {
 
   return (
     <div className="w-full overflow-x-auto">
-      <table className="w-full table-auto border-collapse bg-white dark:bg-darkblack-600 rounded-lg shadow-md min-w-full">
-        <thead className="bg-gray-50 dark:bg-darkblack-500">
+      <table className="w-full table-auto border-collapse bg-white dark:bg-darkblack-600 rounded-lg shadow-lg overflow-hidden min-w-full">
+        <thead className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-darkblack-500 dark:to-darkblack-400 border-b-2 border-gray-200 dark:border-darkblack-300">
           <tr>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">
+            <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
               {t('users.user')}
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 hidden sm:table-cell">
+            <th className="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 hidden sm:table-cell">
               {t('common.status')}
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">
+            <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
               {t('common.actions')}
             </th>
           </tr>
@@ -163,14 +163,14 @@ function UsersList({ searchTerm, role, onUserSelect }) {
       </table>
 
       {/* Pagination Controls */}
-      <div className="flex items-center justify-center gap-4 mt-6">
+      <div className="flex items-center justify-between mt-6 px-4 py-3 bg-white dark:bg-darkblack-600 rounded-lg border border-gray-200 dark:border-darkblack-400">
         <button
           onClick={handlePrevPage}
           disabled={currentPage <= 1}
-          className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed transition"
+          className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-darkblack-500 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-darkblack-400 rounded-lg hover:bg-gray-50 dark:hover:bg-darkblack-400 disabled:bg-gray-100 dark:disabled:bg-darkblack-500 disabled:text-gray-400 dark:disabled:text-gray-600 disabled:cursor-not-allowed transition-colors shadow-sm"
         >
           <svg
-            className="w-4 h-4 mr-2"
+            className="w-4 h-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -182,21 +182,32 @@ function UsersList({ searchTerm, role, onUserSelect }) {
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          {t('common.previous')}
+          <span className="font-medium">{t('common.previous')}</span>
         </button>
 
-        <span className="text-sm text-gray-600 dark:text-gray-400">
-          {t('common.page')} {currentPage} {t('common.of')} {totalPages}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {t('common.page')}
+          </span>
+          <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-md font-bold text-sm">
+            {currentPage}
+          </span>
+          <span className="text-sm text-gray-500 dark:text-gray-400">
+            {t('common.of')}
+          </span>
+          <span className="px-3 py-1 bg-gray-100 dark:bg-darkblack-500 text-gray-700 dark:text-gray-300 rounded-md font-bold text-sm">
+            {totalPages}
+          </span>
+        </div>
 
         <button
           onClick={handleNextPage}
           disabled={currentPage >= totalPages}
-          className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed transition"
+          className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-darkblack-500 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-darkblack-400 rounded-lg hover:bg-gray-50 dark:hover:bg-darkblack-400 disabled:bg-gray-100 dark:disabled:bg-darkblack-500 disabled:text-gray-400 dark:disabled:text-gray-600 disabled:cursor-not-allowed transition-colors shadow-sm"
         >
-          {t('common.next')}
+          <span className="font-medium">{t('common.next')}</span>
           <svg
-            className="w-4 h-4 ml-2"
+            className="w-4 h-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

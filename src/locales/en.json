@@ -472,6 +472,14 @@
     "statusPlaceholder": "Filter by status",
     "all": "All"
   },
+  "contracts": {
+    "balance": "Balance",
+    "noContracts": "No Contracts",
+    "contactInformation": "Contact Information",
+    "note": "Note",
+    "documents": "Documents",
+    "accountStatement": "Account Statement"
+  },
   "contractNotes": {
     "generalNotes": "General Notes",
     "rejectionReason": "Rejection Reason",

@@ -469,6 +469,7 @@
     "contractSearchPlaceholder": "Search contracts...",
     "contractStatusPlaceholder": "Filter by status",
     "searchPlaceholder": "Search transactions...",
+    "statusPlaceholder": "Filter by status",
     "all": "All"
   },
   "contractNotes": {

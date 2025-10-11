@@ -480,6 +480,7 @@
     "contractSearchPlaceholder": "Buscar contratos...",
     "contractStatusPlaceholder": "Filtrar por estado",
     "searchPlaceholder": "Buscar transacciones...",
+    "statusPlaceholder": "Filtrar por estado",
     "all": "Todos"
   },
   "contractNotes": {

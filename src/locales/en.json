@@ -27,6 +27,7 @@
     "retry": "Retry",
     "notAvailable": "N/A",
     "processing": "Processing...",
+    "inactive": "INACTIVE",
     "months": {
       "jan": "Jan",
       "feb": "Feb",
@@ -469,7 +470,16 @@
     "contractSearchPlaceholder": "Search contracts...",
     "contractStatusPlaceholder": "Filter by status",
     "searchPlaceholder": "Search transactions...",
+    "statusPlaceholder": "Filter by status",
     "all": "All"
+  },
+  "contracts": {
+    "balance": "Balance",
+    "noContracts": "No Contracts",
+    "contactInformation": "Contact Information",
+    "note": "Note",
+    "documents": "Documents",
+    "accountStatement": "Account Statement"
   },
   "contractNotes": {
     "generalNotes": "General Notes",
@@ -573,7 +583,7 @@
     "invalidUser": "Invalid user",
     "resendError": "Error resending confirmation",
     "verificationEmailSent": "Verification email sent"
-  }
+  },
   "userFilter": {
     "all": "All",
     "user": "User",

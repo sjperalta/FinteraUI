@@ -84,7 +84,8 @@ function PersonalInfoForm({ userId }) {
     };
 
     fetchUser();
-  }, [userId, token, t, setLocale]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId, token]); // Only re-fetch when userId or token changes
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -95,6 +96,11 @@ function PersonalInfoForm({ userId }) {
       ...prevUser,
       [name]: v,
     }));
+
+    // Immediately update locale when language is changed
+    if (name === "locale") {
+      setLocale(value);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -120,6 +126,7 @@ function PersonalInfoForm({ userId }) {
           identity: user.identity.replace(/-/g, ''), // send raw digits
           rtn: user.rtn.replace(/-/g, ''), // send raw digits
           address: user.address,
+          locale: user.locale, // Include locale in the update
         }),
       });
 

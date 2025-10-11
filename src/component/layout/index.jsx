@@ -36,7 +36,7 @@ function Layout({ bg, overlay, children }) {
         }}
       >
         <div className="relative flex w-full">
-          {user ?<Sidebar handleActive={() => setSidebar(!sidebar)} user={user}  handleLogout={handleLogout} /> : <div>Sidebar render ...</div>}
+          {user ? <Sidebar handleActive={() => setSidebar(!sidebar)} user={user}  handleLogout={handleLogout} /> : <div>Sidebar render ...</div>}
           {overlay ? overlay : <Overlay />}
           {user ? <SidebarV2 user={user} handleLogout={handleLogout} /> : <div>Sidebar render ...</div>}
           <div

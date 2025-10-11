@@ -3,12 +3,38 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { useLocale } from "../../contexts/LocaleContext";
 import { API_URL } from "../../../config";
-import inbox1 from "../../assets/images/avatar/profile.png";
 
 function UserData({ userInfo, index, token, onClick}) {
   const { t } = useLocale();
   const { id, full_name, phone, email, status: initialStatus, role, created_at, created_by, creator } = userInfo;
   const [status, setStatus] = useState(initialStatus); // Use local state for status
+
+  // Generate initials from full name
+  const getInitials = (name) => {
+    if (!name) return "??";
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) {
+      return parts[0].substring(0, 2).toUpperCase();
+    }
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  };
+
+  // Generate a consistent color based on the name
+  const getAvatarColor = (name) => {
+    if (!name) return "bg-gray-400";
+    const colors = [
+      "bg-blue-500",
+      "bg-green-500",
+      "bg-purple-500",
+      "bg-pink-500",
+      "bg-indigo-500",
+      "bg-yellow-500",
+      "bg-red-500",
+      "bg-teal-500",
+    ];
+    const hash = name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    return colors[hash % colors.length];
+  };
 
   const toggleUserStatus = async () => {
     if (!token) {
@@ -63,62 +89,81 @@ function UserData({ userInfo, index, token, onClick}) {
 
   return (
     <tr
-      className={`${index % 2 === 0 ? "bg-white dark:bg-darkblack-600" : ""} hover:bg-success-50 cursor-pointer`}
+      className={`${
+        index % 2 === 0 
+          ? "bg-white dark:bg-darkblack-600" 
+          : "bg-gray-50 dark:bg-darkblack-500"
+      } hover:bg-blue-50 dark:hover:bg-darkblack-400 transition-colors duration-150 cursor-pointer border-b border-gray-100 dark:border-darkblack-400`}
       onClick={() => onClick && onClick(userInfo)}
     >
-      <td className="whitespace-nowrap py-4 text-sm text-gray-500 w-[400px] lg:w-auto">
-        <div className="flex items-center gap-5">
-          <div className="w-[64px] h-[64px]">
-            <img
-              className="w-full h-full object-cover rounded-lg"
-              src={inbox1}
-              alt=""
-            />
+      <td className="px-6 py-5 text-sm text-gray-500">
+        <div className="flex items-center gap-4">
+          {/* Avatar with Initials */}
+          <div className="relative group flex-shrink-0">
+            <div className={`w-14 h-14 rounded-full ${getAvatarColor(full_name)} flex items-center justify-center shadow-lg ring-2 ring-white dark:ring-darkblack-600 transform transition-all duration-200 group-hover:scale-110 group-hover:shadow-xl`}>
+              <span className="text-white font-bold text-lg tracking-tight">
+                {getInitials(full_name)}
+              </span>
+            </div>
+            {/* Status indicator dot */}
+            <div className={`absolute bottom-0 right-0 w-4 h-4 rounded-full border-2 border-white dark:border-darkblack-600 ${
+              status === "active" ? "bg-green-500" : "bg-gray-400"
+            }`}></div>
           </div>
-          <div className="flex-1">
-            {/* Top row: name (left) + role badge (right) */}
-            <div className="flex items-start justify-between">
-              <h4 className="font-bold text-lg text-bgray-900 dark:text-white">
-                {full_name}#{id} <span
+          
+          <div className="flex-1 min-w-0">
+            {/* Top row: name + role badge */}
+            <div className="flex items-center gap-3 mb-2">
+              <h4 className="font-bold text-base text-bgray-900 dark:text-white truncate">
+                {full_name}
+              </h4>
+              <span className="text-xs text-gray-400 dark:text-gray-500 font-medium">
+                #{id}
+              </span>
+              <span
                 className={
-                  "text-sm font-medium px-3 py-1 rounded-full " +
+                  "text-xs font-semibold px-2.5 py-1 rounded-full " +
                   (role === "admin"
-                    ? "bg-success-300 text-white"
+                    ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
                     : role === "seller"
-                    ? "bg-yellow-400 text-white"
-                    : "bg-bgray-100 text-bgray-900 dark:bg-darkblack-500 dark:text-bgray-50")
+                    ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                    : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400")
                 }
               >
                 {role}
               </span>
-              </h4>
-             
             </div>
 
-            {/* Second line: email + created_at (removed phone & duplicate role) */}
-            <div className="mt-1">
-              <div className="flex items-center gap-1 mb-1">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {/* User details */}
+            <div className="space-y-1.5">
+              {/* Email */}
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <span className="font-medium text-base text-bgray-700 dark:text-bgray-50">
+                <span className="text-sm text-gray-600 dark:text-gray-300 truncate">
                   {email}
                 </span>
               </div>
-              <div className="flex items-center gap-1 mb-1">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              
+              {/* Created date */}
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                <span className="text-sm text-gray-500">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
                   {t('users.created')}: {formattedDate}
                 </span>
               </div>
-              <div className="flex items-center gap-1 text-sm text-gray-500">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              
+              {/* Created by */}
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
-                <span className="font-medium text-bgray-700 dark:text-bgray-50">{t('users.createdBy')}: </span>
-                <span className="ml-1">{creatorLabel}</span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {t('users.createdBy')}: <span className="font-medium text-gray-600 dark:text-gray-300">{creatorLabel}</span>
+                </span>
               </div>
             </div>
           </div>
@@ -126,38 +171,58 @@ function UserData({ userInfo, index, token, onClick}) {
       </td>
 
       {/* Status cell */}
-      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-        <div className="flex items-center">
-          <input
-            type="checkbox"
-            checked={status === "active"}
-            onChange={toggleUserStatus}
-            role="switch"
-            id={`flexSwitchCheckDefault-${id}`}
-            className="mr-2 mt-[0.3rem] h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:rounded-full before:bg-transparent before:content-[''] after:absolute after:z-[2] after:-mt-[0.1875rem] after:h-5 after:w-5 after:rounded-full after:border-none after:bg-neutral-100 after:shadow-[0_0px_3px_0_rgb(0_0_0_/_7%),_0_2px_2px_0_rgb(0_0_0_/_4%)] after:transition-[background-color_0.2s,transform_0.2s] after:content-[''] checked:bg-primary checked:after:absolute checked:after:z-[2] checked:after:-mt-[3px] checked:after:ml-[1.0625rem]"
-          />
-          <label
-            className="inline-block pl-[0.15rem] hover:cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-300"
-            htmlFor={`flexSwitchCheckDefault-${id}`}
+      <td className="whitespace-nowrap px-6 py-5 text-sm text-gray-500 hidden sm:table-cell">
+        <div className="flex items-center justify-center">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleUserStatus();
+            }}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+              status === "active" 
+                ? "bg-green-500" 
+                : "bg-gray-300 dark:bg-gray-600"
+            }`}
           >
-            {status}
-          </label>
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                status === "active" ? "translate-x-6" : "translate-x-1"
+              }`}
+            />
+          </button>
+          <span className={`ml-3 text-xs font-semibold ${
+            status === "active" 
+              ? "text-green-600 dark:text-green-400" 
+              : "text-gray-500 dark:text-gray-400"
+          }`}>
+            {status === "active" ? t('common.active') : t('common.inactive')}
+          </span>
         </div>
       </td>
 
       {/* Actions cell */}
-      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-        <div className="flex items-center gap-5">
+      <td className="whitespace-nowrap px-6 py-5 text-sm text-gray-500">
+        <div className="flex items-center gap-3">
           <Link
             to={`/settings/user/${id}`}
-            className="text-sm font-medium text-success-300"
+            onClick={(e) => e.stopPropagation()}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-lg transition-colors font-medium text-xs"
           >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
             {t('common.edit')}
           </Link>
           <button
-            onClick={resendConfirmation}
-            className="text-sm font-medium text-success-300"
+            onClick={(e) => {
+              e.stopPropagation();
+              resendConfirmation();
+            }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:hover:bg-green-900/40 text-green-600 dark:text-green-400 rounded-lg transition-colors font-medium text-xs"
           >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76" />
+            </svg>
             {t('users.invite')}
           </button>
         </div>

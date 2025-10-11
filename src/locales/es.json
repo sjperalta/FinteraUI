@@ -27,6 +27,7 @@
     "retry": "Reintentar",
     "notAvailable": "N/A",
     "processing": "Procesando...",
+    "inactive": "INACTIVO",
     "months": {
       "jan": "Ene",
       "feb": "Feb",
@@ -480,7 +481,16 @@
     "contractSearchPlaceholder": "Buscar contratos...",
     "contractStatusPlaceholder": "Filtrar por estado",
     "searchPlaceholder": "Buscar transacciones...",
+    "statusPlaceholder": "Filtrar por estado",
     "all": "Todos"
+  },
+  "contracts": {
+    "balance": "Saldo",
+    "noContracts": "Sin Contratos",
+    "contactInformation": "Información de Contacto",
+    "note": "Nota",
+    "documents": "Documentos",
+    "accountStatement": "Estado de Cuenta"
   },
   "contractNotes": {
     "generalNotes": "Notas Generales",
@@ -584,7 +594,7 @@
     "invalidUser": "Usuario inválido",
     "resendError": "Error al reenviar confirmación",
     "verificationEmailSent": "Correo de verificación reenviado"
-  }
+  },
   "userFilter": {
     "all": "Todos",
     "user": "Usuario",

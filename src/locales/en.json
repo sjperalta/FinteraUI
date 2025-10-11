@@ -27,7 +27,8 @@
     "retry": "Retry",
     "notAvailable": "N/A",
     "processing": "Processing...",
-    "inactive": "INACTIVE",
+    "inactive": "Inactive",
+    "active": "Active",
     "months": {
       "jan": "Jan",
       "feb": "Feb",

@@ -4,7 +4,6 @@ import Home from "./pages/home";
 import Transaction from "./pages/Transaction";
 import Projects from "./pages/projects";
 import Users from "./pages/users";
-import History from "./pages/history";
 import Settings from "./pages/settings";
 import SignIn from "./pages/signin";
 import SignUp from "./pages/signup";

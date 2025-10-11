@@ -24,7 +24,7 @@ function TotalWidget({ statistics }) {
 
   return (
     <div className="mb-[32px] w-full">
-      <div className="grid grid-cols-1 gap-[24px] lg:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-[24px] lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-4">
         <div className="transform hover:scale-105 transition-all duration-300 ease-in-out hover:shadow-lg">
           <TotalWidgetCard
             title={t('widgets.totalIncome')}
@@ -73,7 +73,7 @@ function TotalWidget({ statistics }) {
       </div>
       
       {/* Additional summary cards for payment breakdown */}
-      <div className="grid grid-cols-1 gap-[16px] lg:grid-cols-2 xl:grid-cols-5 mt-6">
+      <div className="grid grid-cols-1 gap-[16px] lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 mt-6">
         <div className="bg-white dark:bg-darkblack-600 rounded-lg p-4 border border-gray-200 dark:border-darkblack-500 hover:shadow-md transition-all duration-200">
           <div className="flex items-center justify-between">
             <div>

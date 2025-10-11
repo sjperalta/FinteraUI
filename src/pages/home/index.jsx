@@ -31,7 +31,7 @@ function MonthSelector({ selectedMonth, onChange }) {
   };
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
       <div className="flex items-center space-x-3">
         <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
           <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -48,7 +48,7 @@ function MonthSelector({ selectedMonth, onChange }) {
         </div>
       </div>
       
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center space-x-3 w-full lg:w-auto justify-end">
         <button
           onClick={handlePrev}
           className="inline-flex items-center px-3 py-2 bg-white dark:bg-darkblack-700 border border-gray-300 dark:border-darkblack-500 rounded-lg text-sm font-medium text-bgray-700 dark:text-bgray-200 hover:bg-gray-50 dark:hover:bg-darkblack-600 transition-colors duration-200"
@@ -251,7 +251,7 @@ function Home() {
   };
 
   return (
-    <main className="w-full px-6 pb-6 pt-[100px] sm:pt-[156px] xl:px-12 xl:pb-12">
+    <main className="w-full px-6 pb-6 pt-[100px] sm:pt-[156px] xl:px-12 xl:pb-12 2xl:px-16">
       {/* Header Section */}
       <div className="mb-8">
         <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer">
@@ -348,9 +348,9 @@ function Home() {
 
       {/* Main Dashboard Content */}
       {!loading && !error && (
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
           {/* Main Content Area */}
-          <div className="xl:col-span-2 space-y-6">
+          <div className="xl:col-span-2 2xl:col-span-3 space-y-6">
             <TotalWidget statistics={statistics} className="animate-fade-in-up" />
             <div className="w-full rounded-xl bg-white dark:bg-darkblack-600 shadow-lg border border-gray-100 dark:border-darkblack-500 overflow-hidden hover:shadow-xl transition-shadow duration-300">
               <div className="bg-gradient-to-r from-bgray-50 to-gray-100 dark:from-darkblack-700 dark:to-darkblack-600 px-6 py-4 border-b border-gray-200 dark:border-darkblack-500">
@@ -371,7 +371,7 @@ function Home() {
                 </div>
               </div>
               <div className="p-6">
-                <div className="h-[400px]">
+                <div className="h-[400px] lg:h-[450px] 2xl:h-[500px]">
                   <RevenueFlow selectedYear={selectedMonth.getFullYear()} currentMonth={selectedMonth.getMonth() + 1} />
                 </div>
               </div>
@@ -379,7 +379,7 @@ function Home() {
           </div>
           
           {/* Sidebar with Reports */}
-          <div className="xl:col-span-1">
+          <div className="xl:col-span-1 2xl:col-span-1">
             <Report />
           </div>
         </div>

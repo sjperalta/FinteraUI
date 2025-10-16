@@ -10,6 +10,7 @@ import PaymentScheduleTab from "./PaymentScheduleTab";
 import LedgerEntriesTab from "./LedgerEntriesTab";
 import ContractSummaryCards from "./ContractSummaryCards";
 import ContractNotesTab from "./ContractNotesTab";
+import Toast from "../ui/Toast";
 
 function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
   const [schedule, setSchedule] = useState([]);
@@ -26,6 +27,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
   const [activeTab, setActiveTab] = useState('payments');
   const [ledgerEntries, setLedgerEntries] = useState([]); // Ensure ledgerEntries is always initialized as an array
   const [ledgerLoading, setLedgerLoading] = useState(false);
+  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
   const token = getToken();
   const { t } = useLocale();
 
@@ -571,7 +573,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                     if (selectedPayment?.isCapitalPayment) {
                       // Handle capital payment (abono a capital)
                       if (paymentAmount <= 0) {
-                        alert(t('contracts.capitalPaymentAmountRequired'));
+                        setToast({ visible: true, message: t('contracts.capitalPaymentAmountRequired'), type: "error" });
                         setActionLoading(false);
                         return;
                       }
@@ -600,28 +602,70 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
 
                       const data = await response.json();
                       
-                      // Handle the capital payment response and update balance locally
-                      // Since capital repayment reduces the balance, subtract the payment amount
-                      setCurrentContract(prev => ({
-                        ...(prev || {}),
-                        balance: (prev?.balance || 0) - paymentAmount
-                      }));
+                      // Update contract with new balance from backend
+                      if (data.contract) {
+                        setCurrentContract(prev => ({
+                          ...(prev || {}),
+                          ...data.contract,
+                          balance: data.contract.balance
+                        }));
+                      }
+                      
+                      // Update schedule with readjusted payments from backend
+                      if (data.reajusted_payments && Array.isArray(data.reajusted_payments) && data.reajusted_payments.length > 0) {
+                        const safeSchedule = Array.isArray(schedule) ? schedule : [];
+                        
+                        // Replace existing payments with readjusted ones from backend
+                        const updatedSchedule = safeSchedule.map(payment => {
+                          // Find if this payment was readjusted
+                          const reajustedPayment = data.reajusted_payments.find(rp => rp.id === payment.id);
+                          if (reajustedPayment) {
+                            // Use the complete payment data from backend
+                            return {
+                              ...reajustedPayment,
+                              status: 'readjustment',
+                              readjusted_at: new Date().toISOString()
+                            };
+                          }
+                          return payment;
+                        });
+                        setSchedule(updatedSchedule);
+                        
+                        // IMPORTANT: Update the contract's payment_schedule to persist readjustment status
+                        // This ensures that when modal reopens, the readjustment status is maintained
+                        setCurrentContract(prev => ({
+                          ...(prev || {}),
+                          payment_schedule: updatedSchedule
+                        }));
+                      }
                       
                       // Call the original callback if provided
                       if (onPaymentSuccess) {
                         onPaymentSuccess({
                           payment: {
                             amount: paymentAmount,
-                            contract: {
+                            contract: data.contract || {
                               id: currentContract?.id,
-                              balance: (currentContract?.balance || 0) - paymentAmount,
+                              balance: data.contract?.balance || (currentContract?.balance || 0) - paymentAmount,
                               status: currentContract?.status,
                               created_at: currentContract?.created_at,
                               currency: currentContract?.currency || "HNL"
                             }
-                          }
+                          },
+                          reajusted_payments_count: data.reajusted_payments_count || 0,
+                          reajusted_payments: data.reajusted_payments || []
                         });
                       }
+                      
+                      // Note: Don't reload payment schedule here as it would overwrite the readjusted payments
+                      // The schedule has already been updated with the readjusted payments from backend
+                      
+                      // Show success feedback for capital payment
+                      let successMessage = `${t('contracts.capitalPayment')} ${t('contracts.appliedSuccessfully')}`;
+                      if (data.reajusted_payments_count > 0) {
+                        successMessage += ` - ${data.reajusted_payments_count} ${t('contracts.paymentsReadjusted')}`;
+                      }
+                      setToast({ visible: true, message: successMessage, type: "success" });
                       
                     } else {
                       // Handle regular payment - Make API call to apply payment
@@ -629,7 +673,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                       const paidAmount = parseFloat(editableTotal) || 0;
 
                       if (paidAmount <= 0) {
-                        alert(t('contracts.totalAmountRequired'));
+                        setToast({ visible: true, message: t('contracts.totalAmountRequired'), type: "error" });
                         setActionLoading(false);
                         return;
                       }
@@ -679,11 +723,10 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                       // Handle the payment response and update balance
                       handlePaymentResponse(data);
                       
+                      // Show success feedback for regular payment
+                      setToast({ visible: true, message: `${t('contracts.payment')} ${t('contracts.appliedSuccessfully')}`, type: "success" });
+                      
                     }
-                    
-                    // Show success feedback
-                    const paymentType = selectedPayment?.isCapitalPayment ? t('contracts.capitalPayment') : t('contracts.payment');
-                    alert(`${paymentType} ${t('contracts.appliedSuccessfully')}`);
                     
                     setTimeout(() => {
                       setApplyPaymentModal(false);
@@ -696,7 +739,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                   } catch (error) {
                     console.error('Error applying payment:', error);
                     const paymentType = selectedPayment?.isCapitalPayment ? t('contracts.capitalPayment').toLowerCase() : t('contracts.payment').toLowerCase();
-                    alert(`${t('contracts.errorApplying')} ${paymentType}: ${error.message}`);
+                    setToast({ visible: true, message: `${t('contracts.errorApplying')} ${paymentType}: ${error.message}`, type: "error" });
                     setActionLoading(false);
                   }
                 }}
@@ -772,6 +815,14 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
           </div>
         </div>
       )}
+
+      {/* Toast Notification */}
+      <Toast
+        visible={toast.visible}
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast((s) => ({ ...s, visible: false }))}
+      />
     </div>
   );
 }

@@ -54,15 +54,17 @@ const PaymentScheduleTab = ({
             {(Array.isArray(schedule) ? schedule : []).map((row, idx) => {
               const amount = row.amount || row.value || row.payment_amount;
               const interest = row.interest_amount || 0;
-              const status = (row.status || "pending").toLowerCase();
+              const status = (row.status || 'pending').toLowerCase();
+              // Check if payment is a readjustment (disabled)
+              const isReadjustment = status === "readjustment";
               // Normalize moratory days to a number in case the source is a string
               const moratoryDaysRaw = (row.overdue_days ?? row.moratory_days ?? calculateMoratoryDays(row.due_date));
               const moratoryDaysParsed = parseInt(moratoryDaysRaw, 10);
               const moratoryDays = Number.isNaN(moratoryDaysParsed) ? 0 : moratoryDaysParsed;
 
               // Derive payment state: some APIs don't include an 'overdue' status
-              const isPaid = (row.status || "").toString().toLowerCase() === "paid";
-              const isOverdue = !isPaid && moratoryDays > 0;
+              const isPaid = status === "paid";
+              const isOverdue = !isPaid && !isReadjustment && moratoryDays > 0;
 
               const getMoratoryDaysColor = (days) => {
                 const d = Number(days) || 0;
@@ -75,20 +77,36 @@ const PaymentScheduleTab = ({
               return (
                 <tr
                   key={row.id || idx}
-                  className="border-b border-bgray-100 dark:border-darkblack-500 last:border-b-0 hover:bg-bgray-50 dark:hover:bg-darkblack-500"
+                  className={`border-b border-bgray-100 dark:border-darkblack-500 last:border-b-0 ${
+                    isReadjustment 
+                      ? 'bg-gray-100 dark:bg-gray-800 opacity-60 cursor-not-allowed' 
+                      : 'hover:bg-bgray-50 dark:hover:bg-darkblack-500'
+                  }`}
                 >
-                  <td className="py-3 pr-3 font-medium text-bgray-900 dark:text-white">{row.number || idx + 1}</td>
-                  <td className="py-3 pr-3 text-bgray-900 dark:text-white font-mono text-xs">{row.id || 'N/A'}</td>
-                  <td className="py-3 pr-3 text-bgray-900 dark:text-white">
+                  <td className={`py-3 pr-3 font-medium ${isReadjustment ? 'text-gray-400 dark:text-gray-500' : 'text-bgray-900 dark:text-white'}`}>
+                    {row.number || idx + 1}
+                  </td>
+                  <td className={`py-3 pr-3 font-mono text-xs ${isReadjustment ? 'text-gray-400 dark:text-gray-500' : 'text-bgray-900 dark:text-white'}`}>
+                    {row.id || 'N/A'}
+                  </td>
+                  <td className={`py-3 pr-3 ${isReadjustment ? 'text-gray-400 dark:text-gray-500' : 'text-bgray-900 dark:text-white'}`}>
                     {row.due_date ? new Date(row.due_date).toLocaleDateString() : "—"}
                   </td>
                   <td className="py-3 pr-3">
-                    <span className="px-2 py-1 bg-bgray-100 dark:bg-darkblack-400 text-bgray-900 dark:text-white rounded text-xs">
+                    <span className={`px-2 py-1 rounded text-xs ${
+                      isReadjustment 
+                        ? 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400' 
+                        : 'bg-bgray-100 dark:bg-darkblack-400 text-bgray-900 dark:text-white'
+                    }`}>
                       {translatePaymentType(row.payment_type)}
                     </span>
                   </td>
-                  <td className="py-3 pr-3 text-right font-medium text-bgray-900 dark:text-white">{fmt(amount)}</td>
-                  <td className="py-3 pr-3 text-right font-medium text-bgray-900 dark:text-white">{fmt(interest)}</td>
+                  <td className={`py-3 pr-3 text-right font-medium ${isReadjustment ? 'text-gray-400 dark:text-gray-500' : 'text-bgray-900 dark:text-white'}`}>
+                    {fmt(amount)}
+                  </td>
+                  <td className={`py-3 pr-3 text-right font-medium ${isReadjustment ? 'text-gray-400 dark:text-gray-500' : 'text-bgray-900 dark:text-white'}`}>
+                    {fmt(interest)}
+                  </td>
                   <td className="py-3 pr-3 text-center">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${getMoratoryDaysColor(moratoryDays)}`}>
                       {moratoryDays} {t('paymentSchedule.days')}
@@ -98,109 +116,126 @@ const PaymentScheduleTab = ({
                     <span
                       className={
                         "px-2 py-0.5 rounded-full text-[11px] font-semibold " +
-                        (isPaid
+                        (isReadjustment
+                          ? "bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400"
+                          : isPaid
                           ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
                           : isOverdue
                           ? "bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300"
                           : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300")
                       }
                     >
-                      {isPaid ? t('paymentSchedule.paid') : isOverdue ? t('paymentSchedule.overdue') : t('paymentSchedule.pending')}
+                      {isReadjustment 
+                        ? t('paymentSchedule.readjustment') 
+                        : isPaid 
+                        ? t('paymentSchedule.paid') 
+                        : isOverdue 
+                        ? t('paymentSchedule.overdue') 
+                        : t('paymentSchedule.pending')
+                      }
                     </span>
                   </td>
                   <td className="py-3 pr-3 text-center">
                     <div className="flex items-center justify-center gap-1">
-                      {!isReadOnly && !isPaid && (
-                        <button
-                          onClick={() => {
-                            setSelectedPayment(row);
-                            setEditableAmount(amount?.toString() || "");
-                            setEditableInterest(interest?.toString() || "");
-                            setEditableTotal(((Number(amount) || 0) + (Number(interest) || 0)).toString());
-                            setApplyPaymentModal(true);
-                          }}
-                          className="px-2 py-1 text-xs font-medium bg-blue-100 hover:bg-blue-200 text-blue-700 rounded transition-colors"
-                          title={t('paymentSchedule.applyPayment')}
-                        >
-                          💰
-                        </button>
-                      )}
-                      {!isReadOnly && !isPaid && moratoryDays > 0 && (
-                        <button
-                          onClick={() => {
-                            setEditingMora(row.id || idx);
-                            setMoratoryAmount(interest?.toString() || "0");
-                          }}
-                          className="px-2 py-1 text-xs font-medium bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded transition-colors"
-                          title={t('paymentSchedule.editMoratory')}
-                        >
-                          ⚠️
-                        </button>
-                      )}
-                      {isPaid && (
+                      {isReadjustment ? (
+                        <span className="px-2 py-1 text-xs text-gray-400 dark:text-gray-500" title={t('paymentSchedule.readjustment')}>
+                          🔒
+                        </span>
+                      ) : (
                         <>
-                          <span className="px-2 py-1 text-xs text-green-600" title="Pagado">
-                            ✅
-                          </span>
-                          {!isReadOnly && (
+                          {!isReadOnly && !isPaid && (
                             <button
                               onClick={() => {
-                                // Handle undo payment logic
-                                const safeSchedule = Array.isArray(schedule) ? schedule : [];
-                                const updatedSchedule = safeSchedule.map((payment, paymentIdx) =>
-                                  (payment.id === row.id || paymentIdx === idx)
-                                    ? {
-                                        ...payment,
-                                        status: "pending",
-                                        paid_date: null,
-                                        undo_date: new Date().toISOString().split('T')[0]
-                                      }
-                                    : payment
-                                );
-                                setSchedule(updatedSchedule);
-
-                                // Update balance by adding back the payment amount
-                                const paymentAmount = row.amount || 0;
-                                setCurrentContract(prev => ({
-                                  ...(prev || {}),
-                                  balance: (prev?.balance || 0) + paymentAmount
-                                }));
-
-                                // Simulate undo payment response
-                                const mockUndoResponse = {
-                                  payment: {
-                                    ...row,
-                                    status: "pending",
-                                    paid_date: null,
-                                    undo_date: new Date().toISOString().split('T')[0],
-                                    contract: {
-                                      id: currentContract?.id,
-                                      balance: (currentContract?.balance || 0) + paymentAmount,
-                                      status: currentContract?.status,
-                                      created_at: currentContract?.created_at,
-                                      currency: currentContract?.currency || "HNL"
-                                    }
-                                  }
-                                };
-
-                                // Call the callback if provided
-                                if (onPaymentSuccess) {
-                                  onPaymentSuccess(mockUndoResponse);
-                                }
-
+                                setSelectedPayment(row);
+                                setEditableAmount(amount?.toString() || "");
+                                setEditableInterest(interest?.toString() || "");
+                                setEditableTotal(((Number(amount) || 0) + (Number(interest) || 0)).toString());
+                                setApplyPaymentModal(true);
                               }}
-                              className="px-2 py-1 text-xs font-medium bg-red-100 hover:bg-red-200 text-red-700 rounded transition-colors"
-                              title={t('paymentSchedule.undoPayment')}
+                              className="px-2 py-1 text-xs font-medium bg-blue-100 hover:bg-blue-200 text-blue-700 rounded transition-colors"
+                              title={t('paymentSchedule.applyPayment')}
                             >
-                              ↩️
+                              💰
                             </button>
                           )}
+                          {!isReadOnly && !isPaid && moratoryDays > 0 && (
+                            <button
+                              onClick={() => {
+                                setEditingMora(row.id || idx);
+                                setMoratoryAmount(interest?.toString() || "0");
+                              }}
+                              className="px-2 py-1 text-xs font-medium bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded transition-colors"
+                              title={t('paymentSchedule.editMoratory')}
+                            >
+                              ⚠️
+                            </button>
+                          )}
+                          {isPaid && (
+                            <>
+                              <span className="px-2 py-1 text-xs text-green-600" title="Pagado">
+                                ✅
+                              </span>
+                              {!isReadOnly && (
+                                <button
+                                  onClick={() => {
+                                    // Handle undo payment logic
+                                    const safeSchedule = Array.isArray(schedule) ? schedule : [];
+                                    const updatedSchedule = safeSchedule.map((payment, paymentIdx) =>
+                                      (payment.id === row.id || paymentIdx === idx)
+                                        ? {
+                                            ...payment,
+                                            status: "pending",
+                                            paid_date: null,
+                                            undo_date: new Date().toISOString().split('T')[0]
+                                          }
+                                        : payment
+                                    );
+                                    setSchedule(updatedSchedule);
+
+                                    // Update balance by adding back the payment amount
+                                    const paymentAmount = row.amount || 0;
+                                    setCurrentContract(prev => ({
+                                      ...(prev || {}),
+                                      balance: (prev?.balance || 0) + paymentAmount
+                                    }));
+
+                                    // Simulate undo payment response
+                                    const mockUndoResponse = {
+                                      payment: {
+                                        ...row,
+                                        status: "pending",
+                                        paid_date: null,
+                                        undo_date: new Date().toISOString().split('T')[0],
+                                        contract: {
+                                          id: currentContract?.id,
+                                          balance: (currentContract?.balance || 0) + paymentAmount,
+                                          status: currentContract?.status,
+                                          created_at: currentContract?.created_at,
+                                          currency: currentContract?.currency || "HNL"
+                                        }
+                                      }
+                                    };
+
+                                    // Call the callback if provided
+                                    if (onPaymentSuccess) {
+                                      onPaymentSuccess(mockUndoResponse);
+                                    }
+
+                                  }}
+                                  className="px-2 py-1 text-xs font-medium bg-red-100 hover:bg-red-200 text-red-700 rounded transition-colors"
+                                  title={t('paymentSchedule.undoPayment')}
+                                >
+                                  ↩️
+                                </button>
+                              )}
+                            </>
+                          )}
+                          {isReadOnly && !isPaid && (
+                            <span className="px-2 py-1 text-xs text-gray-500 dark:text-gray-400" title="Solo lectura">
+                              👁️
+                            </span>
+                          )}
                         </>
-                      )}
-                      {isReadOnly && !isPaid && (
-                        <span className="px-2 py-1 text-xs text-gray-500 dark:text-gray-400" title="Solo lectura">
-                          👁️
-                        </span>
                       )}
                     </div>
                   </td>

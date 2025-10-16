@@ -116,88 +116,126 @@ function ContractTab({ contracts, userRole, pageSize, refreshContracts, sortFiel
   };
 
   return (
-    <div className="table-content w-full overflow-x-auto">
-      <table className="w-full">
-        <thead>
-          <tr className="border-b border-bgray-300 dark:border-darkblack-400">
-            {/* Cliente */}
-            <th className="px-6 py-5 xl:px-0 text-left">
-              <div className="flex items-center space-x-2.5">
-                <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  Cliente
-                </span>
-                {/* Sorting Icon */}
-                {renderSortIcon('applicant_user_id')}
-              </div>
-            </th>
+    <div className="table-content w-full">
+      {/* Desktop Table View */}
+      <div className="hidden xl:block w-full overflow-x-auto rounded-xl border-2 border-gray-200 dark:border-darkblack-400 shadow-lg">
+        <table className="w-full bg-white dark:bg-darkblack-600">
+          <thead>
+            <tr className="border-b-2 border-blue-200 dark:border-blue-800/50 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-darkblack-500 dark:to-darkblack-400">
+              {/* Cliente */}
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-left">
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                    Cliente
+                  </span>
+                  {/* Sorting Icon */}
+                  <div className="flex-shrink-0">{renderSortIcon('applicant_user_id')}</div>
+                </div>
+              </th>
 
-            {/* Lote */}
-            <th className="px-6 py-5 xl:px-0 text-left">
-              <div className="flex items-center space-x-2.5">
-                <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  Lote
-                </span>
-                {/* Sorting Icon */}
-                {renderSortIcon('lot_id')}
-              </div>
-            </th>
+              {/* Lote */}
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-left">
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                    Lote
+                  </span>
+                  {/* Sorting Icon */}
+                  <div className="flex-shrink-0">{renderSortIcon('lot_id')}</div>
+                </div>
+              </th>
 
-            {/* Financiamiento */}
-            <th className="px-6 py-5 xl:px-0 text-left">
-              <div className="flex items-center space-x-2.5">
-                <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  Financiamiento
-                </span>
-                {/* Sorting Icon */}
-                {renderSortIcon('financing_type')}
-              </div>
-            </th>
+              {/* Financiamiento */}
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-left">
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                    Financiamiento
+                  </span>
+                  {/* Sorting Icon */}
+                  <div className="flex-shrink-0">{renderSortIcon('financing_type')}</div>
+                </div>
+              </th>
 
-            {/* Estado */}
-            <th className="px-6 py-5 xl:px-0 text-left">
-              <div className="flex items-center space-x-2.5">
-                <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  Estado
-                </span>
-                {/* Sorting Icon */}
-                {renderSortIcon('status')}
-              </div>
-            </th>
+              {/* Estado */}
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-left">
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                    Estado
+                  </span>
+                  {/* Sorting Icon */}
+                  <div className="flex-shrink-0">{renderSortIcon('status')}</div>
+                </div>
+              </th>
 
-            {/* Creado */}
-            <th className="px-6 py-5 xl:px-0 text-left">
-              <div className="flex items-center space-x-2.5">
-                <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  Creado
-                </span>
-                {/* Sorting Icon */}
-                {renderSortIcon('contracts.created_at')}
-              </div>
-            </th>
+              {/* Creado */}
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-left">
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                    Creado
+                  </span>
+                  {/* Sorting Icon */}
+                  <div className="flex-shrink-0">{renderSortIcon('contracts.created_at')}</div>
+                </div>
+              </th>
 
-            {/* Creado Por */}
-            <th className="w-[165px] px-6 py-5 xl:px-0 text-left">
-              <div className="flex items-center space-x-2.5">
-                <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
+              {/* Creado Por */}
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-left">
+                <span className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
                   Creado Por
                 </span>
-              </div>
-            </th>
+              </th>
 
-            {/* Acciones */}
-            <th className="px-6 py-5 xl:px-0 text-center">
-              <div className="flex justify-center">
-                <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
+              {/* Acciones */}
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-left">
+                <span className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
                   Acciones
                 </span>
-              </div>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {contracts?.map((contract) => (
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {contracts?.map((contract) => (
+              <ContractInfo
+                key={contract.id}
+                applicant_name={contract.applicant_name}
+                applicant_phone={contract.applicant_phone}
+                applicant_identity={contract.applicant_identity}
+                applicant_credit_score={contract.applicant_credit_score}
+                created_by={contract.created_by}
+                approved_at={contract.approved_at}
+                lot_name={contract.lot_name}
+                lot_address={contract.lot_address}
+                balance={contract.balance}
+                financing_type={contract.financing_type}
+                down_payment={contract.down_payment}
+                amount={contract.amount}
+                payment_term={contract.payment_term}
+                reserve_amount={contract.reserve_amount}
+                status={contract.status}
+                project_name={contract.project_name}
+                project_address={contract.project_address}
+                rejection_reason={contract.rejection_reason}
+                note={contract.note}
+                created_at={contract.created_at}
+                project_id={contract.project_id}
+                lot_id={contract.lot_id}
+                payment_schedule={contract.payment_schedule}
+                contract_id={contract.id}
+                userRole={userRole}
+                refreshContracts={refreshContracts}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="block xl:hidden space-y-3 sm:space-y-4">
+        {contracts?.map((contract) => (
+          <div
+            key={contract.id}
+            className="bg-white dark:bg-darkblack-600 rounded-xl border-2 border-gray-200 dark:border-darkblack-400 p-4 shadow-md hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200"
+          >
             <ContractInfo
-              key={contract.id}
               applicant_name={contract.applicant_name}
               applicant_phone={contract.applicant_phone}
               applicant_identity={contract.applicant_identity}
@@ -223,11 +261,12 @@ function ContractTab({ contracts, userRole, pageSize, refreshContracts, sortFiel
               payment_schedule={contract.payment_schedule}
               contract_id={contract.id}
               userRole={userRole}
-              refreshContracts={refreshContracts} 
+              refreshContracts={refreshContracts}
+              isMobileCard={true}
             />
-          ))}
-        </tbody>
-      </table>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

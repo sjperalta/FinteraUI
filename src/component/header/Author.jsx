@@ -1,5 +1,5 @@
-import profile from "../../assets/images/avatar/profile-52x52.png";
 import ProtoTypes from "prop-types";
+import { getInitials, getAvatarColor } from "../../utils/avatarUtils";
 
 function Author({ showProfile, user }) {
   return (
@@ -7,8 +7,10 @@ function Author({ showProfile, user }) {
       onClick={() => showProfile("profile")}
       className="flex cursor-pointer space-x-0 lg:space-x-3 z-30"
     >
-      <div className="h-[52px] w-[52px] overflow-hidden rounded-xl border border-bgray-300">
-        <img className="object-cover" src={profile} alt="avatar" />
+      <div className={`h-[52px] w-[52px] rounded-xl border border-bgray-300 ${getAvatarColor(user.full_name)} flex items-center justify-center`}>
+        <span className="text-white font-bold text-xl">
+          {getInitials(user.full_name)}
+        </span>
       </div>
       <div className="hidden 2xl:block">
         <div className="flex items-center space-x-2.5">

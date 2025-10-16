@@ -61,6 +61,39 @@ function PaymentList({ user, token }) {
     fetchPayments();
   }, [user, token]); // Only re-run if user or token changes
 
+  // Function to refresh payments data
+  const refreshPayments = async () => {
+    if (!user || !user.id || !token) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/api/v1/users/${user.id}/payments`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Error fetching payments');
+      }
+
+      const data = await response.json();
+
+      // Adjust based on API response structure
+      if (data.payments) {
+        setPayments(data.payments);
+      } else if (Array.isArray(data)) {
+        // If the API returns an array directly
+        setPayments(data);
+      }
+    } catch (error) {
+      console.error('Error refreshing payments:', error);
+    }
+  };
+
   const handleToggleShow = () => {
     setShowAll(prevShowAll => !prevShowAll);
   };
@@ -120,7 +153,7 @@ function PaymentList({ user, token }) {
       <TransitionGroup>
         {displayedPayments.map((payment, index) => (
           <CSSTransition key={payment.id} timeout={300} classNames="fade">
-            <PaymentData paymentData={payment} user={user} index={index} />
+            <PaymentData paymentData={payment} user={user} index={index} onPaymentSuccess={refreshPayments} />
           </CSSTransition>
         ))}
       </TransitionGroup>

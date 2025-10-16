@@ -18,12 +18,12 @@ function Sidebar({ handleActive, user, handleLogout }) {
   const isUser = user.role === "user";
 
   return (
-    <aside className="sidebar-wrapper fixed top-0 z-30 block h-full w-[308px] bg-white dark:bg-darkblack-600 sm:hidden xl:block">
+    <aside className="sidebar-wrapper fixed top-0 z-30 block h-full w-[280px] sm:w-[308px] bg-white dark:bg-darkblack-600 sm:hidden xl:block">
       {/* Header */}
-      <div className="sidebar-header relative z-30 flex h-[108px] w-full items-center border-b border-r border-b-[#F7F7F7] border-r-[#F7F7F7] pl-[50px] dark:border-darkblack-400">
-        <Link to="/">
-          <img src={logo} className="block dark:hidden" alt="logo" />
-          <img src={logoW} className="hidden dark:block" alt="logo" />
+      <div className="sidebar-header relative z-30 flex h-[80px] sm:h-[108px] w-full items-center border-b border-r border-b-[#F7F7F7] border-r-[#F7F7F7] pl-[30px] sm:pl-[50px] dark:border-darkblack-400">
+        <Link to="/" className="flex items-center">
+          <img src={logo} className="block dark:hidden h-8 sm:h-auto" alt="logo" />
+          <img src={logoW} className="hidden dark:block h-8 sm:h-auto" alt="logo" />
         </Link>
         <button
           aria-label="none"
@@ -57,29 +57,30 @@ function Sidebar({ handleActive, user, handleLogout }) {
       </div>
 
       {/* Body */}
-      <div className="sidebar-body overflow-style-none relative z-30 h-screen w-full overflow-y-scroll pb-[200px] pl-[48px] pt-[14px]">
-        <div className="nav-wrapper mb-[36px] pr-[50px]">
+      <div className="sidebar-body overflow-style-none relative z-30 h-screen w-full overflow-y-scroll pb-[200px] pl-[30px] sm:pl-[48px] pt-[14px]">
+        <div className="nav-wrapper mb-[24px] sm:mb-[36px] pr-[30px] sm:pr-[50px]">
           {/* Menu */}
           <div className="item-wrapper mb-5">
-            <h4 className="border-b border-bgray-200 text-sm font-medium leading-7 text-bgray-700 dark:border-darkblack-400 dark:text-bgray-50">
+            <h4 className="border-b border-bgray-200 text-xs sm:text-sm font-medium leading-7 text-bgray-700 dark:border-darkblack-400 dark:text-bgray-50">
               {t('dashboard.menu')}
             </h4>
-            <ul className="mt-2.5">
+            <ul className="mt-2 sm:mt-2.5">
               {/* Dashboard: Only Admin */}
               {isAdmin && (
                 <li
-                  className={`item py-[11px] text-bgray-900 dark:text-white ${
+                  className={`item py-[9px] sm:py-[11px] text-bgray-900 dark:text-white ${
                     location === "/" ? "nav-active" : ""
                   }`}
                 >
                   <Link to="/">
-                    <div className="flex items-center space-x-2.5">
+                    <div className="flex items-center space-x-2 sm:space-x-2.5">
                       <svg
                         width="18"
                         height="21"
                         viewBox="0 0 18 21"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
+                        className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"
                       >
                         <path
                           d="M0 8.84719C0 7.99027 0.366443 7.17426 1.00691 6.60496L6.34255 1.86217C7.85809 0.515019 10.1419 0.515019 11.6575 1.86217L16.9931 6.60496C17.6336 7.17426 18 7.99027 18 8.84719V17C18 19.2091 16.2091 21 14 21H4C1.79086 21 0 19.2091 0 17V8.84719Z"
@@ -90,7 +91,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                           fill="#22C55E"
                         />
                       </svg>
-                      <span className="item-text text-lg font-medium leading-none">
+                      <span className="item-text text-sm sm:text-base lg:text-lg font-medium leading-none min-w-0 truncate">
                         {t('dashboard.dashboard')}
                       </span>
                     </div>
@@ -101,15 +102,16 @@ function Sidebar({ handleActive, user, handleLogout }) {
               {/* Balance: All roles */}
               {(isUser) && (
                 <li
-                  className={`item py-[11px] text-bgray-900 dark:text-white ${
-                    location.includes("/balance/user") ? "nav-active" : ""
+                  className={`item py-[9px] sm:py-[11px] text-bgray-900 dark:text-white ${
+                    location.includes("/financing/user") ? "nav-active" : ""
                   }`}
                 >
-                  <Link to={`/balance/user/${user.id}`}>
-                    <div className="flex items-center space-x-2.5">
+                  <Link to={`/financing/user/${user.id}`}>
+                    <div className="flex items-center space-x-2 sm:space-x-2.5">
                       <svg
                         viewBox="0 0 16 16"
                         fill="currentColor"
+                        className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"
                         width="24"
                         height="24"
                       >
@@ -118,8 +120,42 @@ function Sidebar({ handleActive, user, handleLogout }) {
                           d="M2 14h14v2H0V0h2zm2.5-1a1.5 1.5 0 11.131-2.994l1.612-2.687a1.5 1.5 0 112.514 0l1.612 2.687a1.42 1.42 0 01.23-.002l2.662-4.658a1.5 1.5 0 111.14.651l-2.662 4.658a1.5 1.5 0 11-2.496.026L7.631 7.994a1.42 1.42 0 01-.262 0l-1.612 2.687A1.5 1.5 0 014.5 13z"
                         />
                       </svg>
-                      <span className="item-text text-lg font-medium leading-none">
-                        {t('dashboard.balance')}
+                      <span className="item-text text-sm sm:text-base lg:text-lg font-medium leading-none min-w-0 truncate">
+                        {t('dashboard.financing')}
+                      </span>
+                    </div>
+                  </Link>
+                </li>
+              )}
+
+              {/* Payment History: Only User */}
+              {isUser && (
+                <li
+                  className={`item py-[9px] sm:py-[11px] text-bgray-900 dark:text-white ${
+                    location === "/payment-history" ? "nav-active" : ""
+                  }`}
+                >
+                  <Link to="/payment-history">
+                    <div className="flex items-center space-x-2 sm:space-x-2.5">
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"
+                      >
+                        <path
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          fill="none"
+                        />
+                      </svg>
+                      <span className="item-text text-sm sm:text-base lg:text-lg font-medium leading-none min-w-0 truncate">
+                        {t('sidebar.paymentHistory')}
                       </span>
                     </div>
                   </Link>
@@ -129,21 +165,21 @@ function Sidebar({ handleActive, user, handleLogout }) {
               {/* Transactions: Only Admin */}
               {isAdmin && (
                 <li
-                  className={`item py-[11px] text-bgray-900 dark:text-white ${
-                    location === "/transaction" ? "nav-active" : ""
+                  className={`item py-[9px] sm:py-[11px] text-bgray-900 dark:text-white ${
+                    location === "/payments" ? "nav-active" : ""
                   }`}
                 >
-                  <Link to="/transaction">
-                    <div className="flex items-center space-x-2.5">
-                      <span className="item-ico">
-                        <svg width="22" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+                  <Link to="/payments">
+                    <div className="flex items-center space-x-2 sm:space-x-2.5">
+                      <span className="item-ico w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0">
+                        <svg width="22" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true" className="w-full h-full">
                           <rect x="1" y="4" width="20" height="12" rx="2.5" fill="#22C55E" stroke="#1A202C" strokeWidth="1.2" />
                           <path d="M2 7C4 5 8 5 11 7C14 9 18 9 20 7" stroke="#1A202C" strokeWidth="1.1" strokeLinecap="round" fill="none"/>
                           <circle cx="11" cy="10" r="2.2" fill="#fff" stroke="#1A202C" strokeWidth="1" />
                           <text x="11" y="12" textAnchor="middle" fontSize="10" fontFamily="Inter, Arial, sans-serif" fontWeight="700" fill="#22C55E">$</text>
                         </svg>
                       </span>
-                      <span className="item-text text-lg font-medium leading-none">
+                      <span className="item-text text-sm sm:text-base lg:text-lg font-medium leading-none min-w-0 truncate">
                         {t('dashboard.payments')}
                       </span>
                     </div>
@@ -154,19 +190,20 @@ function Sidebar({ handleActive, user, handleLogout }) {
               {/* Contracts: Admin or Seller */}
               {(isAdmin || isSeller) && (
                 <li
-                  className={`item py-[11px] text-bgray-900 dark:text-white ${
+                  className={`item py-[9px] sm:py-[11px] text-bgray-900 dark:text-white ${
                     location === "/contracts" ? "nav-active" : ""
                   }`}
                 >
                   <Link to="/contracts">
-                    <div className="flex items-center space-x-2.5">
-                      <span className="item-ico">
+                    <div className="flex items-center space-x-2 sm:space-x-2.5">
+                      <span className="item-ico w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0">
                         <svg
                           width="20"
                           height="20"
                           viewBox="0 0 20 20"
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
+                          className="w-full h-full"
                         >
                           <path
                             d="M0 4C0 1.79086 1.79086 0 4 0H16C18.2091 0 20 1.79086 20 4V16C20 18.2091 18.2091 20 16 20H4C1.79086 20 0 18.2091 0 16V4Z"
@@ -182,7 +219,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                           />
                         </svg>
                       </span>
-                      <span className="item-text text-lg font-medium leading-none">
+                      <span className="item-text text-sm sm:text-base lg:text-lg font-medium leading-none min-w-0 truncate">
                         {t('dashboard.contracts')}
                       </span>
                     </div>
@@ -193,19 +230,20 @@ function Sidebar({ handleActive, user, handleLogout }) {
               {/* Projects: Admin or Seller */}
               {(isAdmin || isSeller) && (
                 <li
-                  className={`item py-[11px] text-bgray-900 dark:text-white ${
+                  className={`item py-[9px] sm:py-[11px] text-bgray-900 dark:text-white ${
                     location === "/projects" ? "nav-active" : ""
                   }`}
                 >
                   <Link to="/projects">
-                    <div className="flex items-center space-x-2.5">
-                      <span className="item-ico">
+                    <div className="flex items-center space-x-2 sm:space-x-2.5">
+                      <span className="item-ico w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0">
                         <svg
                           width="24"
                           height="24"
                           viewBox="0 0 24 24"
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
+                          className="w-full h-full"
                         >
                           <path
                             d="M1.57666 3.61499C1.57666 2.51042 2.47209 1.61499 3.57666 1.61499H8.5C9.60456 1.61499 10.5 2.51042 10.5 3.61499V8.53833C10.5 9.64289 9.60456 10.5383 8.49999 10.5383H3.57666C2.47209 10.5383 1.57666 9.64289 1.57666 8.53832V3.61499Z"
@@ -229,7 +267,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                           />
                         </svg>
                       </span>
-                      <span className="item-text text-lg font-medium leading-none">
+                      <span className="item-text text-sm sm:text-base lg:text-lg font-medium leading-none min-w-0 truncate">
                         {t('dashboard.projects')}
                       </span>
                     </div>
@@ -240,18 +278,19 @@ function Sidebar({ handleActive, user, handleLogout }) {
               {/* Users: Admin or Seller */}
               {(isAdmin || isSeller) && (
                 <li
-                  className={`item py-[11px] text-bgray-900 dark:text-white ${
+                  className={`item py-[9px] sm:py-[11px] text-bgray-900 dark:text-white ${
                     location === "/users" ? "nav-active" : ""
                   }`}
                 >
                   <Link to="/users">
-                    <div className="flex items-center space-x-2.5">
+                    <div className="flex items-center space-x-2 sm:space-x-2.5">
                       <svg
                         width="24"
                         height="24"
                         viewBox="0 0 24 24"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
+                        className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"
                       >
                         <ellipse
                           cx="11.7778"
@@ -267,7 +306,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                           fill="#22C55E"
                         />
                       </svg>
-                      <span className="item-text text-lg font-medium leading-none">
+                      <span className="item-text text-sm sm:text-base lg:text-lg font-medium leading-none min-w-0 truncate">
                         {t('users.title')}
                       </span>
                     </div>
@@ -278,18 +317,19 @@ function Sidebar({ handleActive, user, handleLogout }) {
               {/* Audits: Only Admin */}
               {isAdmin && (
                 <li
-                  className={`item py-[11px] text-bgray-900 dark:text-white ${
-                    location === "/history" ? "nav-active" : ""
+                  className={`item py-[9px] sm:py-[11px] text-bgray-900 dark:text-white ${
+                    location === "/audits" ? "nav-active" : ""
                   }`}
                 >
                   <Link to="/audits">
-                    <div className="flex items-center space-x-2.5">
+                    <div className="flex items-center space-x-2 sm:space-x-2.5">
                       <svg
                         width="18"
                         height="21"
                         viewBox="0 0 18 21"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
+                        className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"
                       >
                         <path
                           d="M17.5 12.5C17.5 17.1944 13.6944 21 9 21C4.30558 21 0.5 17.1944 0.5 12.5C0.5 7.80558 4.30558 4 9 4C13.6944 4 17.5 7.80558 17.5 12.5Z"
@@ -312,7 +352,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                           fill="#22C55E"
                         />
                       </svg>
-                      <span className="item-text text-lg font-medium leading-none">
+                      <span className="item-text text-sm sm:text-base lg:text-lg font-medium leading-none min-w-0 truncate">
                         {t('dashboard.audits')}
                       </span>
                     </div>
@@ -323,23 +363,24 @@ function Sidebar({ handleActive, user, handleLogout }) {
           </div>
 
           {/* Others */}
-          <div className="item-wrapper mb-5">
-            <h4 className="border-b border-bgray-200 text-sm font-medium leading-7 text-bgray-700 dark:border-darkblack-400 dark:text-bgray-50"></h4>
-            <ul className="mt-2.5">
+          <div className="item-wrapper mb-4 sm:mb-5">
+            <h4 className="border-b border-bgray-200 text-xs sm:text-sm font-medium leading-7 text-bgray-700 dark:border-darkblack-400 dark:text-bgray-50"></h4>
+            <ul className="mt-2 sm:mt-2.5">
               {/* Signin: All roles can see or you can hide if already signed in */}
               <li
-                className={`item py-[11px] text-bgray-900 dark:text-white ${
+                className={`item py-[9px] sm:py-[11px] text-bgray-900 dark:text-white ${
                   location === "/signin" ? "nav-active" : ""
                 }`}
               >
                 <Link to="/signin">
-                  <div className="flex items-center space-x-2.5">
+                  <div className="flex items-center space-x-2 sm:space-x-2.5">
                     <svg
                       width="24"
                       height="24"
                       viewBox="0 0 24 24"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
+                      className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"
                     >
                       <ellipse
                         cx="11.7778"
@@ -355,7 +396,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                         fill="#22C55E"
                       />
                     </svg>
-                    <span className="item-text text-lg font-medium leading-none">
+                    <span className="item-text text-sm sm:text-base lg:text-lg font-medium leading-none min-w-0 truncate">
                       {t('dashboard.signIn')}
                     </span>
                   </div>
@@ -363,15 +404,16 @@ function Sidebar({ handleActive, user, handleLogout }) {
               </li>
 
               {/* Logout */}
-              <li className={`item py-[11px] text-bgray-900 dark:text-white`}>
+              <li className={`item py-[9px] sm:py-[11px] text-bgray-900 dark:text-white`}>
                 <Link to="/#" onClick={handleLogout}>
-                  <div className="flex items-center space-x-2.5">
+                  <div className="flex items-center space-x-2 sm:space-x-2.5">
                     <svg
                       width="21"
                       height="18"
                       viewBox="0 0 21 18"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
+                      className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"
                     >
                       <path
                         fillRule="evenodd"
@@ -392,7 +434,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                         fill="#1A202C"
                       />
                     </svg>
-                    <span className="item-text text-lg font-medium leading-none">
+                    <span className="item-text text-sm sm:text-base lg:text-lg font-medium leading-none min-w-0 truncate">
                       {t('dashboard.logout')}
                     </span>
                   </div>
@@ -402,9 +444,9 @@ function Sidebar({ handleActive, user, handleLogout }) {
           </div>
         </div>
         {/* Footer */}
-        <div className="copy-write-text">
-          <p className="text-sm text-[#969BA0]">{t('footer.copyright')}</p>
-          <p className="text-sm font-medium text-bgray-700">
+        <div className="copy-write-text px-3 sm:px-0">
+          <p className="text-xs sm:text-sm text-[#969BA0]">{t('footer.copyright')}</p>
+          <p className="text-xs sm:text-sm font-medium text-bgray-700">
             {t('footer.madeBy')}
             <a
               href="http://www.securexapp.com"

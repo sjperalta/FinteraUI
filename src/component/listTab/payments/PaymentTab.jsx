@@ -125,77 +125,106 @@ function PaymentTab({ payments, userRole, pageSize, refreshPayments }) {
   };
 
   return (
-    <div className="table-content w-full overflow-x-auto">
-      <table className="w-full">
-        <thead>
-          <tr className="border-b border-bgray-300 dark:border-darkblack-400">
-            {/* Descripción */}
-            <th className="px-6 py-5 xl:px-0 text-left">
-              <div className="flex items-center space-x-2.5">
-                <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  {t('payments.description')}
-                </span>
-                {/* Sorting Icon */}
-                {renderSortIcon('description')}
-              </div>
-            </th>
+    <div className="w-full">
+      {/* Desktop Table View */}
+      <div className=" rounded-xl border-2 border-gray-200 dark:border-darkblack-400 shadow-lg">
+        <table className="w-full bg-white dark:bg-darkblack-600">
+          <thead>
+            <tr className="border-b-2 border-blue-200 dark:border-blue-800/50 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-darkblack-500 dark:to-darkblack-400">
+              {/* Descripción */}
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-left">
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                    {t('payments.description')}
+                  </span>
+                  {/* Sorting Icon */}
+                  <div className="flex-shrink-0">{renderSortIcon('description')}</div>
+                </div>
+              </th>
 
-            {/* Solicitante */}
-            <th className="px-6 py-5 xl:px-0 text-left">
-              <div className="flex items-center space-x-2.5">
-                <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  {t('payments.applicant')}
-                </span>
-              </div>
-            </th>
+              {/* Solicitante */}
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-left">
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                    {t('payments.applicant')}
+                  </span>
+                </div>
+              </th>
 
-            {/* Monto Total */}
-            <th className="px-6 py-5 xl:px-0 text-left">
-              <div className="flex items-center space-x-2.5">
-                <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  {t('payments.totalAmount')}
-                </span>
-                {/* Sorting Icon */}
-                {renderSortIcon('amount')}
-              </div>
-            </th>
+              {/* Monto Total */}
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-left">
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                    {t('payments.totalAmount')}
+                  </span>
+                  {/* Sorting Icon */}
+                  <div className="flex-shrink-0">{renderSortIcon('amount')}</div>
+                </div>
+              </th>
 
-            {/* Vencimiento */}
-            <th className="px-6 py-5 xl:px-0 text-left">
-              <div className="flex items-center space-x-2.5">
-                <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  {t('payments.dueDate')}
-                </span>
-                {/* Sorting Icon */}
-                {renderSortIcon('due_date')}
-              </div>
-            </th>
+              {/* Vencimiento */}
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-left">
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                    {t('payments.dueDate')}
+                  </span>
+                  {/* Sorting Icon */}
+                  <div className="flex-shrink-0">{renderSortIcon('due_date')}</div>
+                </div>
+              </th>
 
-            {/* Estado */}
-            <th className="px-6 py-5 xl:px-0 text-left">
-              <div className="flex items-center space-x-2.5">
-                <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  {t('payments.status')}
-                </span>
-                {/* Sorting Icon */}
-                {renderSortIcon('status')}
-              </div>
-            </th>
+              {/* Estado */}
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-left">
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                    {t('payments.status')}
+                  </span>
+                  {/* Sorting Icon */}
+                  <div className="flex-shrink-0">{renderSortIcon('status')}</div>
+                </div>
+              </th>
 
-            {/* Acciones */}
-            <th className="px-6 py-5 xl:px-0 text-center">
-              <div className="flex justify-center">
-                <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
+              {/* Acciones */}
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-left">
+                <span className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
                   {t('payments.actions')}
                 </span>
-              </div>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {payments.map((payment) => (
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {payments.map((payment) => (
+              <PaymentInfo
+                key={payment.id}
+                description={payment.description}
+                amount={payment.amount}
+                due_date={payment.due_date}
+                interest_amount={payment.interest_amount}
+                status={payment.status}
+                payment_id={payment.id}
+                userRole={userRole}
+                refreshPayments={refreshPayments}
+                currency={payment.contract?.currency || "HNL"}
+                applicant_name={payment.contract?.applicant_user?.full_name}
+                applicant_phone={payment.contract?.applicant_user?.phone}
+                applicant_identity={payment.contract?.applicant_user?.identity}
+                lot_name={payment.contract?.lot?.name}
+                lot_address={payment.contract?.lot?.address}
+                pageSize={pageSize}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="block lg:hidden space-y-3 sm:space-y-4">
+        {payments.map((payment) => (
+          <div
+            key={payment.id}
+            className="bg-white dark:bg-darkblack-600 rounded-xl border-2 border-gray-200 dark:border-darkblack-400 p-4 shadow-md hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200"
+          >
             <PaymentInfo
-              key={payment.id}
               description={payment.description}
               amount={payment.amount}
               due_date={payment.due_date}
@@ -211,10 +240,11 @@ function PaymentTab({ payments, userRole, pageSize, refreshPayments }) {
               lot_name={payment.contract?.lot?.name}
               lot_address={payment.contract?.lot?.address}
               pageSize={pageSize}
+              isMobileCard={true}
             />
-          ))}
-        </tbody>
-      </table>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

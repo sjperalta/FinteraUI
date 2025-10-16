@@ -2,7 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ProtectedRoute from "./component/protectedRoute";
 import Home from "./pages/home";
 import Contracts from "./pages/contract";
-import Transaction from "./pages/transaction";
+import Payments from "./pages/payments";
 import Projects from "./pages/projects";
 import Users from "./pages/users";
 import History from "./pages/audits";
@@ -24,11 +24,12 @@ import CreateLot from "./pages/projects/lots/create";
 import EditLot from "./pages/projects/lots/edit";
 import Reserve from "./pages/projects/reserve";
 import CreateUser from "./pages/users/create";
-import Balance from "./pages/balance";
-import Upload from "./pages/balance/upload";
-import Summary from "./pages/balance/summary";
+import Financing from "./pages/financing";
+import Upload from "./pages/financing/upload";
+import Summary from "./pages/financing/summary";
 import AdminOrOwnerRoute from "./component/protectedRoute/AdminOrOwnerRoute";
 import Audits from "./pages/audits";
+import PaymentHistory from "./pages/paymentHistory";
 
 const router = createBrowserRouter([
   {
@@ -53,10 +54,10 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/transaction",
+        path: "/payments",
         element: (
           <ProtectedRoute>
-            <Transaction />
+            <Payments />
           </ProtectedRoute>
         ),
       },
@@ -125,10 +126,10 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/balance/user/:userId",
+        path: "/financing/user/:userId",
         element: (
           <AdminOrOwnerRoute>
-            <Balance />
+            <Financing />
           </AdminOrOwnerRoute>
         ),
         children: [
@@ -173,6 +174,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <CreateUser />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/payment-history",
+        element: (
+          <ProtectedRoute>
+            <PaymentHistory />
           </ProtectedRoute>
         ),
       },

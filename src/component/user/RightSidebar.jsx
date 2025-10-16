@@ -3,6 +3,7 @@ import { API_URL } from "../../../config";
 import AuthContext from "../../context/AuthContext";
 import { Link } from "react-router-dom";
 import { useLocale } from "../../contexts/LocaleContext";
+import { getInitials, getAvatarColor } from "../../utils/avatarUtils";
 
 function RightSidebar({ user, onClose, currentUser }) {
   const { t } = useLocale();
@@ -14,32 +15,6 @@ function RightSidebar({ user, onClose, currentUser }) {
   // Minimal guard: don't attempt to render sidebar when no user provided
   if (!user) return null;
 
-  // Generate initials from full name
-  const getInitials = (name) => {
-    if (!name) return "??";
-    const parts = name.trim().split(/\s+/);
-    if (parts.length === 1) {
-      return parts[0].substring(0, 2).toUpperCase();
-    }
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  };
-
-  // Generate a consistent color based on the name
-  const getAvatarColor = (name) => {
-    if (!name) return "bg-gray-400";
-    const colors = [
-      "bg-blue-500",
-      "bg-green-500",
-      "bg-purple-500",
-      "bg-pink-500",
-      "bg-indigo-500",
-      "bg-yellow-500",
-      "bg-red-500",
-      "bg-teal-500",
-    ];
-    const hash = name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    return colors[hash % colors.length];
-  };
 
   useEffect(() => {
     const userId = user?.id;
@@ -258,7 +233,7 @@ function RightSidebar({ user, onClose, currentUser }) {
               </div>
             </div>
             <Link 
-              to={`/balance/user/${user.id}`}
+              to={`/financing/user/${user.id}`}
               className="p-2 bg-white dark:bg-darkblack-600 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
             >
               <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 16 16">

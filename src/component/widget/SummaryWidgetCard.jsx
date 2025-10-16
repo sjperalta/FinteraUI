@@ -144,11 +144,6 @@ function SummaryWidgetCard({ title, amount, fee, memberImg, totalEarnImg, curren
               </span>
             </div>
           </div>
-          {memberImg && (
-            <div className="hidden sm:block">
-              <img src={memberImg} alt="members" className="w-8 h-8 rounded-full" />
-            </div>
-          )}
         </div>
 
         <div className="flex items-end justify-between">

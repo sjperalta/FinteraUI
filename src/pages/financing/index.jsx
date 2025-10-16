@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 
-function Balance({ children }) {
+function Financing({ children }) {
 
   return (
     <main className="w-full xl:px-[48px] px-6 pb-6 xl:pb-[48px] sm:pt-[156px] pt-[100px] dark:bg-darkblack-700 ">
@@ -15,4 +15,4 @@ function Balance({ children }) {
   );
 }
 
-export default Balance;
+export default Financing;

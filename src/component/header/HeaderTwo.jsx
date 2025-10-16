@@ -1,24 +1,26 @@
 import ProtoTypes from "prop-types";
 import logo from "../../assets/images/logo/logo-color.svg";
 import logoW from "../../assets/images/logo/logo-white.svg";
-import profile from "../../assets/images/avatar/profile-52x52.png";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import ResProfilePopup from "./ResProfilePopup";
 import { useLocale } from "../../contexts/LocaleContext";
+import { usePageTitle } from "../../hooks/usePageTitle";
+import { getInitials, getAvatarColor } from "../../utils/avatarUtils";
 
 function HeaderTwo({ handleSidebar }) {
   const [activePopup, handleActivePopup] = useState(false);
   const { t } = useLocale();
+  const { title, subtitle } = usePageTitle();
   return (
     <div>
       <header className="mobile-wrapper fixed z-20 block w-full md:hidden">
-        <div className="flex h-[80px] w-full items-center justify-between bg-white dark:bg-darkblack-600">
-          <div className="flex h-full w-full items-center space-x-5">
+        <div className="flex h-[80px] w-full items-center justify-between bg-white dark:bg-darkblack-600 px-4">
+          <div className="flex h-full w-full items-center space-x-3">
             <button
-              aria-label="none"
+              aria-label="Toggle sidebar"
               type="button"
-              className="drawer-btn rotate-180 transform"
+              className="drawer-btn rotate-180 transform flex-shrink-0"
               onClick={handleSidebar}
             >
               <span>
@@ -31,11 +33,11 @@ function HeaderTwo({ handleSidebar }) {
                 >
                   <path
                     d="M0 10C0 4.47715 4.47715 0 10 0H16V40H10C4.47715 40 0 35.5228 0 30V10Z"
-                    fill="#F7F7F7"
+                    fill="#22C55E"
                   />
                   <path
                     d="M10 15L6 20.0049L10 25.0098"
-                    stroke="#A0AEC0"
+                    stroke="#ffffff"
                     strokeWidth="1.2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -43,24 +45,33 @@ function HeaderTwo({ handleSidebar }) {
                 </svg>
               </span>
             </button>
-            <div>
-              <Link to="/">
-                <img src={logo} className="block dark:hidden" alt="logo" />
-                <img src={logoW} className="hidden dark:block" alt="logo" />
-              </Link>
+            
+            {/* Dynamic Title for Mobile */}
+            <div className="flex-1 min-w-0">
+              <h3 className="text-lg font-bold text-bgray-900 dark:text-white truncate">
+                {title}
+              </h3>
+              <p className="text-xs font-medium text-bgray-600 dark:text-bgray-300 truncate">
+                {subtitle}
+              </p>
             </div>
           </div>
+          
+          {/* Profile Button */}
           <div className="mr-2">
-            <div
+            <button
               onClick={() => handleActivePopup(!activePopup)}
-              className="flex cursor-pointer space-x-0 lg:space-x-3"
+              aria-label="Profile menu"
+              className="flex cursor-pointer space-x-0 lg:space-x-3 flex-shrink-0"
             >
-              <div className="h-[52px] w-[52px] overflow-hidden rounded-xl border border-bgray-300">
-                <img className="object-cover" src={profile} alt="avater" />
+              <div className={`h-[52px] w-[52px] rounded-xl border border-bgray-300 ${getAvatarColor(t('header.administrator'))} flex items-center justify-center`}>
+                <span className="text-white font-bold text-xl">
+                  {getInitials(t('header.administrator'))}
+                </span>
               </div>
               <div className="hidden 2xl:block">
                 <div className="flex items-center space-x-2.5">
-                  <h3 className="text-base font-bold leading-[28px] text-bgray-900">
+                  <h3 className="text-base font-bold leading-[28px] text-bgray-900 dark:text-white">
                     {t('header.administrator')}
                   </h3>
                   <span>
@@ -81,11 +92,11 @@ function HeaderTwo({ handleSidebar }) {
                     </svg>
                   </span>
                 </div>
-                <p className="text-sm font-medium leading-[20px] text-bgray-600">
+                <p className="text-sm font-medium leading-[20px] text-bgray-600 dark:text-white">
                   {t('header.admin')}
                 </p>
               </div>
-            </div>
+            </button>
 
             <div className="profile-wrapper">
               <div
@@ -185,13 +196,6 @@ function HeaderTwo({ handleSidebar }) {
                             <span className="text-sm font-semibold">
                               {t('dashboard.configuration')}
                             </span>
-                          </div>
-                        </Link>
-                      </li>
-                      <li className="w-full">
-                        <Link to="/users">
-                          <div className="rounded-lg p-[14px] text-bgray-600 hover:bg-bgray-100 hover:text-bgray-900">
-                            <span className="text-sm font-semibold">{t('users.title')}</span>
                           </div>
                         </Link>
                       </li>

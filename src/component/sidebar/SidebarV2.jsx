@@ -101,10 +101,10 @@ function SidebarV2({user, handleLogout }) {
                   {(isUser) && (
                     <li
                       className={`text-md inline-block py-1.5 font-medium text-bgray-600 hover:text-bgray-800 ${
-                        location.includes("/balance/user") ? "nav-active" : ""
+                        location.includes("/financing/user") ? "nav-active" : ""
                       } `}
                     >
-                      <Link to={`/balance/user/${user.id}`}>
+                      <Link to={`/financing/user/${user.id}`}>
                         <div className="flex items-center space-x-2.5">
                           <svg
                             viewBox="0 0 16 16"
@@ -123,9 +123,9 @@ function SidebarV2({user, handleLogout }) {
                   )}
                   <li className="item px-[43px] py-[11px]">
                     <Link
-                      to="/transaction"
+                      to="/payments"
                       className={`${
-                        location === "/transaction" ? "nav-active" : ""
+                        location === "/payments" ? "nav-active" : ""
                       }`}
                     >
                       <span className="item-ico">

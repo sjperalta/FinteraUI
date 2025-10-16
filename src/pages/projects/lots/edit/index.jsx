@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import AuthContext from "../../../../context/AuthContext";
 import { API_URL } from "../../../../../config";
 import { getToken } from "../../../../../auth";
+import { useLocale } from "../../../../contexts/LocaleContext";
 
 // ---- Area conversion factors (from m2) ----
 const M2_TO_FT2_FACTOR = 10.7639;
@@ -18,6 +19,7 @@ function EditLot() {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const token = getToken();
+  const { t } = useLocale();
 
   const [name, setName] = useState("");
   const [length, setLength] = useState(0);
@@ -30,12 +32,21 @@ function EditLot() {
   const [address, setAddress] = useState("");
   const [registrationNumber, setRegistrationNumber] = useState("");
   const [note, setNote] = useState("");
+  const [north, setNorth] = useState("");
+  const [east, setEast] = useState("");
+  const [west, setWest] = useState("");
   // Whether user wants to override price (local UI toggle)
   const [overridePrice, setOverridePrice] = useState(false);
   // Manual override value bound to backend field override_price
   const [overridePriceValue, setOverridePriceValue] = useState("");
+  // Whether user wants to override area (local UI toggle)
+  const [overrideArea, setOverrideArea] = useState(false);
+  // Manual override value bound to backend field override_area
+  const [overrideAreaValue, setOverrideAreaValue] = useState("");
   // Server authoritative calculated/base price (lot.price)
   const [serverPrice, setServerPrice] = useState(null);
+  // Server authoritative calculated/base area (lot.area)
+  const [serverArea, setServerArea] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -64,10 +75,18 @@ function EditLot() {
         setAddress(data.address || "");
         setRegistrationNumber(data.registration_number || data.registrationNumber || "");
         setNote(data.note || "");
+        setNorth(data.north || "");
+        setEast(data.east || "");
+        setWest(data.west || "");
         if (data.price != null) setServerPrice(data.price); // backend-calculated price
+        if (data.area != null) setServerArea(data.area); // backend-calculated area
         if (data.override_price != null) {
           setOverridePriceValue(String(data.override_price));
           setOverridePrice(true); // auto-enable if backend already has an override
+        }
+        if (data.override_area != null) {
+          setOverrideAreaValue(String(data.override_area));
+          setOverrideArea(true); // auto-enable if backend already has an override
         }
         // fetch project info separately for header context & price unit
         const pres = await fetch(`${API_URL}/api/v1/projects/${project_id}`, {
@@ -103,17 +122,32 @@ function EditLot() {
 
   // Convert area into selected measurement unit using constants
   const displayedArea = useMemo(() => {
+    // If user overrides area, use that value
+    if (overrideArea && Number(overrideAreaValue) > 0) {
+      return Number(overrideAreaValue);
+    }
+    
+    // Otherwise use server area if available, else calculate
+    if (serverArea != null) {
+      return serverArea;
+    }
+    
     const factor = AREA_CONVERSION_FROM_M2[measurementUnit] || 1;
     return +(areaM2 * factor).toFixed(2);
-  }, [areaM2, measurementUnit]);
+  }, [areaM2, measurementUnit, overrideArea, overrideAreaValue, serverArea]);
 
   const calculatedPrice = useMemo(() => {
     // projectPricePerUnit already corresponds to measurementUnit for display
     return +(displayedArea * Number(projectPricePerUnit || 0)).toFixed(2);
   }, [displayedArea, projectPricePerUnit]);
 
-  // Effective price to show as current applied price (server authoritative if exists, else live calc)
-  const effectiveServerPrice = serverPrice != null ? serverPrice : calculatedPrice;
+  // Effective price to show - if manual override, use that; otherwise show recalculated price
+  const effectivePricePreview = useMemo(() => {
+    if (overridePrice && Number(overridePriceValue) > 0) {
+      return Number(overridePriceValue);
+    }
+    return calculatedPrice;
+  }, [overridePrice, overridePriceValue, calculatedPrice]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -130,6 +164,10 @@ function EditLot() {
     // Only validate override price if user has enabled override and provided a value
     if (overridePrice && overridePriceValue && !(Number(overridePriceValue) > 0)) {
       fe.override_price = "Precio override debe ser > 0";
+    }
+    // Only validate override area if user has enabled override and provided a value
+    if (overrideArea && overrideAreaValue && !(Number(overrideAreaValue) > 0)) {
+      fe.override_area = "Área override debe ser > 0";
     }
     if (Object.keys(fe).length) {
       setFieldErrors(fe);
@@ -151,10 +189,16 @@ function EditLot() {
             // Only send override_price when user has enabled override and provided a value
             // Let backend calculate the regular price based on dimensions
             ...(overridePrice && overridePriceValue ? { override_price: Number(overridePriceValue) } : { override_price: null }),
+            // Only send override_area when user has enabled override and provided a value
+            // Let backend calculate the regular area based on dimensions
+            ...(overrideArea && overrideAreaValue ? { override_area: Number(overrideAreaValue) } : { override_area: null }),
             address: address || "",
             registration_number: registrationNumber || "",
-            note: note || ""
-            // Note: We don't send 'price' field - let backend calculate it from dimensions
+            note: note || "",
+            north: north || "",
+            east: east || "",
+            west: west || ""
+            // Note: We don't send 'price' or 'area' fields - let backend calculate them from dimensions
           }
         }),
       });
@@ -204,43 +248,19 @@ function EditLot() {
         )}
 
         <form onSubmit={handleSubmit}>
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">Nombre</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
-            />
-            {fieldErrors.name && <p className="text-xs text-red-500 mt-1">{fieldErrors.name}</p>}
-          </div>       
-
-          {/* Address */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">Dirección</label>
-            <input
-              type="text"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
-              placeholder="Dirección del lote"
-            />
-          </div>
-
-          {/* Registration Number */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">Número de Registro</label>
-            <input
-              type="text"
-              value={registrationNumber}
-              onChange={(e) => setRegistrationNumber(e.target.value)}
-              className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
-              placeholder="Número de registro del lote"
-            />
-          </div>
-
+          {/* Basic Information Row */}
           <div className="mb-6 grid md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">Nombre</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
+              />
+              {fieldErrors.name && <p className="text-xs text-red-500 mt-1">{fieldErrors.name}</p>}
+            </div>
             <div>
               <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">Estado</label>
               <input
@@ -250,6 +270,34 @@ function EditLot() {
                 className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg bg-gray-100 dark:bg-darkblack-500 dark:text-white"
               />
             </div>
+          </div>
+
+          {/* Address and Registration Row */}
+          <div className="mb-6 grid md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">Dirección</label>
+              <input
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
+                placeholder="Dirección del lote"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">Número de Registro</label>
+              <input
+                type="text"
+                value={registrationNumber}
+                onChange={(e) => setRegistrationNumber(e.target.value)}
+                className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
+                placeholder="Número de registro del lote"
+              />
+            </div>
+          </div>
+
+          {/* Price Information Row */}
+          <div className="mb-6 grid md:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">Precio Base Unidad</label>
               <input
@@ -259,20 +307,18 @@ function EditLot() {
                 className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg bg-gray-100 dark:bg-darkblack-500 dark:text-white"
               />
             </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">Dimensiones</label>
+              <input
+                type="text"
+                value={`${length} x ${width} ${measurementUnit}`}
+                readOnly
+                className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg bg-gray-100 dark:bg-darkblack-500 dark:text-white"
+              />
+            </div>
           </div>
 
-
-         {/* Read-only combined dimensions */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">Dimensiones</label>
-            <input
-              type="text"
-              value={`${length} x ${width} ${measurementUnit}`}
-              readOnly
-              className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg bg-gray-100 dark:bg-darkblack-500 dark:text-white"
-            />
-          </div>
-
+          {/* Dimensions Input Row */}
           <div className="mb-6 grid md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">Longitud ({measurementUnit})</label>
@@ -309,15 +355,31 @@ function EditLot() {
             </div>
           </div>
 
+          {/* Area and Price Display Row */}
           <div className="mb-6 grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">Área ({measurementUnit})</label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-bgray-900 dark:text-white">Área ({measurementUnit})</label>
+                {(overrideArea && Number(overrideAreaValue) > 0) && (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-warning-300 text-white dark:bg-success-300">
+                    Sobrescrito
+                  </span>
+                )}
+              </div>
               <input
                 type="text"
                 value={displayedArea}
                 readOnly
                 className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg bg-gray-100 dark:bg-darkblack-500 dark:text-white"
               />
+              {!overrideArea && (
+                <p className="text-xs text-bgray-600 dark:text-bgray-50 mt-1">
+                  Calculado: {length} × {width} = {areaM2} m²
+                </p>
+              )}
+              {(overrideArea && Number(overrideAreaValue) > 0) && (
+                <p className="text-xs text-error-300 mt-1">Área manual aplicada: {overrideAreaValue}</p>
+              )}
             </div>
             <div>
               <div className="flex items-center justify-between mb-2">
@@ -330,50 +392,126 @@ function EditLot() {
               </div>
               <input
                 type="text"
-                value={effectiveServerPrice}
+                value={effectivePricePreview}
                 readOnly
                 className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg bg-gray-100 dark:bg-darkblack-500 dark:text-white"
               />
-              {serverPrice != null && serverPrice !== calculatedPrice && (
-                <p className="text-xs text-bgray-600 dark:text-bgray-50 mt-1">Calculo Precio (area * precio base): {calculatedPrice}</p>
+              {!overridePrice && (
+                <p className="text-xs text-bgray-600 dark:text-bgray-50 mt-1">
+                  Calculado: {displayedArea} × {projectPricePerUnit} = {calculatedPrice}
+                </p>
               )}
-              {(overridePrice && Number(overridePriceValue) > 0 && serverPrice != null) && (
-                <p className="text-xs text-error-300 mt-1">Precio manual aplicado: {overridePriceValue}</p>
+              {(overridePrice && Number(overridePriceValue) > 0) && (
+                <p className="text-xs text-green-600 dark:text-green-400 mt-1">Precio manual aplicado: {overridePriceValue}</p>
               )}
             </div>
           </div>
 
-          {/* Price Override */}
-          <div className="mb-6">
-            <div className="flex items-center mb-2 gap-3">
-              <input
-                id="overridePrice"
-                type="checkbox"
-                checked={overridePrice}
-                onChange={(e) => setOverridePrice(e.target.checked)}
-                className="h-4 w-4 text-success-300 focus:ring-success-300 border-bgray-300 rounded"
-              />
-              <label htmlFor="overridePrice" className="text-sm font-medium text-bgray-900 dark:text-white">
-                Sobrescribir precio manualmente
-              </label>
-            </div>
-            {overridePrice && (
-              <div>
-                <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">Precio Manual (HNL)</label>
+          {/* Override Sections */}
+          <div className="mb-6 grid md:grid-cols-2 gap-6">
+            {/* Area Override */}
+            <div>
+              <div className="flex items-center mb-2 gap-3">
                 <input
-                  type="number"
-                  value={overridePriceValue}
-                  onChange={(e) => setOverridePriceValue(e.target.value)}
-                  className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
-                  placeholder="Ingrese el precio manual"
+                  id="overrideArea"
+                  type="checkbox"
+                  checked={overrideArea}
+                  onChange={(e) => setOverrideArea(e.target.checked)}
+                  className="h-4 w-4 text-success-300 focus:ring-success-300 border-bgray-300 rounded"
                 />
-                {fieldErrors.override_price && <p className="text-xs text-red-500 mt-1">{fieldErrors.override_price}</p>}
-                <p className="text-xs text-bgray-600 dark:text-bgray-50 mt-1">Al guardar, se almacenará en override_price y reemplazará el precio calculado.</p>
+                <label htmlFor="overrideArea" className="text-sm font-medium text-bgray-900 dark:text-white">
+                  Sobrescribir área manualmente
+                </label>
               </div>
-            )}
+              {overrideArea && (
+                <div>
+                  <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">Área Manual ({measurementUnit})</label>
+                  <input
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    value={overrideAreaValue}
+                    onChange={(e) => setOverrideAreaValue(e.target.value)}
+                    className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
+                    placeholder="Ingrese el área manual"
+                  />
+                  {fieldErrors.override_area && <p className="text-xs text-red-500 mt-1">{fieldErrors.override_area}</p>}
+                  <p className="text-xs text-bgray-600 dark:text-bgray-50 mt-1">Al guardar, se almacenará en override_area y reemplazará el área calculada.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Price Override */}
+            <div>
+              <div className="flex items-center mb-2 gap-3">
+                <input
+                  id="overridePrice"
+                  type="checkbox"
+                  checked={overridePrice}
+                  onChange={(e) => setOverridePrice(e.target.checked)}
+                  className="h-4 w-4 text-success-300 focus:ring-success-300 border-bgray-300 rounded"
+                />
+                <label htmlFor="overridePrice" className="text-sm font-medium text-bgray-900 dark:text-white">
+                  Sobrescribir precio manualmente
+                </label>
+              </div>
+              {overridePrice && (
+                <div>
+                  <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">Precio Manual (HNL)</label>
+                  <input
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    value={overridePriceValue}
+                    onChange={(e) => setOverridePriceValue(e.target.value)}
+                    className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
+                    placeholder="Ingrese el precio manual"
+                  />
+                  {fieldErrors.override_price && <p className="text-xs text-red-500 mt-1">{fieldErrors.override_price}</p>}
+                  <p className="text-xs text-bgray-600 dark:text-bgray-50 mt-1">Al guardar, se almacenará en override_price y reemplazará el precio calculado.</p>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Note */}
+          {/* Boundary Descriptions */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-bgray-900 dark:text-white mb-4">{t("lots.boundaryDescriptions")}</h3>
+            <div className="grid md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">{t("lots.north")}</label>
+                <input
+                  type="text"
+                  value={north}
+                  onChange={(e) => setNorth(e.target.value)}
+                  className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
+                  placeholder={t("lots.northBoundary")}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">{t("lots.east")}</label>
+                <input
+                  type="text"
+                  value={east}
+                  onChange={(e) => setEast(e.target.value)}
+                  className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
+                  placeholder={t("lots.eastBoundary")}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">{t("lots.west")}</label>
+                <input
+                  type="text"
+                  value={west}
+                  onChange={(e) => setWest(e.target.value)}
+                  className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
+                  placeholder={t("lots.westBoundary")}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Note - Last Field */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">Nota</label>
             <textarea

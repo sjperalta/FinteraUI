@@ -52,7 +52,7 @@ function SignIn() {
       else if(user.role === 'seller')
         navigate("/contracts");
       else {
-        navigate(`/balance/user/${user.id}`);
+        navigate(`/financing/user/${user.id}`);
       }
     }
     // If not success, error is handled by apiError from context

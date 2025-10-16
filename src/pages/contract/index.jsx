@@ -17,54 +17,54 @@ function Contract() {
   // Status filter options
   const statusOptions = useMemo(
     () => [
-      { value: "", label: "Todos los Estados" },
-      { value: "pending", label: "Pendiente" },
-      { value: "submitted", label: "Enviado" },
-      { value: "approved", label: "Aprobado" },
-      { value: "rejected", label: "Rechazado" },
-      { value: "cancelled", label: "Cancelado" },
-      { value: "closed", label: "Cerrado" },
+      { value: "", label: t('contracts.allStatuses') },
+      { value: "pending", label: t('contracts.status.pending') },
+      { value: "submitted", label: t('contracts.status.submitted') },
+      { value: "approved", label: t('contracts.status.approved') },
+      { value: "rejected", label: t('contracts.status.rejected') },
+      { value: "cancelled", label: t('contracts.status.cancelled') },
+      { value: "closed", label: t('contracts.status.closed') },
     ],
-    []
+    [t]
   );
 
   // Table columns with sort keys (Lote first, then Cliente)
   const columns = useMemo(
     () => [
       {
-        label: "Lote",
+        label: t('contracts.lot'),
         align: "left",
         sortKey: "lot_id",
         defaultSortDirection: "asc",
       },
       {
-        label: "Cliente",
+        label: t('contracts.client'),
         align: "left",
         sortKey: "applicant_user_id",
         defaultSortDirection: "asc",
       },
       {
-        label: "Financiamiento",
+        label: t('contracts.financing'),
         align: "center",
         sortKey: "financing_type",
         defaultSortDirection: "asc",
       },
       {
-        label: "Estado",
+        label: t('common.status'),
         align: "center",
         sortKey: "status",
         defaultSortDirection: "asc",
       },
       {
-        label: "Creado",
+        label: t('contracts.created'),
         align: "center",
         sortKey: "contracts.created_at",
         defaultSortDirection: "desc",
       },
-      { label: "Creado Por", align: "center" },
-      { label: "Acciones", align: "center" },
+      { label: t('contracts.createdBy'), align: "center" },
+      { label: t('contracts.actions'), align: "center" },
     ],
-    []
+    [t]
   );
 
   // Filters for GenericList
@@ -108,8 +108,8 @@ function Contract() {
             filterOptions={statusOptions}
             onSearchChange={setSearchTerm}
             onFilterChange={setStatusFilter}
-            searchPlaceholder="Buscar por cliente, lote, proyecto..."
-            filterPlaceholder="Filtrar por estado"
+            searchPlaceholder={t('contracts.searchPlaceholder')}
+            filterPlaceholder={t('contracts.filterByStatus')}
             showFilter={true}
           />
 
@@ -121,8 +121,8 @@ function Contract() {
             columns={columns}
             sortBy="contracts.created_at-desc"
             itemsPerPage={20}
-            emptyMessage="No se encontraron contratos"
-            loadingMessage="Cargando contratos..."
+            emptyMessage={t('contracts.noContractsFound')}
+            loadingMessage={t('contracts.loadingContracts')}
             entityName="contracts"
             showMobileCards={true}
             showDesktopTable={true}

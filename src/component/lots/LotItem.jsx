@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import { useContext } from "react";
 import { useLocale } from "../../contexts/LocaleContext";
 import { getStatusLabel, getStatusBadgeClass } from "../../utils/statusUtils";
 

@@ -420,7 +420,8 @@
         "phone": "Teléfono: 31848112",
         "address": "Dirección: [Insertar Dirección]"
       }
-    }
+    },
+    "footerNote": "Estos Términos y Condiciones constituyen el acuerdo completo entre usted y Fintera con respecto al uso de nuestra plataforma y servicios."
   },
   "reservations": {
     "title": "Solicitud de Reserva",
@@ -629,6 +630,25 @@
     "payment": "Pago",
     "appliedSuccessfully": "aplicado exitosamente",
     "noAddress": "Sin dirección",
+    "allStatuses": "Todos los Estados",
+    "lot": "Lote",
+    "client": "Cliente",
+    "financing": "Financiamiento",
+    "created": "Creado",
+    "createdBy": "Creado Por",
+    "actions": "Acciones",
+    "searchPlaceholder": "Buscar por cliente, lote, proyecto...",
+    "filterByStatus": "Filtrar por estado",
+    "noContractsFound": "No se encontraron contratos",
+    "loadingContracts": "Cargando contratos...",
+    "status": {
+      "pending": "Pendiente",
+      "submitted": "Enviado",
+      "approved": "Aprobado",
+      "rejected": "Rechazado",
+      "cancelled": "Cancelado",
+      "closed": "Cerrado"
+    },
     "financingTypes": {
       "direct": "Directo",
       "bank": "Bancario"

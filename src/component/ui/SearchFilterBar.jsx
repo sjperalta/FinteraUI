@@ -130,9 +130,13 @@ function SearchFilterBar({
       {/* Filter Dropdown */}
       {showFilter && filterOptions.length > 0 && (
         <div className="relative">
-          <div
+          <button
+            type="button"
             onClick={() => setShowFilterDropdown(!showFilterDropdown)}
-            className="items-center pl-9 border-r border-bgray-400 dark:border-darkblack-400 xl:flex hidden cursor-pointer"
+            className="items-center pl-9 border-r border-bgray-400 dark:border-darkblack-400 xl:flex hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            aria-expanded={showFilterDropdown}
+            aria-haspopup="listbox"
+            aria-label={filterPlaceholder}
           >
             <span>
               <svg
@@ -182,7 +186,7 @@ function SearchFilterBar({
                 />
               </svg>
             </span>
-          </div>
+          </button>
 
           {/* Dropdown Menu */}
           <div

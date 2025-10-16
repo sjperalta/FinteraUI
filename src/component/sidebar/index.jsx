@@ -318,7 +318,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
               {isAdmin && (
                 <li
                   className={`item py-[9px] sm:py-[11px] text-bgray-900 dark:text-white ${
-                    location === "/history" ? "nav-active" : ""
+                    location === "/audits" ? "nav-active" : ""
                   }`}
                 >
                   <Link to="/audits">

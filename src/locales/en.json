@@ -409,7 +409,8 @@
         "phone": "Phone: 31848112",
         "address": "Address: [Insert Address]"
       }
-    }
+    },
+    "footerNote": "These Terms and Conditions constitute the entire agreement between you and Fintera regarding your use of our platform and services."
   },
   "reservations": {
     "title": "Reservation Request",
@@ -618,6 +619,25 @@
     "payment": "Payment",
     "appliedSuccessfully": "applied successfully",
     "noAddress": "No address",
+    "allStatuses": "All Statuses",
+    "lot": "Lot",
+    "client": "Client",
+    "financing": "Financing",
+    "created": "Created",
+    "createdBy": "Created By",
+    "actions": "Actions",
+    "searchPlaceholder": "Search by client, lot, project...",
+    "filterByStatus": "Filter by status",
+    "noContractsFound": "No contracts found",
+    "loadingContracts": "Loading contracts...",
+    "status": {
+      "pending": "Pending",
+      "submitted": "Submitted",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "cancelled": "Cancelled",
+      "closed": "Closed"
+    },
     "financingTypes": {
       "direct": "Direct",
       "bank": "Bank"

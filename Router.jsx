@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ProtectedRoute from "./component/protectedRoute";
 import Home from "./pages/home";
-import Transaction from "./pages/Transaction";
+import Payments from "./pages/Payments";
 import Projects from "./pages/projects";
 import Users from "./pages/users";
 import Settings from "./pages/settings";
@@ -16,9 +16,9 @@ import TermsAndCondition from "./pages/settings/Terms&condition";
 import CreateProject from "./src/pages/projects/create";
 import LotsList from "./src/pages/projects/lots";
 import Reserve from "./src/pages/projects/reserve";
-import Balance from "./pages/balance";
-import Upload from "./src/pages/balance/upload";
-import Summary from "./src/pages/balance/summary";
+import Financing from "./pages/financing";
+import Upload from "./src/pages/financing/upload";
+import Summary from "./src/pages/financing/summary";
 import Audits from "./pages/audits";
 
 const router = createBrowserRouter([
@@ -35,10 +35,10 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/transaction",
+        path: "/payments",
         element: (
           <ProtectedRoute>
-            <Transaction />
+            <Payments />
           </ProtectedRoute>
         ),
       },
@@ -83,8 +83,8 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/balance/user/:userId",
-        Component: Balance,
+        path: "/financing/user/:userId",
+        Component: Financing,
         children: [
           {
             index: true,

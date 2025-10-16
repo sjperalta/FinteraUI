@@ -129,7 +129,7 @@ function LotInfo({
          * - current user is admin OR current user created the reservation
          */}
         {reserved_by_user_id && (userRole === 'admin' || String(contract_created_user_id) === String(currentUserId)) ? (
-          <Link to={`/balance/user/${reserved_by_user_id}`} className="text-base font-medium text-blue-600 dark:text-blue-400 hover:underline">
+          <Link to={`/financing/user/${reserved_by_user_id}`} className="text-base font-medium text-blue-600 dark:text-blue-400 hover:underline">
             {reserved_by}
           </Link>
         ) : (

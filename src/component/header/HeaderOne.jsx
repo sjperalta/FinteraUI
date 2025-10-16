@@ -9,20 +9,16 @@ import NotificationPopup from "./NotificationPopup";
 import ProfilePopup from "./ProfilePopup";
 import ToggleBtn from "./ToggleBtn";
 import ModeToggler from "./ModeToggler";
-import { API_URL } from "../../../config";   // <-- Example import
-import { getToken } from "../../../auth";    // <-- For authentication token
-
-const WELCOME_MESSAGES = [
-  "¡Revisemos tus avances hoy!",
-  "¡Bienvenido de nuevo! Esperamos que tengas un día productivo.",
-  "¿Listo para alcanzar tus metas?",
-  "¡Es hora de progresar con tus tareas!",
-  "¡Esperamos que tengas un día fantástico!",
-];
+import { API_URL } from "../../../config";
+import { getToken } from "../../../auth";
+import { usePageTitle } from "../../hooks/usePageTitle";
 
 function HeaderOne({ handleSidebar }) {
   const [popup, setPopup] = useState(false);
   const navigate = useNavigate();
+
+  // Get dynamic page title and subtitle
+  const { title, subtitle } = usePageTitle();
 
   // Notifications state
   const [loading, setLoading] = useState(false);
@@ -30,12 +26,6 @@ function HeaderOne({ handleSidebar }) {
 
   // Extract user, logout from AuthContext
   const { user, logout } = useContext(AuthContext);
-
-  // Pick a random welcome message once
-  const [welcomeMessage] = useState(() => {
-    const randomIndex = Math.floor(Math.random() * WELCOME_MESSAGES.length);
-    return WELCOME_MESSAGES[randomIndex];
-  });
 
   // On mount, fetch notifications if user is logged in
   useEffect(() => {
@@ -129,25 +119,25 @@ function HeaderOne({ handleSidebar }) {
           </span>
         </button>
 
-        {/* Page Title */}
-        <div>
-          <h3 className="text-xl font-bold text-bgray-900 dark:text-bgray-50 lg:text-3xl lg:leading-[36.4px]">
-            Dashboard
+        {/* Dynamic Page Title */}
+        <div className="flex-1 ml-10">
+          <h3 className="text-xl font-bold text-bgray-900 dark:text-white lg:text-3xl lg:leading-[36.4px] truncate">
+            {title}
           </h3>
-          <p className="text-xs font-medium text-bgray-600 dark:text-bgray-50 lg:text-sm lg:leading-[25.2px]">
-            {welcomeMessage}
+          <p className="text-xs font-medium text-bgray-600 dark:text-bgray-300 lg:text-sm lg:leading-[25.2px] truncate">
+            {subtitle}
           </p>
         </div>
 
         {/* Right Section: Notifications + Profile */}
-        <div className="quick-access-wrapper relative">
+        <div className="quick-access-wrapper relative flex-shrink-0">
           <div className="flex items-center space-x-[43px]">
             {/* Some hidden items + Toggles */}
             <div className="hidden items-center space-x-5 xl:flex">
               <div
                 onClick={() => setPopup(false)}
                 id="noti-outside"
-                className={`fixed left-0 top-0 h-full w-full ${popup ? "block" : "hidden"}`}
+                className={`fixed left-0 top-0 h-full w-full z-10 ${popup ? "block" : "hidden"}`}
               ></div>
 
               <ModeToggler />
@@ -158,10 +148,11 @@ function HeaderOne({ handleSidebar }) {
                 clickHandler={handlePopup}
                 active={notifications?.length > 0}
                 icon={
-                  <svg className="stroke-bgray-900 dark:stroke-white" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 12V7C2 4.79086 3.79086 3 6 3H18C20.2091 3 22 4.79086 22 7V17C22 19.2091 20.2091 21 18 21H8M6 8L9.7812 10.5208C11.1248 11.4165 12.8752 11.4165 14.2188 10.5208L18 8M2 15H8M2 18H8" strokeWidth="1.5" strokeLinecap="round"></path></svg>
+                  <svg className="stroke-bgray-900 dark:stroke-white" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 12V7C2 4.79086 3.79086 3 6 3H18C20.2091 3 22 4.79086 22 7V17C22 19.2091 20.2091 21 18 21H8M6 8L9.7812 10.5208C11.1248 11.4165 12.8752 11.4165 14.2188 10.5208L18 8M2 15H8M2 18H8" strokeWidth="1.5" strokeLinecap="round"></path>
+                  </svg>
                 }
               >
-                {/* Pass the notifications + active state to NotificationPopup */}
                 <NotificationPopup
                   loading={loading}
                   active={popup?.notification}
@@ -178,7 +169,7 @@ function HeaderOne({ handleSidebar }) {
             {user ? (
               <Author showProfile={handlePopup} user={user} />
             ) : (
-              <div>Por favor inicia sesión</div>
+              <div className="text-sm text-bgray-600 dark:text-bgray-300">Por favor inicia sesión</div>
             )}
           </div>
 

@@ -134,40 +134,63 @@ function UsersList({ searchTerm, role, onUserSelect }) {
   }
 
   return (
-    <div className="w-full overflow-x-auto">
-      <table className="w-full table-auto border-collapse bg-white dark:bg-darkblack-600 rounded-lg shadow-lg overflow-hidden min-w-full">
-        <thead className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-darkblack-500 dark:to-darkblack-400 border-b-2 border-gray-200 dark:border-darkblack-300">
-          <tr>
-            <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
-              {t('users.user')}
-            </th>
-            <th className="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 hidden sm:table-cell">
-              {t('common.status')}
-            </th>
-            <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
-              {t('common.actions')}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {users?.map((user, index) => (
+    <div className="w-full">
+      {/* Mobile: Card View */}
+      <div className="block lg:hidden space-y-3 sm:space-y-4">
+        {users?.map((user, index) => (
+          <div
+            key={user.id}
+            onClick={() => handleUserClick(user)}
+            className="bg-white dark:bg-darkblack-600 rounded-xl border-2 border-gray-200 dark:border-darkblack-400 p-4 shadow-md hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 cursor-pointer"
+          >
             <UserData
-              key={user.id}
               userInfo={user}
               index={index}
               token={token}
               onClick={() => handleUserClick(user)}
+              isMobileCard={true}
             />
-          ))}
-        </tbody>
-      </table>
+          </div>
+        ))}
+      </div>
 
-      {/* Pagination Controls */}
-      <div className="flex items-center justify-between mt-6 px-4 py-3 bg-white dark:bg-darkblack-600 rounded-lg border border-gray-200 dark:border-darkblack-400">
+      {/* Desktop: Table View */}
+      <div className="hidden lg:block w-full overflow-x-auto rounded-xl border-2 border-gray-200 dark:border-darkblack-400 shadow-lg">
+        <table className="w-full table-auto border-collapse bg-white dark:bg-darkblack-600 min-w-full">
+          <thead className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-darkblack-500 dark:to-darkblack-400 border-b-2 border-blue-200 dark:border-blue-800/50">
+            <tr>
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                {t('users.user')}
+              </th>
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-center text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                {t('common.status')}
+              </th>
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                {t('common.actions')}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {users?.map((user, index) => (
+              <UserData
+                key={user.id}
+                userInfo={user}
+                index={index}
+                token={token}
+                onClick={() => handleUserClick(user)}
+                isMobileCard={false}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pagination Controls - Mobile Optimized */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0 mt-4 sm:mt-6 px-3 sm:px-4 py-3 sm:py-4 bg-white dark:bg-darkblack-600 rounded-xl border-2 border-gray-200 dark:border-darkblack-400 shadow-sm">
         <button
           onClick={handlePrevPage}
           disabled={currentPage <= 1}
-          className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-darkblack-500 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-darkblack-400 rounded-lg hover:bg-gray-50 dark:hover:bg-darkblack-400 disabled:bg-gray-100 dark:disabled:bg-darkblack-500 disabled:text-gray-400 dark:disabled:text-gray-600 disabled:cursor-not-allowed transition-colors shadow-sm"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-darkblack-500 dark:to-darkblack-400 text-gray-700 dark:text-gray-300 border-2 border-blue-200 dark:border-blue-800/50 rounded-lg hover:from-blue-100 hover:to-blue-200 dark:hover:from-darkblack-400 dark:hover:to-darkblack-300 disabled:from-gray-50 disabled:to-gray-100 dark:disabled:from-darkblack-500 dark:disabled:to-darkblack-500 disabled:text-gray-400 dark:disabled:text-gray-600 disabled:cursor-not-allowed disabled:border-gray-200 dark:disabled:border-darkblack-400 transition-all duration-200 shadow-sm hover:shadow-md font-medium text-sm"
         >
           <svg
             className="w-4 h-4"
@@ -178,24 +201,24 @@ function UsersList({ searchTerm, role, onUserSelect }) {
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth="2"
+              strokeWidth="2.5"
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          <span className="font-medium">{t('common.previous')}</span>
+          <span className="font-semibold">{t('common.previous')}</span>
         </button>
 
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+        <div className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-darkblack-500 dark:to-darkblack-400 px-4 py-2 rounded-lg border-2 border-blue-200 dark:border-blue-800/50 shadow-sm">
+          <span className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
             {t('common.page')}
           </span>
-          <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-md font-bold text-sm">
+          <span className="px-3 py-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-md font-bold text-sm shadow-md">
             {currentPage}
           </span>
-          <span className="text-sm text-gray-500 dark:text-gray-400">
+          <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
             {t('common.of')}
           </span>
-          <span className="px-3 py-1 bg-gray-100 dark:bg-darkblack-500 text-gray-700 dark:text-gray-300 rounded-md font-bold text-sm">
+          <span className="px-3 py-1 bg-white dark:bg-darkblack-600 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-darkblack-300 rounded-md font-bold text-sm">
             {totalPages}
           </span>
         </div>
@@ -203,9 +226,9 @@ function UsersList({ searchTerm, role, onUserSelect }) {
         <button
           onClick={handleNextPage}
           disabled={currentPage >= totalPages}
-          className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-darkblack-500 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-darkblack-400 rounded-lg hover:bg-gray-50 dark:hover:bg-darkblack-400 disabled:bg-gray-100 dark:disabled:bg-darkblack-500 disabled:text-gray-400 dark:disabled:text-gray-600 disabled:cursor-not-allowed transition-colors shadow-sm"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-darkblack-500 dark:to-darkblack-400 text-gray-700 dark:text-gray-300 border-2 border-blue-200 dark:border-blue-800/50 rounded-lg hover:from-blue-100 hover:to-blue-200 dark:hover:from-darkblack-400 dark:hover:to-darkblack-300 disabled:from-gray-50 disabled:to-gray-100 dark:disabled:from-darkblack-500 dark:disabled:to-darkblack-500 disabled:text-gray-400 dark:disabled:text-gray-600 disabled:cursor-not-allowed disabled:border-gray-200 dark:disabled:border-darkblack-400 transition-all duration-200 shadow-sm hover:shadow-md font-medium text-sm"
         >
-          <span className="font-medium">{t('common.next')}</span>
+          <span className="font-semibold">{t('common.next')}</span>
           <svg
             className="w-4 h-4"
             fill="none"
@@ -215,7 +238,7 @@ function UsersList({ searchTerm, role, onUserSelect }) {
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth="2"
+              strokeWidth="2.5"
               d="M9 5l7 7-7 7"
             />
           </svg>

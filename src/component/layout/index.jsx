@@ -37,7 +37,8 @@ function Layout({ bg, overlay, children }) {
       >
         <div className="relative flex w-full">
           {user ? <Sidebar handleActive={() => setSidebar(!sidebar)} user={user}  handleLogout={handleLogout} /> : <div>Sidebar render ...</div>}
-          {overlay ? overlay : <Overlay />}
+          {/* Only show overlay on mobile when sidebar is active */}
+          {overlay ? overlay : (sidebar && <Overlay handleClick={() => setSidebar(false)} />)}
           {user ? <SidebarV2 user={user} handleLogout={handleLogout} /> : <div>Sidebar render ...</div>}
           <div
             className={`body-wrapper flex-1 overflow-x-hidden ${

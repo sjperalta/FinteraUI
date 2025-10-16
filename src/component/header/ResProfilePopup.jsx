@@ -1,14 +1,19 @@
 import ProtoTypes from "prop-types";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import AuthContext from "../../context/AuthContext";
 
 function ResProfilePopup({ isActive }) {
+  const { user } = useContext(AuthContext);
+  const userId = user?.id;
+
   return (
     <div
       style={{
         filter: `drop-shadow(12px 12px 40px rgba(0, 0, 0, 0.08))`,
         zIndex: 999,
       }}
-      className={`profile-box absolute right-0 top-[81px]  w-[300px] overflow-hidden rounded-lg bg-white ${
+      className={`profile-box absolute right-0 top-[81px] w-[300px] overflow-hidden rounded-lg bg-white dark:bg-darkblack-600 z-50 ${
         isActive ? "block" : "hidden"
       }`}
     >
@@ -17,7 +22,7 @@ function ResProfilePopup({ isActive }) {
           <ul>
             <li className="w-full">
               <Link to="/settings">
-                <div className="flex items-center space-x-[18px] rounded-lg p-[14px] text-bgray-600 hover:bg-bgray-100 hover:text-bgray-900">
+                <div className="flex items-center space-x-[18px] rounded-lg p-[14px] text-bgray-600 hover:bg-bgray-100 hover:text-bgray-900 dark:text-bgray-50 dark:hover:bg-darkblack-500">
                   <div className="w-[20px]">
                     <span>
                       <svg
@@ -63,15 +68,15 @@ function ResProfilePopup({ isActive }) {
         <div>
           <ul>
             <li className="w-full">
-              <Link to={`/settings/user/1`}>
-                <div className="rounded-lg p-[14px] text-bgray-600 hover:bg-bgray-100 hover:text-bgray-900">
+              <Link to={userId ? `/settings/user/${userId}` : "#"} onClick={(e) => !userId && e.preventDefault()}>
+                <div className="rounded-lg p-[14px] text-bgray-600 hover:bg-bgray-100 hover:text-bgray-900 dark:text-bgray-50 dark:hover:bg-darkblack-500">
                   <span className="text-sm font-semibold">Settings</span>
                 </div>
               </Link>
             </li>
             <li className="w-full">
               <Link to="/users">
-                <div className="rounded-lg p-[14px] text-bgray-600 hover:bg-bgray-100 hover:text-bgray-900">
+                <div className="rounded-lg p-[14px] text-bgray-600 hover:bg-bgray-100 hover:text-bgray-900 dark:text-bgray-50 dark:hover:bg-darkblack-500">
                   <span className="text-sm font-semibold">Users</span>
                 </div>
               </Link>

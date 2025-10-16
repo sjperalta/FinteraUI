@@ -421,9 +421,11 @@ function ContractInfo({
             <div className="flex items-center">
               <DocumentSelect contract_id={contract_id} financing_type={financing_type} status={status} />
             </div>
-
-            {/* View Details Button - For submitted contracts or seller users */}
-            {(status?.toLowerCase() === "submitted" || userRole === "seller") && (
+            
+            {/* View Details Button - For submitted contracts, rejected contracts, for seller, admin users */}
+             {(userRole === "admin" || userRole === "seller") && 
+               (status?.toLowerCase() === "submitted" || 
+               status?.toLowerCase() === "rejected") && (
               <button
                 type="button"
                 onClick={() => setShowDetailsModal(true)}

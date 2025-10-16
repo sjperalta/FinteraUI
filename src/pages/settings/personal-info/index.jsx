@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
 import PropTypes from "prop-types";
-import profileImg from "../../../assets/images/avatar/profile.png";
 import PersonalInfoFrom from "../../../component/forms/PersonalInfoFrom";
 
 function PersonalInfo() { 

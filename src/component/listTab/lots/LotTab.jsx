@@ -127,90 +127,127 @@ function LotTab({ lots, userRole, pageSize, refreshLots, highlightedLotId }) {
   };
 
   return (
-    <div className="table-content w-full overflow-x-auto">
-      <table className="w-full">
-        <thead>
-          <tr className="border-b border-bgray-300 dark:border-darkblack-400">
-            {/* Proyecto */}
-            <th className="px-6 py-5 xl:px-0 text-left">
-              <div className="flex items-center space-x-2.5">
-                <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  Proyecto
-                </span>
-                {/* Sorting Icon */}
-                {renderSortIcon('project_id')}
-              </div>
-            </th>
+    <div className="table-content w-full">
+      {/* Desktop Table View */}
+      <div className="hidden xl:block w-full overflow-x-auto rounded-xl border-2 border-gray-200 dark:border-darkblack-400 shadow-lg">
+        <table className="w-full bg-white dark:bg-darkblack-600">
+          <thead>
+            <tr className="border-b-2 border-blue-200 dark:border-blue-800/50 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-darkblack-500 dark:to-darkblack-400">
+              {/* Proyecto */}
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-left">
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                    Proyecto
+                  </span>
+                  {/* Sorting Icon */}
+                  <div className="flex-shrink-0">{renderSortIcon('project_id')}</div>
+                </div>
+              </th>
 
-            {/* Nombre (ahora incluye dirección y registro) */}
-            <th className="px-6 py-5 xl:px-0 text-left">
-              <div className="flex items-center space-x-2.5">
-                <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  Lote
-                </span>
-                {/* Sorting Icon */}
-                {renderSortIcon('name')}
-              </div>
-            </th>
+              {/* Nombre (ahora incluye dirección y registro) */}
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-left">
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                    Lote
+                  </span>
+                  {/* Sorting Icon */}
+                  <div className="flex-shrink-0">{renderSortIcon('name')}</div>
+                </div>
+              </th>
 
-            {/* Dimensiones */}
-            <th className="px-6 py-5 xl:px-0 text-left">
-              <div className="flex items-center space-x-2.5">
-                <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  Dimensiones
-                </span>
-                {/* Sorting Icon */}
-                {renderSortIcon('width')}
-              </div>
-            </th>
+              {/* Dimensiones */}
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-left">
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                    Dimensiones
+                  </span>
+                  {/* Sorting Icon */}
+                  <div className="flex-shrink-0">{renderSortIcon('width')}</div>
+                </div>
+              </th>
 
-            {/* Precio (actualizado desde Balance) */}
-            <th className="px-6 py-5 xl:px-0 text-left">
-              <div className="flex items-center space-x-2.5">
-                <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  Precio
-                </span>
-                {/* Sorting Icon */}
-                {renderSortIcon('price')}
-              </div>
-            </th>
+              {/* Precio (actualizado desde Balance) */}
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-left">
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                    Precio
+                  </span>
+                  {/* Sorting Icon */}
+                  <div className="flex-shrink-0">{renderSortIcon('price')}</div>
+                </div>
+              </th>
 
-            {/* Reservado Por */}
-            <th className="w-[165px] px-6 py-5 xl:px-0 text-left">
-              <div className="flex items-center space-x-2.5">
-                <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
+              {/* Reservado Por */}
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-left">
+                <span className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
                   Reservado Por
                 </span>
-              </div>
-            </th>
+              </th>
 
-            {/* Estado */}
-            <th className="px-6 py-5 xl:px-0 text-left">
-              <div className="flex items-center space-x-2.5">
-                <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                  Estado
-                </span>
-                {/* Sorting Icon */}
-                {renderSortIcon('status')}
-              </div>
-            </th>
+              {/* Estado */}
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-left">
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                    Estado
+                  </span>
+                  {/* Sorting Icon */}
+                  <div className="flex-shrink-0">{renderSortIcon('status')}</div>
+                </div>
+              </th>
 
-            {/* Acciones */}
-            <th className="px-6 py-5 xl:px-0 text-center">
-              <div className="flex justify-center">
-                <span className="text-base font-medium text-bgray-600 dark:text-bgray-50">
+              {/* Acciones */}
+              <th className="px-4 xl:px-5 py-2.5 xl:py-3 text-left">
+                <span className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
                   Acciones
                 </span>
-              </div>
-            </th>
-          </tr>
-        </thead>
+              </th>
+            </tr>
+          </thead>
 
-        <tbody>
-          {/* We'll pass userRole and refreshLots as props to each <LotInfo /> */}
-          {lots?.map((lot) => (
+          <tbody>
+            {/* We'll pass userRole and refreshLots as props to each <LotInfo /> */}
+            {lots?.map((lot) => (
+              <LotInfo
+                key={lot.id}
+                project_name={lot.project_name}
+                name={lot.name}
+                address={lot.address}
+                registration_number={lot.registration_number}
+                dimensions={lot.dimensions}
+                balance={lot.balance}
+                price={lot.price}
+                override_price={lot.override_price}
+                contract_created_user_id={lot.contract_created_user_id}
+                contract_created_by={lot.contract_created_by}
+                reserved_by={lot.reserved_by}
+                reserved_by_user_id={lot.reserved_by_user_id}
+                status={lot.status}
+                project_id={lot.project_id}
+                lot_id={lot.id}
+                contract_id={lot.contract_id}
+                userRole={userRole}
+                refreshLots={refreshLots}
+                measurement_unit={lot.measurement_unit}
+                area={lot.area}
+                isHighlighted={highlightedLotId && lot.id === highlightedLotId}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="block xl:hidden space-y-3 sm:space-y-4">
+        {lots?.map((lot) => (
+          <div
+            key={lot.id}
+            className={`bg-white dark:bg-darkblack-600 rounded-xl border-2 ${
+              highlightedLotId && lot.id === highlightedLotId
+                ? 'border-blue-500 dark:border-blue-600 shadow-xl'
+                : 'border-gray-200 dark:border-darkblack-400 shadow-md'
+            } p-4 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200`}
+          >
             <LotInfo
-              key={lot.id}
               project_name={lot.project_name}
               name={lot.name}
               address={lot.address}
@@ -232,10 +269,11 @@ function LotTab({ lots, userRole, pageSize, refreshLots, highlightedLotId }) {
               measurement_unit={lot.measurement_unit}
               area={lot.area}
               isHighlighted={highlightedLotId && lot.id === highlightedLotId}
+              isMobileCard={true}
             />
-          ))}
-        </tbody>
-      </table>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -1,25 +1,31 @@
 import ProtoTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { useLocale } from "../../contexts/LocaleContext";
+import { useContext } from "react";
+import AuthContext from "../../context/AuthContext";
 
 function ProfilePopup({ active, user, handleLogout }) {
   const { t } = useLocale();
+  const { user: authUser } = useContext(AuthContext);
+  
+  // Get the user ID from either the passed user prop or auth context
+  const userId = user?.id || authUser?.id;
+  
   return (
     <div className="profile-wrapper text-left">
       <div
         style={{
           filter: `drop-shadow(12px 12px 40px rgba(0, 0, 0, 0.08))`,
-          display: active ? "block" : "none",
         }}
-        className={`profile-box transition-all origin-top absolute right-0 top-[81px] hidden w-[300px] overflow-hidden rounded-lg bg-white dark:bg-darkblack-600 ${
-          active ? " block introAnimation" : "hidden"
-        } `}
+        className={`profile-box transition-all origin-top absolute right-0 top-[81px] w-[300px] overflow-hidden rounded-lg bg-white dark:bg-darkblack-600 z-50 ${
+          active ? "block introAnimation" : "hidden"
+        }`}
       >
         <div className="relative w-full px-3 py-2">
           <div>
             <ul>
               <li className="w-full">
-                <Link to={`/settings/user/${user.id}`}>
+                <Link to={userId ? `/settings/user/${userId}` : "#"} onClick={(e) => !userId && e.preventDefault()}>
                   <div className="flex items-center space-x-[18px] rounded-lg p-[14px] text-bgray-600 hover:bg-bgray-100 hover:text-bgray-900 hover:dark:bg-darkblack-500">
                     <div className="w-[20px]">
                       <span>
@@ -93,21 +99,12 @@ function ProfilePopup({ active, user, handleLogout }) {
           <div>
             <ul>
               <li className="w-full">
-                <Link to={`/settings/user/${user.id}`}>
+                <Link to={userId ? `/settings/user/${userId}` : "#"} onClick={(e) => !userId && e.preventDefault()}>
                   <div className="rounded-lg p-[14px] text-bgray-600 hover:bg-bgray-100 hover:text-bgray-900 dark:text-bgray-50 dark:hover:bg-darkblack-500">
                     <span className="text-sm font-semibold">{t('profile.settings')}</span>
                   </div>
                 </Link>
               </li>
-              {(user?.role === 'admin' || user?.role === 'seller') && (
-                <li className="w-full">
-                  <Link to="/users">
-                    <div className="rounded-lg p-[14px] text-bgray-600 hover:bg-bgray-100 hover:text-bgray-900 dark:text-bgray-50 dark:hover:bg-darkblack-500">
-                      <span className="text-sm font-semibold">{t('profile.users')}</span>
-                    </div>
-                  </Link>
-                </li>
-              )}
             </ul>
           </div>
         </div>
@@ -118,6 +115,8 @@ function ProfilePopup({ active, user, handleLogout }) {
 ProfilePopup.propTypes = {
   active: ProtoTypes.bool,
   handlePopup: ProtoTypes.func,
+  user: ProtoTypes.object,
+  handleLogout: ProtoTypes.func,
 };
 
 export default ProfilePopup;

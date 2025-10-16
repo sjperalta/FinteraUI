@@ -54,7 +54,7 @@ const PaymentScheduleTab = ({
             {(Array.isArray(schedule) ? schedule : []).map((row, idx) => {
               const amount = row.amount || row.value || row.payment_amount;
               const interest = row.interest_amount || 0;
-              const status = row.status.toLowerCase();
+              const status = (row.status || 'pending').toLowerCase();
               // Check if payment is a readjustment (disabled)
               const isReadjustment = status === "readjustment";
               // Normalize moratory days to a number in case the source is a string

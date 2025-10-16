@@ -200,7 +200,7 @@ function ContractItem({
       setActionLoading(false);
     }
   };
-
+  
   // Mobile Card View
   if (isMobileCard) {
     return (

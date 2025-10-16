@@ -600,28 +600,70 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
 
                       const data = await response.json();
                       
-                      // Handle the capital payment response and update balance locally
-                      // Since capital repayment reduces the balance, subtract the payment amount
-                      setCurrentContract(prev => ({
-                        ...(prev || {}),
-                        balance: (prev?.balance || 0) - paymentAmount
-                      }));
+                      // Update contract with new balance from backend
+                      if (data.contract) {
+                        setCurrentContract(prev => ({
+                          ...(prev || {}),
+                          ...data.contract,
+                          balance: data.contract.balance
+                        }));
+                      }
+                      
+                      // Update schedule with readjusted payments from backend
+                      if (data.reajusted_payments && Array.isArray(data.reajusted_payments) && data.reajusted_payments.length > 0) {
+                        const safeSchedule = Array.isArray(schedule) ? schedule : [];
+                        
+                        // Replace existing payments with readjusted ones from backend
+                        const updatedSchedule = safeSchedule.map(payment => {
+                          // Find if this payment was readjusted
+                          const reajustedPayment = data.reajusted_payments.find(rp => rp.id === payment.id);
+                          if (reajustedPayment) {
+                            // Use the complete payment data from backend
+                            return {
+                              ...reajustedPayment,
+                              status: 'readjustment',
+                              readjusted_at: new Date().toISOString()
+                            };
+                          }
+                          return payment;
+                        });
+                        setSchedule(updatedSchedule);
+                        
+                        // IMPORTANT: Update the contract's payment_schedule to persist readjustment status
+                        // This ensures that when modal reopens, the readjustment status is maintained
+                        setCurrentContract(prev => ({
+                          ...(prev || {}),
+                          payment_schedule: updatedSchedule
+                        }));
+                      }
                       
                       // Call the original callback if provided
                       if (onPaymentSuccess) {
                         onPaymentSuccess({
                           payment: {
                             amount: paymentAmount,
-                            contract: {
+                            contract: data.contract || {
                               id: currentContract?.id,
-                              balance: (currentContract?.balance || 0) - paymentAmount,
+                              balance: data.contract?.balance || (currentContract?.balance || 0) - paymentAmount,
                               status: currentContract?.status,
                               created_at: currentContract?.created_at,
                               currency: currentContract?.currency || "HNL"
                             }
-                          }
+                          },
+                          reajusted_payments_count: data.reajusted_payments_count || 0,
+                          reajusted_payments: data.reajusted_payments || []
                         });
                       }
+                      
+                      // Note: Don't reload payment schedule here as it would overwrite the readjusted payments
+                      // The schedule has already been updated with the readjusted payments from backend
+                      
+                      // Show success feedback for capital payment
+                      let successMessage = `${t('contracts.capitalPayment')} ${t('contracts.appliedSuccessfully')}`;
+                      if (data.reajusted_payments_count > 0) {
+                        successMessage += `\n\n${data.reajusted_payments_count} ${t('contracts.paymentsReadjusted')}`;
+                      }
+                      alert(successMessage);
                       
                     } else {
                       // Handle regular payment - Make API call to apply payment
@@ -679,11 +721,10 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                       // Handle the payment response and update balance
                       handlePaymentResponse(data);
                       
+                      // Show success feedback for regular payment
+                      alert(`${t('contracts.payment')} ${t('contracts.appliedSuccessfully')}`);
+                      
                     }
-                    
-                    // Show success feedback
-                    const paymentType = selectedPayment?.isCapitalPayment ? t('contracts.capitalPayment') : t('contracts.payment');
-                    alert(`${paymentType} ${t('contracts.appliedSuccessfully')}`);
                     
                     setTimeout(() => {
                       setApplyPaymentModal(false);

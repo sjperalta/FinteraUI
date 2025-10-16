@@ -475,7 +475,6 @@ function EditLot() {
           </div>
 
           {/* Boundary Descriptions */}
-                    {/* Boundary Descriptions */}
           <div className="mb-6">
             <h3 className="text-lg font-semibold text-bgray-900 dark:text-white mb-4">{t("lots.boundaryDescriptions")}</h3>
             <div className="grid md:grid-cols-3 gap-4">

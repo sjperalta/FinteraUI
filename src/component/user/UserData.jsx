@@ -3,38 +3,12 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { useLocale } from "../../contexts/LocaleContext";
 import { API_URL } from "../../../config";
+import { getInitials, getAvatarColor } from "../../utils/avatarUtils";
 
 function UserData({ userInfo, index, token, onClick, isMobileCard = false }) {
   const { t } = useLocale();
   const { id, full_name, phone, email, status: initialStatus, role, created_at, created_by, creator } = userInfo;
   const [status, setStatus] = useState(initialStatus); // Use local state for status
-
-  // Generate initials from full name
-  const getInitials = (name) => {
-    if (!name) return "??";
-    const parts = name.trim().split(/\s+/);
-    if (parts.length === 1) {
-      return parts[0].substring(0, 2).toUpperCase();
-    }
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  };
-
-  // Generate a consistent color based on the name
-  const getAvatarColor = (name) => {
-    if (!name) return "bg-gray-400";
-    const colors = [
-      "bg-blue-500",
-      "bg-green-500",
-      "bg-purple-500",
-      "bg-pink-500",
-      "bg-indigo-500",
-      "bg-yellow-500",
-      "bg-red-500",
-      "bg-teal-500",
-    ];
-    const hash = name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    return colors[hash % colors.length];
-  };
 
   const toggleUserStatus = async () => {
     if (!token) {

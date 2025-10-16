@@ -183,6 +183,7 @@
   },
   "lotsTable": {
     "project": "Project",
+    "lot": "Lot",
     "lotFilter": "Search for Lot Name, Address, or Registration Number",
     "dimensions": "Dimensions",
     "price": "Price",

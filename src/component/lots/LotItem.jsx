@@ -39,8 +39,6 @@ function LotItem({ lot, userRole, isMobileCard = false, isHighlighted = false })
     contract_id,
   } = lot;
 
-  console.log(lot);
-
   // Get status label and badge class using centralized utilities
   const statusLabel = getStatusLabel(status);
   const badgeClass = getStatusBadgeClass(status);

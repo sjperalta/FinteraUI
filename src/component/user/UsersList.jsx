@@ -172,14 +172,23 @@ function UsersList({ searchTerm, role, onUserSelect }) {
           </thead>
           <tbody>
             {users?.map((user, index) => (
-              <UserData
+              <tr
                 key={user.id}
-                userInfo={user}
-                index={index}
-                token={token}
                 onClick={() => handleUserClick(user)}
-                isMobileCard={false}
-              />
+                className={`${
+                  index % 2 === 0
+                    ? "bg-white dark:bg-darkblack-600"
+                    : "bg-gray-50 dark:bg-darkblack-500"
+                } hover:bg-blue-50 dark:hover:bg-darkblack-400 transition-colors duration-150 cursor-pointer border-b border-gray-100 dark:border-darkblack-400`}
+              >
+                <UserData
+                  userInfo={user}
+                  index={index}
+                  token={token}
+                  onClick={() => handleUserClick(user)}
+                  isMobileCard={false}
+                />
+              </tr>
             ))}
           </tbody>
         </table>

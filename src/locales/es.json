@@ -194,6 +194,7 @@
   },
   "lotsTable": {
     "project": "Proyecto",
+    "lot": "Lote",
     "lotFilter": "Busca por Id, Nombre del Lote, Dirección o Número de Registro",
     "dimensions": "Dimensiones",
     "price": "Precio",

@@ -9,6 +9,7 @@ import DocumentSelect from "../forms/ReportSelect";
 import PaymentScheduleModal from "./PaymentScheduleModal";
 import RejectionModal from "./RejectionModal";
 import ContractDetailsModal from "./ContractDetailsModal";
+import Toast from "../ui/Toast";
 import { createPortal } from "react-dom";
 
 // Translate financing type to Spanish
@@ -92,6 +93,7 @@ function ContractItem({
   const [showRejectionModal, setShowRejectionModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
   const { t } = useLocale();
 
   // Navigation handlers
@@ -136,10 +138,10 @@ function ContractItem({
         }
       );
       if (!response.ok) throw new Error("Error aprobando el contrato.");
-      alert("Contrato aprobado exitosamente.");
+      setToast({ visible: true, message: "Contrato aprobado exitosamente.", type: "success" });
       refreshContracts();
     } catch (error) {
-      alert(`Error: ${error.message}`);
+      setToast({ visible: true, message: `Error: ${error.message}`, type: "error" });
     } finally {
       setActionLoading(false);
     }
@@ -162,11 +164,11 @@ function ContractItem({
         }
       );
       if (!response.ok) throw new Error("Error rechazando el contrato.");
-      alert("Contrato rechazado exitosamente.");
+      setToast({ visible: true, message: "Contrato rechazado exitosamente.", type: "success" });
       setShowRejectionModal(false);
       refreshContracts();
     } catch (error) {
-      alert(`Error: ${error.message}`);
+      setToast({ visible: true, message: `Error: ${error.message}`, type: "error" });
     } finally {
       setActionLoading(false);
     }
@@ -192,10 +194,10 @@ function ContractItem({
         }
       );
       if (!response.ok) throw new Error("Error cancelando el contrato.");
-      alert("Contrato cancelado exitosamente.");
+      setToast({ visible: true, message: "Contrato cancelado exitosamente.", type: "success" });
       refreshContracts();
     } catch (error) {
-      alert(`Error: ${error.message}`);
+      setToast({ visible: true, message: `Error: ${error.message}`, type: "error" });
     } finally {
       setActionLoading(false);
     }
@@ -679,6 +681,14 @@ function ContractItem({
         isOpen={showDetailsModal}
         onClose={() => setShowDetailsModal(false)}
         contract={contract}
+      />
+
+      {/* Toast Notification */}
+      <Toast
+        visible={toast.visible}
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast((s) => ({ ...s, visible: false }))}
       />
     </>
   );

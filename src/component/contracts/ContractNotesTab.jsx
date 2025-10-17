@@ -3,11 +3,13 @@ import PropTypes from 'prop-types';
 import { API_URL } from '../../../config';
 import { getToken } from '../../../auth';
 import MessageEditor from '../editor/MessageEditor';
+import Toast from '../ui/Toast';
 
 export default function ContractNotesTab({ currentContract, onContractUpdate }) {
   const [editingNotes, setEditingNotes] = useState(false);
   const [editedNotes, setEditedNotes] = useState('');
   const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
   const token = getToken();
 
   const handleEditNotes = () => {
@@ -18,7 +20,7 @@ export default function ContractNotesTab({ currentContract, onContractUpdate }) 
 
   const handleSaveNotes = async () => {
     if (!currentContract?.id || !currentContract?.project_id || !currentContract?.lot_id) {
-      alert('Información del contrato incompleta para actualizar notas.');
+      setToast({ visible: true, message: 'Información del contrato incompleta para actualizar notas.', type: "error" });
       return;
     }
 
@@ -54,10 +56,10 @@ export default function ContractNotesTab({ currentContract, onContractUpdate }) 
       }
 
       setEditingNotes(false);
-      alert('Notas actualizadas exitosamente.');
+      setToast({ visible: true, message: 'Notas actualizadas exitosamente.', type: "success" });
     } catch (error) {
       console.error('Error updating contract notes:', error);
-      alert(`Error al actualizar notas: ${error.message}`);
+      setToast({ visible: true, message: `Error al actualizar notas: ${error.message}`, type: "error" });
     } finally {
       setSaving(false);
     }
@@ -204,6 +206,14 @@ export default function ContractNotesTab({ currentContract, onContractUpdate }) 
           </div>
         </div>
       </div>
+
+      {/* Toast Notification */}
+      <Toast
+        visible={toast.visible}
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast((s) => ({ ...s, visible: false }))}
+      />
     </div>
   );
 }

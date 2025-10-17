@@ -9,6 +9,7 @@ import { formatStatus } from "../../utils/formatStatus";
 import { API_URL } from "../../../config";
 import AuthContext from "../../context/AuthContext";
 import { useLocale } from "../../contexts/LocaleContext";
+import Toast from "../ui/Toast";
 
 function PaymentData({ paymentData, user, index, onPaymentSuccess }) {
   const { id, contract, description, amount, due_date, status: initialStatus, interest_amount } = paymentData;
@@ -21,6 +22,7 @@ function PaymentData({ paymentData, user, index, onPaymentSuccess }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
   const modalRef = useRef(null);
 
   // Handle modal animation and body scroll
@@ -312,7 +314,7 @@ function PaymentData({ paymentData, user, index, onPaymentSuccess }) {
               <button
                 onClick={async () => {
                   if (!selectedFile) {
-                    alert(t('payments.selectFileToUpload'));
+                    setToast({ visible: true, message: t('payments.selectFileToUpload'), type: "error" });
                     return;
                   }
 
@@ -341,7 +343,7 @@ function PaymentData({ paymentData, user, index, onPaymentSuccess }) {
 
                     const data = await response.json();
 
-                    alert(t('payments.paymentSuccessful'));
+                    setToast({ visible: true, message: t('payments.paymentSuccessful'), type: "success" });
 
                     // Close modal and reset state without page reload
                     setTimeout(() => {
@@ -357,11 +359,11 @@ function PaymentData({ paymentData, user, index, onPaymentSuccess }) {
                     
                     // Check if it's an auth error
                     if (error.message.includes('401') || error.message.includes('Unauthorized')) {
-                      alert(t('common.sessionExpired'));
+                      setToast({ visible: true, message: t('common.sessionExpired'), type: "error" });
                       // Optionally redirect to login instead of reload
                       window.location.href = '/signin';
                     } else {
-                      alert(`${t('payments.paymentError')}: ${error.message}`);
+                      setToast({ visible: true, message: `${t('payments.paymentError')}: ${error.message}`, type: "error" });
                     }
                     
                     setActionLoading(false);

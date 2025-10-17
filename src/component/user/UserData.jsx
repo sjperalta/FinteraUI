@@ -4,9 +4,11 @@ import { Link } from "react-router-dom";
 import { useLocale } from "../../contexts/LocaleContext";
 import { API_URL } from "../../../config";
 import { getInitials, getAvatarColor } from "../../utils/avatarUtils";
+import Toast from "../ui/Toast";
 
 function UserData({ userInfo, index, token, onClick, isMobileCard = false }) {
   const { t } = useLocale();
+  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
   const { id, full_name, phone, email, status: initialStatus, role, created_at, created_by, creator } = userInfo;
   const [status, setStatus] = useState(initialStatus); // Use local state for status
 
@@ -47,10 +49,10 @@ function UserData({ userInfo, index, token, onClick, isMobileCard = false }) {
         throw new Error(errorData.message || 'Error resending confirmation email');
       }
 
-      alert('Confirmation email sent successfully');
+      setToast({ visible: true, message: 'Confirmation email sent successfully', type: "success" });
     } catch (error) {
       console.error('Error:', error);
-      alert(`Failed to send confirmation email: ${error.message}`);
+      setToast({ visible: true, message: `Failed to send confirmation email: ${error.message}`, type: "error" });
     }
   };
 
@@ -333,6 +335,14 @@ function UserData({ userInfo, index, token, onClick, isMobileCard = false }) {
           </button>
         </div>
       </td>
+
+      {/* Toast Notification */}
+      <Toast
+        visible={toast.visible}
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast((s) => ({ ...s, visible: false }))}
+      />
     </>
   );
 }

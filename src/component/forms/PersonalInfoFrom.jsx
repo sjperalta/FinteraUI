@@ -4,6 +4,7 @@ import { getToken } from "./../../../auth"; // Update the path as needed
 import PropTypes from "prop-types";
 import { useLocale } from "../../contexts/LocaleContext";
 import AuthContext from "../../context/AuthContext";
+import Toast from "../ui/Toast";
 
 // helper formatters (minimal, preserve digits and insert dashes)
 function formatCedula(raw) {
@@ -44,6 +45,7 @@ function PersonalInfoForm({ userId }) {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
 
   const token = getToken(); // Retrieve token from auth helper
   const { setUser: setAuthUser } = useContext(AuthContext);
@@ -165,7 +167,7 @@ function PersonalInfoForm({ userId }) {
         if (returnedUser.locale) setLocale(returnedUser.locale);
       }
 
-      alert(t("errors.profileUpdated"));
+      setToast({ visible: true, message: t("errors.profileUpdated"), type: "success" });
     } catch (err) {
       setError(err.message);
     }
@@ -312,6 +314,14 @@ function PersonalInfoForm({ userId }) {
           </div>
         </form>
       </div>
+
+      {/* Toast Notification */}
+      <Toast
+        visible={toast.visible}
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast((s) => ({ ...s, visible: false }))}
+      />
     </div>
   );
 }

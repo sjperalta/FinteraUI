@@ -37,6 +37,7 @@
     "active": "Activo",
     "noItemsFound": "No se encontraron elementos",
     "tryAdjustingFilters": "Intenta ajustar tus filtros",
+    "all": "Todos",
     "months": {
       "jan": "Ene",
       "feb": "Feb",
@@ -51,6 +52,11 @@
       "nov": "Nov",
       "dec": "Dic"
     }
+  },
+  "status": {
+    "available": "Disponible",
+    "reserved": "Reservado",
+    "sold": "Vendido"
   },
   "personalInfo": {
     "title": "Información Personal",
@@ -787,6 +793,8 @@
     "originalPrice": "Precio original",
     "savings": "Ahorro",
     "notReserved": "No reservado",
+    "available": "Disponible",
+    "reserved": "Reservado",
     "reserve": "Reservar",
     "reservationCreatedBy": "Reserva creada por",
     "area": "Área",

@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../../config"; 
 import AuthContext from "../../context/AuthContext";
+import Toast from "../../component/ui/Toast";
 import { useRef } from "react";
 import ActionBtn from "../../component/header/ActionBtn";
 import Project from "../../component/project";
@@ -15,6 +16,7 @@ function Projects() {
   const [pagination, setPagination] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
   const { user, token } = useContext(AuthContext);
   const { t } = useLocale();
 
@@ -127,10 +129,10 @@ function Projects() {
 
       // Refresh projects after successful import
       await fetchProjects();
-      alert(t('projectsPage.importCompleted'));
+      setToast({ visible: true, message: t('projectsPage.importCompleted'), type: "success" });
     } catch (err) {
       console.error(err);
-      alert(`${t('projectsPage.importErrorPrefix')} ${err.message}`);
+      setToast({ visible: true, message: `${t('projectsPage.importErrorPrefix')} ${err.message}`, type: "error" });
     } finally {
       setImporting(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -285,6 +287,7 @@ function Projects() {
           </button>
         </div>
       )}
+      <Toast visible={toast.visible} message={toast.message} type={toast.type} onClose={() => setToast((s) => ({ ...s, visible: false }))} />
     </main>
   );
 }

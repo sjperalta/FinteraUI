@@ -5,6 +5,7 @@ import { API_URL } from "../../../config";
 import { getToken } from "../../../auth";
 import { formatStatus } from "../../utils/formatStatus";
 import { useLocale } from "../../contexts/LocaleContext";
+import Toast from "../ui/Toast";
 
 /**
  * PaymentItem Component - Dual rendering for GenericList
@@ -20,6 +21,7 @@ function PaymentItem({ paymentInfo, index, userRole, refreshPayments, onClick, i
   const [editAmount, setEditAmount] = useState(paymentInfo.amount);
   const [editInterest, setEditInterest] = useState(paymentInfo.interest_amount || 0);
   const [approvalResult, setApprovalResult] = useState(null); // { type: 'success'|'error', message: string }
+  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
 
   // Check if document is available
   const hasReceipt = Boolean(paymentInfo.document_url);
@@ -166,7 +168,7 @@ function PaymentItem({ paymentInfo, index, userRole, refreshPayments, onClick, i
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      alert(`Error: ${error.message}`);
+      setToast({ visible: true, message: `Error: ${error.message}`, type: "error" });
       console.error(error);
     }
   };
@@ -174,7 +176,8 @@ function PaymentItem({ paymentInfo, index, userRole, refreshPayments, onClick, i
   // Mobile Card View
   if (isMobileCard) {
     return (
-      <div className="space-y-3">
+      <>
+        <div className="space-y-3">
         {/* Header with description and status */}
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -497,6 +500,8 @@ function PaymentItem({ paymentInfo, index, userRole, refreshPayments, onClick, i
           </div>
         )}
       </div>
+        <Toast visible={toast.visible} message={toast.message} type={toast.type} onClose={() => setToast((s) => ({ ...s, visible: false }))} />
+      </>
     );
   }
 
@@ -828,6 +833,7 @@ function PaymentItem({ paymentInfo, index, userRole, refreshPayments, onClick, i
           </div>
         )}
       </td>
+      <Toast visible={toast.visible} message={toast.message} type={toast.type} onClose={() => setToast((s) => ({ ...s, visible: false }))} />
     </>
   );
 }

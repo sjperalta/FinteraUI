@@ -379,6 +379,14 @@ function PaymentData({ paymentData, user, index, onPaymentSuccess }) {
         </div>,
         document.body
       )}
+
+      {/* Toast Notification */}
+      <Toast
+        visible={toast.visible}
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast((s) => ({ ...s, visible: false }))}
+      />
     </div>
   );
 }

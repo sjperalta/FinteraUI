@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import TotalWidget from "../../component/widget/TotalWidget";
 import RevenueFlow from "../../component/revenueFlow";
 import Report from "../../component/report";
+import Toast from "../../component/ui/Toast";
 import AuthContext from "../../context/AuthContext";
 import { getToken } from "../../../auth";
 import { API_URL } from "../../../config";
@@ -153,6 +154,7 @@ function Home() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
 
   // Set selectedMonth as the first day of the current month
   const [selectedMonth, setSelectedMonth] = useState(
@@ -267,17 +269,17 @@ function Home() {
           }
 
           // Show success message
-          alert(t('home.statisticsUpdated'));
+          setToast({ visible: true, message: t('home.statisticsUpdated'), type: "success" });
         } catch (err) {
           console.error('Error fetching updated statistics:', err);
-          alert(t('home.errorFetchingUpdatedStats'));
+          setToast({ visible: true, message: t('home.errorFetchingUpdatedStats'), type: "error" });
         } finally {
           setRefreshing(false);
         }
       }, 3000); // Wait 3 seconds
     } catch (err) {
       console.error('Error refreshing statistics:', err);
-      alert(t('home.errorUpdatingStats'));
+      setToast({ visible: true, message: t('home.errorUpdatingStats'), type: "error" });
       setRefreshing(false);
     }
   };
@@ -370,6 +372,7 @@ function Home() {
           </div>
         </div>
       )}
+      <Toast visible={toast.visible} message={toast.message} type={toast.type} onClose={() => setToast((s) => ({ ...s, visible: false }))} />
     </main>
   );
 }

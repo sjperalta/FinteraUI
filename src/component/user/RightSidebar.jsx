@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { API_URL } from "../../../config";
 import AuthContext from "../../context/AuthContext";
 import { Link } from "react-router-dom";
+import Toast from "../ui/Toast";
 import { useLocale } from "../../contexts/LocaleContext";
 import { getInitials, getAvatarColor } from "../../utils/avatarUtils";
 
@@ -9,6 +10,7 @@ function RightSidebar({ user, onClose, currentUser }) {
   const { t } = useLocale();
   const [summary, setSummary] = useState(null);
   const [summaryError, setSummaryError] = useState("");
+  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
   const { token, user: loggedUser } = useContext(AuthContext);
   const viewer = currentUser || loggedUser;
 
@@ -82,7 +84,7 @@ function RightSidebar({ user, onClose, currentUser }) {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error(error);
-      alert("Failed to download PDF");
+      setToast({ visible: true, message: "Failed to download PDF", type: "error" });
     }
   };
 
@@ -339,6 +341,7 @@ function RightSidebar({ user, onClose, currentUser }) {
           </button>
         </div>
       )}
+      <Toast visible={toast.visible} message={toast.message} type={toast.type} onClose={() => setToast((s) => ({ ...s, visible: false }))} />
     </aside>
   );
 }

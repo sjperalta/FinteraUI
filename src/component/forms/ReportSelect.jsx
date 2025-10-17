@@ -1,11 +1,13 @@
 import { API_URL } from "../../../config";
 import { getToken } from "../../../auth";
+import Toast from "../ui/Toast";
 import PropTypes from "prop-types";
 import { useState } from "react";
 
 function DocumentSelect({ contract_id, financing_type, status }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [downloading, setDownloading] = useState(null);
+  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
   const token = getToken();
 
   /**
@@ -43,10 +45,10 @@ function DocumentSelect({ contract_id, financing_type, status }) {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-      alert(`${document_label} descargado exitosamente.`);
+      setToast({ visible: true, message: `${document_label} descargado exitosamente.`, type: "success" });
       setDropdownOpen(false);
     } catch (error) {
-      alert(`Error: ${error.message}`);
+      setToast({ visible: true, message: `Error: ${error.message}`, type: "error" });
       console.error(error);
     } finally {
       setDownloading(null);
@@ -182,6 +184,7 @@ function DocumentSelect({ contract_id, financing_type, status }) {
           </div>
         </div>
       )}
+      <Toast visible={toast.visible} message={toast.message} type={toast.type} onClose={() => setToast((s) => ({ ...s, visible: false }))} />
     </div>
   );
 }

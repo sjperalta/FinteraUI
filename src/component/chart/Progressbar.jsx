@@ -2,13 +2,13 @@ import PropTypes from "prop-types";
 import { useMemo, useState } from "react";
 import { API_URL } from "../../../config";
 import { getToken } from "../../../auth";
-import Toast from "../ui/Toast";
+import { useToast } from "../../contexts/ToastContext";
 import { useLocale } from "../../contexts/LocaleContext";
 
 function Progressbar({ className, user }) {
   const { t } = useLocale();
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
 
   const fields = ["full_name", "email", "identity", "rtn", "phone", "address"];
 
@@ -41,7 +41,7 @@ function Progressbar({ className, user }) {
 
   const handleVerifyIdentity = async () => {
     if (!user || !user.id) {
-      setToast({ visible: true, message: t("progressbar.invalidUser"), type: "error" });
+      showToast(t("progressbar.invalidUser"), "error");
       return;
     }
     setLoading(true);
@@ -63,10 +63,10 @@ function Progressbar({ className, user }) {
         throw new Error(err.error || t("progressbar.resendError"));
       }
 
-      setToast({ visible: true, message: t("progressbar.verificationEmailSent"), type: "success" });
+      showToast(t("progressbar.verificationEmailSent"), "success");
     } catch (err) {
       console.error(err);
-      setToast({ visible: true, message: `${t("common.error")}: ${err.message}`, type: "error" });
+      showToast(`${t("common.error")}: ${err.message}`, "error");
     } finally {
       setLoading(false);
     }
@@ -125,12 +125,6 @@ function Progressbar({ className, user }) {
         </button>
       </div>
 
-      <Toast
-        visible={toast.visible}
-        message={toast.message}
-        type={toast.type}
-        onClose={() => setToast((s) => ({ ...s, visible: false }))}
-      />
     </>
   );
 }

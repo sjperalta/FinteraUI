@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { API_URL } from "../../../config";
 import { getToken } from "../../../auth";
 import { useLocale } from "../../contexts/LocaleContext";
-import Toast from "../ui/Toast";
+import { useToast } from "../../contexts/ToastContext";
 
 const truncateText = (text, maxLength) => {
   if (typeof text !== "string") return "";
@@ -13,7 +13,7 @@ const truncateText = (text, maxLength) => {
 
 function Project({ project, user, onDeleted }) {
   const { t } = useLocale();
-  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
+  const { showToast } = useToast();
   const {
     id,
     available,
@@ -51,13 +51,13 @@ function Project({ project, user, onDeleted }) {
         throw new Error(err.error || t('projects.deleteError'));
       }
 
-      setToast({ visible: true, message: t('projects.deleteSuccess'), type: "success" });
+      showToast(t('projects.deleteSuccess'), "success");
       if (typeof onDeleted === "function") {
         onDeleted();
       }
     } catch (err) {
       console.error(err);
-      setToast({ visible: true, message: `${t('common.error')}: ${err.message}`, type: "error" });
+      showToast(`${t('common.error')}: ${err.message}`, "error");
     }
   };
 
@@ -120,13 +120,6 @@ function Project({ project, user, onDeleted }) {
         )}
       </div>
 
-      {/* Toast Notification */}
-      <Toast
-        visible={toast.visible}
-        message={toast.message}
-        type={toast.type}
-        onClose={() => setToast((s) => ({ ...s, visible: false }))}
-      />
     </div>
   );
 }

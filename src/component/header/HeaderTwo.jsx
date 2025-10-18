@@ -1,17 +1,23 @@
 import ProtoTypes from "prop-types";
 import logo from "../../assets/images/logo/logo-color.svg";
 import logoW from "../../assets/images/logo/logo-white.svg";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import ResProfilePopup from "./ResProfilePopup";
 import { useLocale } from "../../contexts/LocaleContext";
 import { usePageTitle } from "../../hooks/usePageTitle";
 import { getInitials, getAvatarColor } from "../../utils/avatarUtils";
+import AuthContext from "../../context/AuthContext";
 
 function HeaderTwo({ handleSidebar }) {
   const [activePopup, handleActivePopup] = useState(false);
   const { t } = useLocale();
   const { title, subtitle } = usePageTitle();
+  const { user } = useContext(AuthContext);
+  
+  // Get user display information
+  const displayName = user?.full_name || user?.email || t('header.user');
+  const displayRole = user?.role === 'admin' ? t('header.admin') : t('header.user');
   return (
     <div>
       <header className="mobile-wrapper fixed z-20 block w-full md:hidden">
@@ -64,15 +70,15 @@ function HeaderTwo({ handleSidebar }) {
               aria-label="Profile menu"
               className="flex cursor-pointer space-x-0 lg:space-x-3 flex-shrink-0"
             >
-              <div className={`h-[52px] w-[52px] rounded-xl border border-bgray-300 ${getAvatarColor(t('header.administrator'))} flex items-center justify-center`}>
+              <div className={`h-[52px] w-[52px] rounded-xl border border-bgray-300 ${getAvatarColor(displayName)} flex items-center justify-center`}>
                 <span className="text-white font-bold text-xl">
-                  {getInitials(t('header.administrator'))}
+                  {getInitials(displayName)}
                 </span>
               </div>
               <div className="hidden 2xl:block">
                 <div className="flex items-center space-x-2.5">
                   <h3 className="text-base font-bold leading-[28px] text-bgray-900 dark:text-white">
-                    {t('header.administrator')}
+                    {displayName}
                   </h3>
                   <span>
                     <svg
@@ -93,7 +99,7 @@ function HeaderTwo({ handleSidebar }) {
                   </span>
                 </div>
                 <p className="text-sm font-medium leading-[20px] text-bgray-600 dark:text-white">
-                  {t('header.admin')}
+                  {displayRole}
                 </p>
               </div>
             </button>

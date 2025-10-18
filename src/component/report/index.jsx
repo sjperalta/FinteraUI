@@ -4,13 +4,13 @@ import { API_URL } from "../../../config";  // e.g. "http://localhost:3000" or y
 import { getToken } from "../../../auth";   // If you use token-based auth
 import DatePicker from "../forms/DatePicker";
 import { useLocale } from "../../contexts/LocaleContext";
-import Toast from "../ui/Toast";
+import { useToast } from "../../contexts/ToastContext";
 
 function Report() {
   // Store the selected start/end dates in ISO format (e.g., "2025-01-15")
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
+  const { showToast } = useToast();
   const { t } = useLocale();
 
   /**
@@ -24,13 +24,13 @@ function Report() {
   const downloadCSV = async (reportEndpoint) => {
     // Validate that both dates are selected
     if (!startDate || !endDate) {
-      setToast({ visible: true, message: t('reports.selectBothDates'), type: "error" });
+      showToast(t('reports.selectBothDates'), "error");
       return;
     }
 
     // Validate that start date is not after end date
     if (new Date(startDate) > new Date(endDate)) {
-      setToast({ visible: true, message: t('reports.startDateAfterEndDate'), type: "error" });
+      showToast(t('reports.startDateAfterEndDate'), "error");
       return;
     }
 
@@ -75,7 +75,7 @@ function Report() {
       URL.revokeObjectURL(link.href);
     } catch (err) {
       console.error("Error downloading CSV:", err);
-      setToast({ visible: true, message: t('reports.downloadError'), type: "error" });
+      showToast(t('reports.downloadError'), "error");
     }
   };
 
@@ -386,13 +386,6 @@ function Report() {
         </div>
       </div>
 
-      {/* Toast Notification */}
-      <Toast
-        visible={toast.visible}
-        message={toast.message}
-        type={toast.type}
-        onClose={() => setToast((s) => ({ ...s, visible: false }))}
-      />
     </aside>
   );
 }

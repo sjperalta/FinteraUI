@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import { API_URL } from '../../../config';
 import { getToken } from '../../../auth';
 import MessageEditor from '../editor/MessageEditor';
-import Toast from '../ui/Toast';
+import { useToast } from '../../contexts/ToastContext';
 
 export default function ContractNotesTab({ currentContract, onContractUpdate }) {
   const [editingNotes, setEditingNotes] = useState(false);
   const [editedNotes, setEditedNotes] = useState('');
   const [saving, setSaving] = useState(false);
-  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
+  const { showToast } = useToast();
   const token = getToken();
 
   const handleEditNotes = () => {
@@ -20,7 +20,7 @@ export default function ContractNotesTab({ currentContract, onContractUpdate }) 
 
   const handleSaveNotes = async () => {
     if (!currentContract?.id || !currentContract?.project_id || !currentContract?.lot_id) {
-      setToast({ visible: true, message: 'Información del contrato incompleta para actualizar notas.', type: "error" });
+      showToast('Información del contrato incompleta para actualizar notas.', 'error');
       return;
     }
 
@@ -56,10 +56,10 @@ export default function ContractNotesTab({ currentContract, onContractUpdate }) 
       }
 
       setEditingNotes(false);
-      setToast({ visible: true, message: 'Notas actualizadas exitosamente.', type: "success" });
+      showToast('Notas actualizadas exitosamente.', 'success');
     } catch (error) {
       console.error('Error updating contract notes:', error);
-      setToast({ visible: true, message: `Error al actualizar notas: ${error.message}`, type: "error" });
+      showToast(`Error al actualizar notas: ${error.message}`, 'error');
     } finally {
       setSaving(false);
     }
@@ -207,13 +207,6 @@ export default function ContractNotesTab({ currentContract, onContractUpdate }) 
         </div>
       </div>
 
-      {/* Toast Notification */}
-      <Toast
-        visible={toast.visible}
-        message={toast.message}
-        type={toast.type}
-        onClose={() => setToast((s) => ({ ...s, visible: false }))}
-      />
     </div>
   );
 }

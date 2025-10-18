@@ -5,7 +5,7 @@ import { API_URL } from "../../../config";
 import { getToken } from "../../../auth";
 import { formatStatus } from "../../utils/formatStatus";
 import { useLocale } from "../../contexts/LocaleContext";
-import Toast from "../ui/Toast";
+import { useToast } from "../../contexts/ToastContext";
 
 /**
  * PaymentItem Component - Dual rendering for GenericList
@@ -13,6 +13,7 @@ import Toast from "../ui/Toast";
  */
 function PaymentItem({ paymentInfo, index, userRole, refreshPayments, onClick, isMobileCard = false }) {
   const { t } = useLocale();
+  const { showToast } = useToast();
   const token = getToken();
 
   // State for approve modal
@@ -21,7 +22,6 @@ function PaymentItem({ paymentInfo, index, userRole, refreshPayments, onClick, i
   const [editAmount, setEditAmount] = useState(paymentInfo.amount);
   const [editInterest, setEditInterest] = useState(paymentInfo.interest_amount || 0);
   const [approvalResult, setApprovalResult] = useState(null); // { type: 'success'|'error', message: string }
-  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
 
   // Check if document is available
   const hasReceipt = Boolean(paymentInfo.document_url);
@@ -168,7 +168,7 @@ function PaymentItem({ paymentInfo, index, userRole, refreshPayments, onClick, i
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      setToast({ visible: true, message: `Error: ${error.message}`, type: "error" });
+      showToast(`Error: ${error.message}`, "error");
       console.error(error);
     }
   };
@@ -500,7 +500,6 @@ function PaymentItem({ paymentInfo, index, userRole, refreshPayments, onClick, i
           </div>
         )}
       </div>
-        <Toast visible={toast.visible} message={toast.message} type={toast.type} onClose={() => setToast((s) => ({ ...s, visible: false }))} />
       </>
     );
   }
@@ -833,7 +832,6 @@ function PaymentItem({ paymentInfo, index, userRole, refreshPayments, onClick, i
           </div>
         )}
       </td>
-      <Toast visible={toast.visible} message={toast.message} type={toast.type} onClose={() => setToast((s) => ({ ...s, visible: false }))} />
     </>
   );
 }

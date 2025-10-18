@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import Toast from "../ui/Toast";
+import { useToast } from "../../contexts/ToastContext";
 
 const RejectionModal = ({ isOpen, onClose, onSubmit, loading }) => {
   const [reason, setReason] = useState("");
-  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
+  const { showToast } = useToast();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!reason.trim()) {
-      setToast({ visible: true, message: "Por favor ingrese una razón para el rechazo.", type: "error" });
+      showToast("Por favor ingrese una razón para el rechazo.", "error");
       return;
     }
     onSubmit(reason);
@@ -74,13 +74,6 @@ const RejectionModal = ({ isOpen, onClose, onSubmit, loading }) => {
         </form>
       </div>
 
-      {/* Toast Notification */}
-      <Toast
-        visible={toast.visible}
-        message={toast.message}
-        type={toast.type}
-        onClose={() => setToast((s) => ({ ...s, visible: false }))}
-      />
     </div>,
     document.body
   );

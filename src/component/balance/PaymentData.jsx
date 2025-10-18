@@ -9,20 +9,20 @@ import { formatStatus } from "../../utils/formatStatus";
 import { API_URL } from "../../../config";
 import AuthContext from "../../context/AuthContext";
 import { useLocale } from "../../contexts/LocaleContext";
-import Toast from "../ui/Toast";
+import { useToast } from "../../contexts/ToastContext";
 
 function PaymentData({ paymentData, user, index, onPaymentSuccess }) {
   const { id, contract, description, amount, due_date, status: initialStatus, interest_amount } = paymentData;
   const navigate = useNavigate();
   const { token } = useContext(AuthContext);
   const { t } = useLocale();
+  const { showToast } = useToast();
 
   // State for payment modal
   const [paymentModal, setPaymentModal] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
-  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
   const modalRef = useRef(null);
 
   // Handle modal animation and body scroll
@@ -314,7 +314,7 @@ function PaymentData({ paymentData, user, index, onPaymentSuccess }) {
               <button
                 onClick={async () => {
                   if (!selectedFile) {
-                    setToast({ visible: true, message: t('payments.selectFileToUpload'), type: "error" });
+                    showToast(t('payments.selectFileToUpload'), "error");
                     return;
                   }
 
@@ -343,7 +343,7 @@ function PaymentData({ paymentData, user, index, onPaymentSuccess }) {
 
                     const data = await response.json();
 
-                    setToast({ visible: true, message: t('payments.paymentSuccessful'), type: "success" });
+                    showToast(t('payments.paymentSuccessful'), "success");
 
                     // Close modal and reset state without page reload
                     setTimeout(() => {
@@ -359,11 +359,11 @@ function PaymentData({ paymentData, user, index, onPaymentSuccess }) {
                     
                     // Check if it's an auth error
                     if (error.message.includes('401') || error.message.includes('Unauthorized')) {
-                      setToast({ visible: true, message: t('common.sessionExpired'), type: "error" });
+                      showToast(t('common.sessionExpired'), "error");
                       // Optionally redirect to login instead of reload
                       window.location.href = '/signin';
                     } else {
-                      setToast({ visible: true, message: `${t('payments.paymentError')}: ${error.message}`, type: "error" });
+                      showToast(`${t('payments.paymentError')}: ${error.message}`, "error");
                     }
                     
                     setActionLoading(false);
@@ -380,13 +380,6 @@ function PaymentData({ paymentData, user, index, onPaymentSuccess }) {
         document.body
       )}
 
-      {/* Toast Notification */}
-      <Toast
-        visible={toast.visible}
-        message={toast.message}
-        type={toast.type}
-        onClose={() => setToast((s) => ({ ...s, visible: false }))}
-      />
     </div>
   );
 }

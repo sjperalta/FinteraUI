@@ -124,7 +124,7 @@ function Summary() {
           <SummaryWidgetCard
             totalEarnImg={totalEarn}
             memberImg={memberImg}
-            title={t('payments.totalFinanced')}
+            title={t('payments.balance')}
             amount={formatCurrency(summaryData?.balance, summaryData?.currency)}
             id="totalBalance"
             type="financing"
@@ -136,7 +136,7 @@ function Summary() {
           <SummaryWidgetCard
             totalEarnImg={totalEarn}
             memberImg={memberImg}
-            title={t('payments.pendingBalance')}
+            title={t('payments.overdueAmount')}
             amount={formatCurrency(summaryData?.totalDue, summaryData?.currency)}
             fee={formatCurrency(summaryData?.totalFees, summaryData?.currency)}
             id="totalDuePayment"

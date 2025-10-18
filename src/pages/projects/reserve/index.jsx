@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { API_URL } from "../../../../config";
 import MessageEditor from "../../../component/editor/MessageEditor";
 import AuthContext from "../../../context/AuthContext";
-import Toast from "../../../component/ui/Toast";
+import { useToast } from "../../../contexts/ToastContext";
 import debounce from "lodash.debounce";
 import { useLocale } from "../../../contexts/LocaleContext";
 
@@ -23,8 +23,8 @@ function Reserve() {
   const [error, setError] = useState(null);
   const [formSubmitting, setFormSubmitting] = useState(false);
 
-  // Toast state
-  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
+  // Global toast
+  const { showToast } = useToast();
 
   // Contract notes state
   const [contractNotes, setContractNotes] = useState("");
@@ -264,7 +264,8 @@ function Reserve() {
         throw new Error((errorData.error || "") + ", " + t('reservations.errorCreatingContract'));
       }
 
-      setToast({ visible: true, message: t('reservations.contractCreatedSuccess'), type: "success" });
+      showToast(t('reservations.contractCreatedSuccess'), "success");
+      // Navigate immediately - global toast will persist
       navigate(`/projects/${id}/lots`);
     } catch (err) {
       setError(err.message || t('reservations.errorCreatingContract'));
@@ -883,7 +884,6 @@ function Reserve() {
           </form>
         </div>
       </div>
-      <Toast visible={toast.visible} message={toast.message} type={toast.type} onClose={() => setToast((s) => ({ ...s, visible: false }))} />
     </main>
   );
 }

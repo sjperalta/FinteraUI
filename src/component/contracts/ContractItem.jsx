@@ -5,6 +5,7 @@ import { API_URL } from "../../../config";
 import { getToken } from "../../../auth";
 import { formatStatus } from "../../utils/formatStatus";
 import { useLocale } from "../../contexts/LocaleContext";
+import { useToast } from "../../contexts/ToastContext";
 import DocumentSelect from "../forms/ReportSelect";
 import PaymentScheduleModal from "./PaymentScheduleModal";
 import RejectionModal from "./RejectionModal";
@@ -86,6 +87,7 @@ function ContractItem({
   refreshContracts,
   isMobileCard = false,
 }) {
+  const { showToast } = useToast();
   const token = getToken();
   const navigate = useNavigate();
   const [showSchedule, setShowSchedule] = useState(false);
@@ -136,10 +138,10 @@ function ContractItem({
         }
       );
       if (!response.ok) throw new Error("Error aprobando el contrato.");
-      alert("Contrato aprobado exitosamente.");
+      showToast("Contrato aprobado exitosamente.", "success");
       refreshContracts();
     } catch (error) {
-      alert(`Error: ${error.message}`);
+      showToast(`Error: ${error.message}`, "error");
     } finally {
       setActionLoading(false);
     }
@@ -162,11 +164,11 @@ function ContractItem({
         }
       );
       if (!response.ok) throw new Error("Error rechazando el contrato.");
-      alert("Contrato rechazado exitosamente.");
+      showToast("Contrato rechazado exitosamente.", "success");
       setShowRejectionModal(false);
       refreshContracts();
     } catch (error) {
-      alert(`Error: ${error.message}`);
+      showToast(`Error: ${error.message}`, "error");
     } finally {
       setActionLoading(false);
     }
@@ -192,10 +194,10 @@ function ContractItem({
         }
       );
       if (!response.ok) throw new Error("Error cancelando el contrato.");
-      alert("Contrato cancelado exitosamente.");
+      showToast("Contrato cancelado exitosamente.", "success");
       refreshContracts();
     } catch (error) {
-      alert(`Error: ${error.message}`);
+      showToast(`Error: ${error.message}`, "error");
     } finally {
       setActionLoading(false);
     }
@@ -680,6 +682,7 @@ function ContractItem({
         onClose={() => setShowDetailsModal(false)}
         contract={contract}
       />
+
     </>
   );
 }

@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../../config"; 
 import AuthContext from "../../context/AuthContext";
+import { useToast } from "../../contexts/ToastContext";
 import { useRef } from "react";
 import ActionBtn from "../../component/header/ActionBtn";
 import Project from "../../component/project";
@@ -15,6 +16,7 @@ function Projects() {
   const [pagination, setPagination] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { showToast } = useToast();
   const { user, token } = useContext(AuthContext);
   const { t } = useLocale();
 
@@ -127,10 +129,10 @@ function Projects() {
 
       // Refresh projects after successful import
       await fetchProjects();
-      alert(t('projectsPage.importCompleted'));
+      showToast(t('projectsPage.importCompleted'), "success");
     } catch (err) {
       console.error(err);
-      alert(`${t('projectsPage.importErrorPrefix')} ${err.message}`);
+      showToast(`${t('projectsPage.importErrorPrefix')} ${err.message}`, "error");
     } finally {
       setImporting(false);
       if (fileInputRef.current) fileInputRef.current.value = "";

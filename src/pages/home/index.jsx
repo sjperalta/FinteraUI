@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import TotalWidget from "../../component/widget/TotalWidget";
 import RevenueFlow from "../../component/revenueFlow";
 import Report from "../../component/report";
+import { useToast } from "../../contexts/ToastContext";
 import AuthContext from "../../context/AuthContext";
 import { getToken } from "../../../auth";
 import { API_URL } from "../../../config";
@@ -153,6 +154,7 @@ function Home() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { showToast } = useToast();
 
   // Set selectedMonth as the first day of the current month
   const [selectedMonth, setSelectedMonth] = useState(
@@ -267,17 +269,17 @@ function Home() {
           }
 
           // Show success message
-          alert(t('home.statisticsUpdated'));
+          showToast(t('home.statisticsUpdated'), "success");
         } catch (err) {
           console.error('Error fetching updated statistics:', err);
-          alert(t('home.errorFetchingUpdatedStats'));
+          showToast(t('home.errorFetchingUpdatedStats'), "error");
         } finally {
           setRefreshing(false);
         }
       }, 3000); // Wait 3 seconds
     } catch (err) {
       console.error('Error refreshing statistics:', err);
-      alert(t('home.errorUpdatingStats'));
+      showToast(t('home.errorUpdatingStats'), "error");
       setRefreshing(false);
     }
   };

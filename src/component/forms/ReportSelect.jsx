@@ -1,9 +1,11 @@
 import { API_URL } from "../../../config";
 import { getToken } from "../../../auth";
+import { useToast } from "../../contexts/ToastContext";
 import PropTypes from "prop-types";
 import { useState } from "react";
 
 function DocumentSelect({ contract_id, financing_type, status }) {
+  const { showToast } = useToast();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [downloading, setDownloading] = useState(null);
   const token = getToken();
@@ -43,10 +45,10 @@ function DocumentSelect({ contract_id, financing_type, status }) {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-      alert(`${document_label} descargado exitosamente.`);
+      showToast(`${document_label} descargado exitosamente.`, "success");
       setDropdownOpen(false);
     } catch (error) {
-      alert(`Error: ${error.message}`);
+      showToast(`Error: ${error.message}`, "error");
       console.error(error);
     } finally {
       setDownloading(null);

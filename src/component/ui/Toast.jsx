@@ -10,7 +10,7 @@ function Toast({ visible, message, type = "success", duration = 3000, onClose })
 
   if (!visible) return null;
 
-  const base = "fixed right-6 bottom-6 z-50 max-w-xs px-4 py-3 rounded-lg shadow-lg";
+  const base = "fixed right-6 bottom-6 z-[9999] max-w-xs px-4 py-3 rounded-lg shadow-lg";
   const style =
     type === "success"
       ? "bg-green-600 text-white"

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { API_URL } from "../../../config";
 import { getToken } from "../../../auth";
 import { useLocale } from "../../contexts/LocaleContext";
+import { useToast } from "../../contexts/ToastContext";
 
 const truncateText = (text, maxLength) => {
   if (typeof text !== "string") return "";
@@ -12,6 +13,7 @@ const truncateText = (text, maxLength) => {
 
 function Project({ project, user, onDeleted }) {
   const { t } = useLocale();
+  const { showToast } = useToast();
   const {
     id,
     available,
@@ -49,13 +51,13 @@ function Project({ project, user, onDeleted }) {
         throw new Error(err.error || t('projects.deleteError'));
       }
 
-      alert(t('projects.deleteSuccess'));
+      showToast(t('projects.deleteSuccess'), "success");
       if (typeof onDeleted === "function") {
         onDeleted();
       }
     } catch (err) {
       console.error(err);
-      alert(`${t('common.error')}: ${err.message}`);
+      showToast(`${t('common.error')}: ${err.message}`, "error");
     }
   };
 
@@ -117,6 +119,7 @@ function Project({ project, user, onDeleted }) {
           </>
         )}
       </div>
+
     </div>
   );
 }

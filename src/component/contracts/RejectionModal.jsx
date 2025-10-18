@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
+import { useToast } from "../../contexts/ToastContext";
 
 const RejectionModal = ({ isOpen, onClose, onSubmit, loading }) => {
   const [reason, setReason] = useState("");
+  const { showToast } = useToast();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!reason.trim()) {
-      alert("Por favor ingrese una razón para el rechazo.");
+      showToast("Por favor ingrese una razón para el rechazo.", "error");
       return;
     }
     onSubmit(reason);
@@ -71,6 +73,7 @@ const RejectionModal = ({ isOpen, onClose, onSubmit, loading }) => {
           </div>
         </form>
       </div>
+
     </div>,
     document.body
   );

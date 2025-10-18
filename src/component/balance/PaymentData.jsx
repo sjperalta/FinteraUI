@@ -9,12 +9,14 @@ import { formatStatus } from "../../utils/formatStatus";
 import { API_URL } from "../../../config";
 import AuthContext from "../../context/AuthContext";
 import { useLocale } from "../../contexts/LocaleContext";
+import { useToast } from "../../contexts/ToastContext";
 
 function PaymentData({ paymentData, user, index, onPaymentSuccess }) {
   const { id, contract, description, amount, due_date, status: initialStatus, interest_amount } = paymentData;
   const navigate = useNavigate();
   const { token } = useContext(AuthContext);
   const { t } = useLocale();
+  const { showToast } = useToast();
 
   // State for payment modal
   const [paymentModal, setPaymentModal] = useState(false);
@@ -312,7 +314,7 @@ function PaymentData({ paymentData, user, index, onPaymentSuccess }) {
               <button
                 onClick={async () => {
                   if (!selectedFile) {
-                    alert(t('payments.selectFileToUpload'));
+                    showToast(t('payments.selectFileToUpload'), "error");
                     return;
                   }
 
@@ -341,7 +343,7 @@ function PaymentData({ paymentData, user, index, onPaymentSuccess }) {
 
                     const data = await response.json();
 
-                    alert(t('payments.paymentSuccessful'));
+                    showToast(t('payments.paymentSuccessful'), "success");
 
                     // Close modal and reset state without page reload
                     setTimeout(() => {
@@ -357,11 +359,11 @@ function PaymentData({ paymentData, user, index, onPaymentSuccess }) {
                     
                     // Check if it's an auth error
                     if (error.message.includes('401') || error.message.includes('Unauthorized')) {
-                      alert(t('common.sessionExpired'));
+                      showToast(t('common.sessionExpired'), "error");
                       // Optionally redirect to login instead of reload
                       window.location.href = '/signin';
                     } else {
-                      alert(`${t('payments.paymentError')}: ${error.message}`);
+                      showToast(`${t('payments.paymentError')}: ${error.message}`, "error");
                     }
                     
                     setActionLoading(false);
@@ -377,6 +379,7 @@ function PaymentData({ paymentData, user, index, onPaymentSuccess }) {
         </div>,
         document.body
       )}
+
     </div>
   );
 }

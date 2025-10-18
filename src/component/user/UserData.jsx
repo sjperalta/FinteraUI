@@ -2,11 +2,13 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { useLocale } from "../../contexts/LocaleContext";
+import { useToast } from "../../contexts/ToastContext";
 import { API_URL } from "../../../config";
 import { getInitials, getAvatarColor } from "../../utils/avatarUtils";
 
 function UserData({ userInfo, index, token, onClick, isMobileCard = false }) {
   const { t } = useLocale();
+  const { showToast } = useToast();
   const { id, full_name, phone, email, status: initialStatus, role, created_at, created_by, creator } = userInfo;
   const [status, setStatus] = useState(initialStatus); // Use local state for status
 
@@ -47,10 +49,10 @@ function UserData({ userInfo, index, token, onClick, isMobileCard = false }) {
         throw new Error(errorData.message || 'Error resending confirmation email');
       }
 
-      alert('Confirmation email sent successfully');
+      showToast('Confirmation email sent successfully', 'success');
     } catch (error) {
       console.error('Error:', error);
-      alert(`Failed to send confirmation email: ${error.message}`);
+      showToast(`Failed to send confirmation email: ${error.message}`, 'error');
     }
   };
 
@@ -333,6 +335,7 @@ function UserData({ userInfo, index, token, onClick, isMobileCard = false }) {
           </button>
         </div>
       </td>
+
     </>
   );
 }

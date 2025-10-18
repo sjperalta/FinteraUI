@@ -2,11 +2,13 @@ import { useState, useEffect, useContext } from "react";
 import { API_URL } from "../../../config";
 import AuthContext from "../../context/AuthContext";
 import { Link } from "react-router-dom";
+import { useToast } from "../../contexts/ToastContext";
 import { useLocale } from "../../contexts/LocaleContext";
 import { getInitials, getAvatarColor } from "../../utils/avatarUtils";
 
 function RightSidebar({ user, onClose, currentUser }) {
   const { t } = useLocale();
+  const { showToast } = useToast();
   const [summary, setSummary] = useState(null);
   const [summaryError, setSummaryError] = useState("");
   const { token, user: loggedUser } = useContext(AuthContext);
@@ -82,7 +84,7 @@ function RightSidebar({ user, onClose, currentUser }) {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error(error);
-      alert("Failed to download PDF");
+      showToast("Failed to download PDF", "error");
     }
   };
 

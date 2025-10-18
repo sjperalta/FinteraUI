@@ -5,6 +5,7 @@ import { API_URL } from "../../../config";
 import { getToken } from "../../../auth";
 import { formatStatus } from "../../utils/formatStatus";
 import { useLocale } from "../../contexts/LocaleContext";
+import { useToast } from "../../contexts/ToastContext";
 
 /**
  * PaymentItem Component - Dual rendering for GenericList
@@ -12,6 +13,7 @@ import { useLocale } from "../../contexts/LocaleContext";
  */
 function PaymentItem({ paymentInfo, index, userRole, refreshPayments, onClick, isMobileCard = false }) {
   const { t } = useLocale();
+  const { showToast } = useToast();
   const token = getToken();
 
   // State for approve modal
@@ -166,7 +168,7 @@ function PaymentItem({ paymentInfo, index, userRole, refreshPayments, onClick, i
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      alert(`Error: ${error.message}`);
+      showToast(`Error: ${error.message}`, "error");
       console.error(error);
     }
   };
@@ -174,7 +176,8 @@ function PaymentItem({ paymentInfo, index, userRole, refreshPayments, onClick, i
   // Mobile Card View
   if (isMobileCard) {
     return (
-      <div className="space-y-3">
+      <>
+        <div className="space-y-3">
         {/* Header with description and status */}
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -497,6 +500,7 @@ function PaymentItem({ paymentInfo, index, userRole, refreshPayments, onClick, i
           </div>
         )}
       </div>
+      </>
     );
   }
 

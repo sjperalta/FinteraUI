@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { API_URL } from "../../../config";
 import { getToken } from "../../../auth";
 import { useLocale } from "../../contexts/LocaleContext";
+import { useToast } from "../../contexts/ToastContext";
 import ProjectLotCards from "./ProjectLotCards";
 import CreditScoreCard from "./CreditScoreCard";
 import ContractInfoCard from "./ContractInfoCard";
@@ -10,7 +11,6 @@ import PaymentScheduleTab from "./PaymentScheduleTab";
 import LedgerEntriesTab from "./LedgerEntriesTab";
 import ContractSummaryCards from "./ContractSummaryCards";
 import ContractNotesTab from "./ContractNotesTab";
-import Toast from "../ui/Toast";
 
 function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
   const [schedule, setSchedule] = useState([]);
@@ -27,7 +27,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
   const [activeTab, setActiveTab] = useState('payments');
   const [ledgerEntries, setLedgerEntries] = useState([]); // Ensure ledgerEntries is always initialized as an array
   const [ledgerLoading, setLedgerLoading] = useState(false);
-  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
+  const { showToast } = useToast();
   const token = getToken();
   const { t } = useLocale();
 
@@ -573,7 +573,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                     if (selectedPayment?.isCapitalPayment) {
                       // Handle capital payment (abono a capital)
                       if (paymentAmount <= 0) {
-                        setToast({ visible: true, message: t('contracts.capitalPaymentAmountRequired'), type: "error" });
+                        showToast(t('contracts.capitalPaymentAmountRequired'), "error");
                         setActionLoading(false);
                         return;
                       }
@@ -665,7 +665,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                       if (data.reajusted_payments_count > 0) {
                         successMessage += ` - ${data.reajusted_payments_count} ${t('contracts.paymentsReadjusted')}`;
                       }
-                      setToast({ visible: true, message: successMessage, type: "success" });
+                      showToast(successMessage, "success");
                       
                     } else {
                       // Handle regular payment - Make API call to apply payment
@@ -673,7 +673,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                       const paidAmount = parseFloat(editableTotal) || 0;
 
                       if (paidAmount <= 0) {
-                        setToast({ visible: true, message: t('contracts.totalAmountRequired'), type: "error" });
+                        showToast(t('contracts.totalAmountRequired'), "error");
                         setActionLoading(false);
                         return;
                       }
@@ -724,7 +724,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                       handlePaymentResponse(data);
                       
                       // Show success feedback for regular payment
-                      setToast({ visible: true, message: `${t('contracts.payment')} ${t('contracts.appliedSuccessfully')}`, type: "success" });
+                      showToast(`${t('contracts.payment')} ${t('contracts.appliedSuccessfully')}`, "success");
                       
                     }
                     
@@ -739,7 +739,7 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
                   } catch (error) {
                     console.error('Error applying payment:', error);
                     const paymentType = selectedPayment?.isCapitalPayment ? t('contracts.capitalPayment').toLowerCase() : t('contracts.payment').toLowerCase();
-                    setToast({ visible: true, message: `${t('contracts.errorApplying')} ${paymentType}: ${error.message}`, type: "error" });
+                    showToast(`${t('contracts.errorApplying')} ${paymentType}: ${error.message}`, "error");
                     setActionLoading(false);
                   }
                 }}
@@ -816,13 +816,6 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
         </div>
       )}
 
-      {/* Toast Notification */}
-      <Toast
-        visible={toast.visible}
-        message={toast.message}
-        type={toast.type}
-        onClose={() => setToast((s) => ({ ...s, visible: false }))}
-      />
     </div>
   );
 }

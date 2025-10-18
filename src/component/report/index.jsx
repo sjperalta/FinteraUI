@@ -4,11 +4,13 @@ import { API_URL } from "../../../config";  // e.g. "http://localhost:3000" or y
 import { getToken } from "../../../auth";   // If you use token-based auth
 import DatePicker from "../forms/DatePicker";
 import { useLocale } from "../../contexts/LocaleContext";
+import { useToast } from "../../contexts/ToastContext";
 
 function Report() {
   // Store the selected start/end dates in ISO format (e.g., "2025-01-15")
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const { showToast } = useToast();
   const { t } = useLocale();
 
   /**
@@ -22,13 +24,13 @@ function Report() {
   const downloadCSV = async (reportEndpoint) => {
     // Validate that both dates are selected
     if (!startDate || !endDate) {
-      alert(t('reports.selectBothDates'));
+      showToast(t('reports.selectBothDates'), "error");
       return;
     }
 
     // Validate that start date is not after end date
     if (new Date(startDate) > new Date(endDate)) {
-      alert(t('reports.startDateAfterEndDate'));
+      showToast(t('reports.startDateAfterEndDate'), "error");
       return;
     }
 
@@ -73,7 +75,7 @@ function Report() {
       URL.revokeObjectURL(link.href);
     } catch (err) {
       console.error("Error downloading CSV:", err);
-      alert(t('reports.downloadError'));
+      showToast(t('reports.downloadError'), "error");
     }
   };
 
@@ -383,6 +385,7 @@ function Report() {
           </div>
         </div>
       </div>
+
     </aside>
   );
 }

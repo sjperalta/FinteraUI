@@ -808,7 +808,26 @@
     "westBoundary": "West boundary description"
   },
   "audits": {
-    "viewSystemActivity": "View system activity history"
+    "viewSystemActivity": "View system activity history",
+    "loading": "Loading audit logs...",
+    "noAuditsFound": "No audit logs found",
+    "searchPlaceholder": "Search audit logs...",
+    "filterByModel": "Filter by Model",
+    "table": {
+      "event": "Event",
+      "model": "Model",
+      "itemId": "Item ID",
+      "user": "User",
+      "changes": "Changes",
+      "date": "Date",
+      "ipAddress": "IP Address",
+      "userAgent": "User Agent"
+    },
+    "events": {
+      "create": "Create",
+      "update": "Update",
+      "destroy": "Delete"
+    }
   },
   "paymentHistory": {
     "title": "Payment History",

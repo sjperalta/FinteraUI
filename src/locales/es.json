@@ -819,7 +819,26 @@
     "westBoundary": "Descripción del lindero oeste"
   },
   "audits": {
-    "viewSystemActivity": "Ver historial de actividad del sistema"
+    "viewSystemActivity": "Ver historial de actividad del sistema",
+    "loading": "Cargando registros de auditoría...",
+    "noAuditsFound": "No se encontraron registros de auditoría",
+    "searchPlaceholder": "Buscar registros de auditoría...",
+    "filterByModel": "Filtrar por Modelo",
+    "table": {
+      "event": "Evento",
+      "model": "Modelo",
+      "itemId": "ID del Ítem",
+      "user": "Usuario",
+      "changes": "Cambios",
+      "date": "Fecha",
+      "ipAddress": "Dirección IP",
+      "userAgent": "Agente de Usuario"
+    },
+    "events": {
+      "create": "Crear",
+      "update": "Actualizar",
+      "destroy": "Eliminar"
+    }
   },
   "paymentHistory": {
     "title": "Historial de Pagos",

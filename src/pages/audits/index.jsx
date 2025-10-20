@@ -122,8 +122,4 @@ function Audits() {
   );
 }
 
-Audits.propTypes = {
-  pageSize: PropTypes.number,
-};
-
 export default Audits;

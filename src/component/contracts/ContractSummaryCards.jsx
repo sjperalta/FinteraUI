@@ -10,7 +10,7 @@ const ContractSummaryCards = ({ summary, currentContract, fmt }) => {
   const isBankOrCash = financingType === 'bank' || financingType === 'cash';
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-8 gap-2 px-4 py-3 text-xs border-b border-bgray-200 dark:border-darkblack-400">
+    <div className="grid grid-cols-2 md:grid-cols-[auto-fit,minmax(0,1fr)] gap-2 px-4 py-3 text-xs border-b border-bgray-200 dark:border-darkblack-400">
       <div className="p-2 rounded-lg bg-bgray-50 dark:bg-darkblack-500">
         <p className="text-bgray-500 dark:text-bgray-400">{t("contracts.financingType")}</p>
         <p className="font-semibold text-bgray-900 dark:text-white">

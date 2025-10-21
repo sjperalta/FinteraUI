@@ -145,13 +145,6 @@ function GenericList({
       params.append("per_page", itemsPerPage);
 
       try {
-        // Debug: log final request URL (safe wrapper) to help diagnose filter issues locally
-        try {
-          // eslint-disable-next-line no-console
-          console.debug("GenericList fetching:", `${API_URL}${endpoint}?${params.toString()}`);
-        } catch (dbg) {
-          // ignore debug failures
-        }
         const response = await fetch(
           `${API_URL}${endpoint}?${params.toString()}`,
           {

@@ -238,6 +238,7 @@ function Reserve() {
     }
 
     if (errors.length) {
+      setError(err.message || t("reservations.errorCreatingContract"));
       setError(errors.join(" "));
       setFormSubmitting(false);
       return;

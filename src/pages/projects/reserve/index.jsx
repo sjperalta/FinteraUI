@@ -79,8 +79,9 @@ function Reserve() {
           }),
         ]);
 
-        if (!lotRes.ok) throw new Error(t('reservations.errorFetchingLot'));
-        if (!projRes.ok) throw new Error(t('reservations.errorFetchingProject'));
+        if (!lotRes.ok) throw new Error(t("reservations.errorFetchingLot"));
+        if (!projRes.ok)
+          throw new Error(t("reservations.errorFetchingProject"));
 
         const lotData = await lotRes.json();
         const projData = await projRes.json();
@@ -91,7 +92,12 @@ function Reserve() {
         setLotLength(lotData.length);
         setLotWidth(lotData.width);
         setLotStatus(lotData.status || "");
-        setLotMeasurementUnit(lotData.measurement_unit || lotData.unit || projData.measurement_unit || "m2");
+        setLotMeasurementUnit(
+          lotData.measurement_unit ||
+            lotData.unit ||
+            projData.measurement_unit ||
+            "m2"
+        );
 
         setProjectName(projData.name || "");
         setProjectMeasurementUnit(projData.measurement_unit || "m2");
@@ -108,7 +114,9 @@ function Reserve() {
       }
     }
     fetchHeader();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [id, lot_id, token]);
 
   // Update defaults & visibility when financing type changes
@@ -153,7 +161,9 @@ function Reserve() {
       setIsLoading(true);
       try {
         const response = await fetch(
-          `${API_URL}/api/v1/users?search_term=${encodeURIComponent(query)}&role=user&page=${page}&per_page=10`,
+          `${API_URL}/api/v1/users?search_term=${encodeURIComponent(
+            query
+          )}&role=user&page=${page}&per_page=10`,
           {
             method: "GET",
             headers: {
@@ -212,15 +222,15 @@ function Reserve() {
     // Basic client-side validation per financing type
     const errors = [];
     if (!reserveAmount || Number(reserveAmount) <= 0) {
-      errors.push(t('reservations.reserveAmountRequired'));
+      errors.push(t("reservations.reserveAmountRequired"));
     }
 
     if (financingType === "direct") {
       if (!paymentTerm || Number(paymentTerm) <= 0) {
-        errors.push(t('reservations.paymentTermRequired'));
+        errors.push(t("reservations.paymentTermRequired"));
       }
       if (!downPayment || Number(downPayment) < 0) {
-        errors.push(t('reservations.downPaymentRequired'));
+        errors.push(t("reservations.downPaymentRequired"));
       }
     } else {
       // bank or cash: prima displayed but not required (defaults handled)
@@ -249,26 +259,33 @@ function Reserve() {
     documents.forEach((doc, index) => {
       formData.append(`documents[${index}]`, doc);
     });
-    
+
     try {
-      const response = await fetch(`${API_URL}/api/v1/projects/${id}/lots/${lot_id}/contracts`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
+      const response = await fetch(
+        `${API_URL}/api/v1/projects/${id}/lots/${lot_id}/contracts`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error((errorData.error || "") + ", " + t('reservations.errorCreatingContract'));
+        throw new Error(
+          (errorData.error || "") +
+            ", " +
+            t("reservations.errorCreatingContract")
+        );
       }
 
-      showToast(t('reservations.contractCreatedSuccess'), "success");
+      showToast(t("reservations.contractCreatedSuccess"), "success");
       // Navigate immediately - global toast will persist
       navigate(`/projects/${id}/lots`);
     } catch (err) {
-      setError(err.message || t('reservations.errorCreatingContract'));
+      setError(err.message || t("reservations.errorCreatingContract"));
       setError(err.errors.join(" "));
     } finally {
       setFormSubmitting(false);
@@ -333,23 +350,18 @@ function Reserve() {
     const downNum = parseFloat(downPayment) || 0;
     const initial = reserveNum + downNum;
 
-    const financed =
-      lot && !isNaN(lot)
-        ? Math.max(lot - initial, 0)
-        : null;
+    const financed = lot && !isNaN(lot) ? Math.max(lot - initial, 0) : null;
 
-    const months = parseInt(paymentTerm, 10) > 0 ? parseInt(paymentTerm, 10) : null;
-    const monthly =
-      financed !== null && months
-        ? financed / months
-        : null;
+    const months =
+      parseInt(paymentTerm, 10) > 0 ? parseInt(paymentTerm, 10) : null;
+    const monthly = financed !== null && months ? financed / months : null;
 
     return {
       numericReserve: reserveNum,
       numericDownPayment: downNum,
       financedAmount: financed,
       monthlyPayment: monthly,
-      totalInitial: initial
+      totalInitial: initial,
     };
   }, [lotPrice, reserveAmount, downPayment, paymentTerm]);
 
@@ -364,14 +376,31 @@ function Reserve() {
   };
 
   // Helper formatters
-  const fmtNum = (v) => (v === null || v === undefined || v === "" ? "—" : Number(v).toLocaleString(undefined, { maximumFractionDigits: 2 }));
-  const fmtPerc = (v) => (v === null || v === undefined ? "—" : `${Number(v).toLocaleString(undefined, { maximumFractionDigits: 2 })}%`);
+  const fmtNum = (v) =>
+    v === null || v === undefined || v === ""
+      ? "—"
+      : Number(v).toLocaleString(undefined, { maximumFractionDigits: 2 });
+  const fmtPerc = (v) =>
+    v === null || v === undefined
+      ? "—"
+      : `${Number(v).toLocaleString(undefined, { maximumFractionDigits: 2 })}%`;
   const statusBadge = (s) => {
     const base = "px-2 py-0.5 rounded text-xs font-semibold";
-    if (!s) return <span className={`${base} bg-gray-100 text-gray-600`}>—</span>;
+    if (!s)
+      return <span className={`${base} bg-gray-100 text-gray-600`}>—</span>;
     const normalized = s.toLowerCase();
-    if (normalized === "available") return <span className={`${base} bg-green-100 text-green-700`}>{t('lots.available')}</span>;
-    if (normalized === "reserved") return <span className={`${base} bg-yellow-100 text-yellow-700`}>{t('lots.reserved')}</span>;
+    if (normalized === "available")
+      return (
+        <span className={`${base} bg-green-100 text-green-700`}>
+          {t("lots.available")}
+        </span>
+      );
+    if (normalized === "reserved")
+      return (
+        <span className={`${base} bg-yellow-100 text-yellow-700`}>
+          {t("lots.reserved")}
+        </span>
+      );
     return <span className={`${base} bg-gray-100 text-gray-600`}>{s}</span>;
   };
 
@@ -383,18 +412,29 @@ function Reserve() {
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
             <div>
               <h2 className="text-2xl font-bold text-bgray-900 dark:text-white">
-                {t('reservations.title')}
+                {t("reservations.title")}
               </h2>
               {!headerLoading && (
                 <p className="mt-1 text-sm text-bgray-600 dark:text-bgray-50">
-                  {t('reservations.project')}: <span className="font-semibold">{projectName || "—"}</span>
-                  {projectType && <> • {t('reservations.type')}: {projectType}</>}
-                  {projectAddress && <> • {t('reservations.address')}: {projectAddress}</>}
+                  {t("reservations.project")}:{" "}
+                  <span className="font-semibold">{projectName || "—"}</span>
+                  {projectType && (
+                    <>
+                      {" "}
+                      • {t("reservations.type")}: {projectType}
+                    </>
+                  )}
+                  {projectAddress && (
+                    <>
+                      {" "}
+                      • {t("reservations.address")}: {projectAddress}
+                    </>
+                  )}
                 </p>
               )}
               {headerLoading && (
                 <p className="mt-1 text-sm text-bgray-400 dark:text-bgray-400">
-                  {t('reservations.loadingInfo')}
+                  {t("reservations.loadingInfo")}
                 </p>
               )}
             </div>
@@ -402,7 +442,7 @@ function Reserve() {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
               <div className="p-3 rounded-md bg-bgray-50 dark:bg-darkblack-500">
                 <p className="uppercase tracking-wide text-bgray-500 dark:text-bgray-400 font-medium mb-1">
-                  {t('reservations.lot')}
+                  {t("reservations.lot")}
                 </p>
                 <p className="text-bgray-900 dark:text-white font-semibold">
                   {lotName || `Lote ${lot_id}`}
@@ -410,17 +450,19 @@ function Reserve() {
               </div>
               <div className="p-3 rounded-md bg-bgray-50 dark:bg-darkblack-500">
                 <p className="uppercase tracking-wide text-bgray-500 dark:text-bgray-400 font-medium mb-1">
-                  {t('reservations.dimensions')}
+                  {t("reservations.dimensions")}
                 </p>
                 <p className="text-bgray-900 dark:text-white font-semibold">
                   {lotLength && lotWidth
-                    ? `${fmtNum(lotLength)} × ${fmtNum(lotWidth)} ${lotMeasurementUnit}`
+                    ? `${fmtNum(lotLength)} × ${fmtNum(
+                        lotWidth
+                      )} ${lotMeasurementUnit}`
                     : "—"}
                 </p>
               </div>
               <div className="p-3 rounded-md bg-bgray-50 dark:bg-darkblack-500">
                 <p className="uppercase tracking-wide text-bgray-500 dark:text-bgray-400 font-medium mb-1">
-                  {t('reservations.area')}
+                  {t("reservations.area")}
                 </p>
                 <p className="text-bgray-900 dark:text-white font-semibold">
                   {headerArea != null
@@ -430,7 +472,7 @@ function Reserve() {
               </div>
               <div className="p-3 rounded-md bg-bgray-50 dark:bg-darkblack-500">
                 <p className="uppercase tracking-wide text-bgray-500 dark:text-bgray-400 font-medium mb-1">
-                  {t('reservations.lotPrice')}
+                  {t("reservations.lotPrice")}
                 </p>
                 <p className="text-bgray-900 dark:text-white font-semibold">
                   {lotPrice != null ? `${fmtNum(lotPrice)} HNL` : "—"}
@@ -438,23 +480,25 @@ function Reserve() {
               </div>
               <div className="p-3 rounded-md bg-bgray-50 dark:bg-darkblack-500">
                 <p className="uppercase tracking-wide text-bgray-500 dark:text-bgray-400 font-medium mb-1">
-                  {t('reservations.baseUnitPrice')}
+                  {t("reservations.baseUnitPrice")}
                 </p>
                 <p className="text-bgray-900 dark:text-white font-semibold">
                   {projectPricePerUnit != null
-                    ? `${fmtNum(projectPricePerUnit)} HNL / ${projectMeasurementUnit}`
+                    ? `${fmtNum(
+                        projectPricePerUnit
+                      )} HNL / ${projectMeasurementUnit}`
                     : "—"}
                 </p>
               </div>
               <div className="p-3 rounded-md bg-bgray-50 dark:bg-darkblack-500">
                 <p className="uppercase tracking-wide text-bgray-500 dark:text-bgray-400 font-medium mb-1">
-                  {t('reservations.status')}
+                  {t("reservations.status")}
                 </p>
                 <div>{statusBadge(lotStatus)}</div>
               </div>
               <div className="p-3 rounded-md bg-bgray-50 dark:bg-darkblack-500">
                 <p className="uppercase tracking-wide text-bgray-500 dark:text-bgray-400 font-medium mb-1">
-                  {t('reservations.interest')}
+                  {t("reservations.interest")}
                 </p>
                 <p className="text-bgray-900 dark:text-white font-semibold">
                   {fmtPerc(projectInterestRate)}
@@ -462,7 +506,7 @@ function Reserve() {
               </div>
               <div className="p-3 rounded-md bg-bgray-50 dark:bg-darkblack-500">
                 <p className="uppercase tracking-wide text-bgray-500 dark:text-bgray-400 font-medium mb-1">
-                  {t('reservations.commission')}
+                  {t("reservations.commission")}
                 </p>
                 <p className="text-bgray-900 dark:text-white font-semibold">
                   {fmtPerc(projectCommissionRate)}
@@ -478,31 +522,31 @@ function Reserve() {
               {/* ------------ LEFT COLUMN: FINANCING ------------- */}
               <div className="space-y-6">
                 <h4 className="text-xl font-bold text-bgray-900 dark:text-white">
-                  {t('reservations.financingType')}
+                  {t("reservations.financingType")}
                 </h4>
 
                 <div className="flex flex-col gap-2">
                   <label className="text-base text-bgray-600 dark:text-bgray-50 font-medium">
-                    {t('reservations.financingType')}
+                    {t("reservations.financingType")}
                   </label>
                   <select
                     value={financingType}
                     onChange={(e) => setFinancingType(e.target.value)}
                     className="bg-bgray-50 dark:bg-darkblack-500 dark:text-white p-4 rounded-lg h-14 border-0 focus:ring-2 focus:ring-success-300"
                   >
-                    <option value="direct">{t('reservations.direct')}</option>
-                    <option value="bank">{t('reservations.bank')}</option>
-                    <option value="cash">{t('reservations.cash')}</option>
+                    <option value="direct">{t("reservations.direct")}</option>
+                    <option value="bank">{t("reservations.bank")}</option>
+                    <option value="cash">{t("reservations.cash")}</option>
                   </select>
                   <p className="text-xs text-bgray-500 dark:text-bgray-300 mt-1">
-                    {t('reservations.financingDescription')}
+                    {t("reservations.financingDescription")}
                   </p>
                 </div>
 
                 {financingType === "direct" && (
                   <div className="flex flex-col gap-2">
                     <label className="text-base text-bgray-600 dark:text-bgray-50">
-                      {t('reservations.paymentTerm')}
+                      {t("reservations.paymentTerm")}
                     </label>
                     <input
                       type="number"
@@ -517,7 +561,7 @@ function Reserve() {
 
                 <div className="flex flex-col gap-2">
                   <label className="text-base text-bgray-600 dark:text-bgray-50 font-medium">
-                    {t('reservations.reserveAmount')}
+                    {t("reservations.reserveAmount")}
                   </label>
                   <input
                     type="number"
@@ -529,28 +573,26 @@ function Reserve() {
                   />
                 </div>
 
-                <div className="flex flex-col gap-2">
-                  <label className="text-base text-bgray-600 dark:text-bgray-50 font-medium">
-                    {t('reservations.downPayment')}
-                  </label>
-                  <input
-                    type="number"
-                    value={downPayment}
-                    onChange={(e) => setDownPayment(e.target.value)}
-                    className="bg-bgray-50 dark:bg-darkblack-500 dark:text-white p-4 rounded-lg h-14 border-0 focus:ring-2 focus:ring-success-300"
-                    placeholder={
-                      financingType === "direct"
-                        ? t('reservations.requiredForDirect')
-                        : t('reservations.optionalDefaultZero')
-                    }
-                    required={financingType === "direct"}
-                    min={0}
-                  />
-                </div>
+                {financingType === "direct" && (
+                  <div className="flex flex-col gap-2">
+                    <label className="text-base text-bgray-600 dark:text-bgray-50 font-medium">
+                      {t("reservations.downPayment")}
+                    </label>
+                    <input
+                      type="number"
+                      value={downPayment}
+                      onChange={(e) => setDownPayment(e.target.value)}
+                      className="bg-bgray-50 dark:bg-darkblack-500 dark:text-white p-4 rounded-lg h-14 border-0 focus:ring-2 focus:ring-success-300"
+                      placeholder={t("reservations.requiredForDirect")}
+                      required
+                      min={0}
+                    />
+                  </div>
+                )}
 
                 <div className="flex flex-col gap-2">
                   <label className="text-base text-bgray-600 dark:text-bgray-50 font-medium">
-                    {t('reservations.notes')}
+                    {t("reservations.notes")}
                   </label>
                   <div className="rounded-lg overflow-hidden border border-bgray-200 dark:border-darkblack-400">
                     <MessageEditor onTextChange={setContractNotes} />
@@ -560,35 +602,51 @@ function Reserve() {
                 {/* ===== Real-time Balance Summary Card ===== */}
                 <div className="mt-4 border border-bgray-200 dark:border-darkblack-400 rounded-lg p-5 bg-bgray-50 dark:bg-darkblack-600">
                   <h5 className="text-sm font-semibold text-bgray-700 dark:text-bgray-100 mb-3 tracking-wide">
-                    {t('reservations.financialSummary')}
+                    {t("reservations.financialSummary")}
                   </h5>
                   <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-xs">
                     <div>
-                      <dt className="text-bgray-500 dark:text-bgray-300">{t('reservations.lotPrice')}</dt>
+                      <dt className="text-bgray-500 dark:text-bgray-300">
+                        {t("reservations.lotPrice")}
+                      </dt>
                       <dd className="font-medium text-bgray-900 dark:text-white">
                         {formatCurrency(lotPrice)}
                       </dd>
                     </div>
+
                     <div>
-                      <dt className="text-bgray-500 dark:text-bgray-300">{t('reservations.reservation')}</dt>
+                      <dt className="text-bgray-500 dark:text-bgray-300">
+                        {t("reservations.reservation")}
+                      </dt>
                       <dd className="font-medium text-bgray-900 dark:text-white">
                         {formatCurrency(numericReserve)}
                       </dd>
                     </div>
-                    <div>
-                      <dt className="text-bgray-500 dark:text-bgray-300">{t('reservations.downPaymentLabel')}</dt>
-                      <dd className="font-medium text-bgray-900 dark:text-white">
-                        {formatCurrency(numericDownPayment)}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="text-bgray-500 dark:text-bgray-300">{t('reservations.initialContribution')}</dt>
-                      <dd className="font-medium text-bgray-900 dark:text-white">
-                        {formatCurrency(totalInitial)}
-                      </dd>
-                    </div>
+
+                    {financingType === "direct" && (
+                      <div>
+                        <dt className="text-bgray-500 dark:text-bgray-300">
+                          {t("reservations.downPaymentLabel")}
+                        </dt>
+                        <dd className="font-medium text-bgray-900 dark:text-white">
+                          {formatCurrency(numericDownPayment)}
+                        </dd>
+                      </div>
+                    )}
+                    {financingType === "direct" && (
+                      <div>
+                        <dt className="text-bgray-500 dark:text-bgray-300">
+                          {t("reservations.initialContribution")}
+                        </dt>
+                        <dd className="font-medium text-bgray-900 dark:text-white">
+                          {formatCurrency(totalInitial)}
+                        </dd>
+                      </div>
+                    )}
                     <div className="col-span-2 border-t border-bgray-200 dark:border-darkblack-500 pt-3">
-                      <dt className="text-bgray-500 dark:text-bgray-300">{t('reservations.financedAmount')}</dt>
+                      <dt className="text-bgray-500 dark:text-bgray-300">
+                        {t("reservations.financedAmount")}
+                      </dt>
                       <dd className="text-lg font-semibold text-success-600 dark:text-success-400">
                         {formatCurrency(financedAmount)}
                       </dd>
@@ -596,7 +654,7 @@ function Reserve() {
                     {financingType === "direct" && (
                       <div className="col-span-2 flex justify-between items-center">
                         <span className="text-bgray-500 dark:text-bgray-300">
-                          {t('reservations.estimatedMonthly')}
+                          {t("reservations.estimatedMonthly")}
                         </span>
                         <span className="text-sm font-semibold text-bgray-900 dark:text-white">
                           {formatCurrency(monthlyPayment)}
@@ -605,7 +663,7 @@ function Reserve() {
                     )}
                   </dl>
                   <p className="mt-3 text-[10px] leading-4 text-bgray-400 dark:text-bgray-400">
-                    {t('reservations.calculationNote')}
+                    {t("reservations.calculationNote")}
                   </p>
                 </div>
               </div>
@@ -614,7 +672,7 @@ function Reserve() {
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <h4 className="text-xl font-bold text-bgray-900 dark:text-white">
-                    {t('reservations.clientInformation')}
+                    {t("reservations.clientInformation")}
                   </h4>
                   <div className="flex items-center gap-2">
                     <button
@@ -627,7 +685,7 @@ function Reserve() {
                           : "bg-bgray-100 dark:bg-darkblack-600 text-bgray-600 dark:text-bgray-300 hover:bg-bgray-200 dark:hover:bg-darkblack-500")
                       }
                     >
-                      {t('reservations.search')}
+                      {t("reservations.search")}
                     </button>
                     <button
                       type="button"
@@ -639,7 +697,7 @@ function Reserve() {
                           : "bg-bgray-100 dark:bg-darkblack-600 text-bgray-600 dark:text-bgray-300 hover:bg-bgray-200 dark:hover:bg-darkblack-500")
                       }
                     >
-                      {t('reservations.new')}
+                      {t("reservations.new")}
                     </button>
                   </div>
                 </div>
@@ -655,7 +713,9 @@ function Reserve() {
                             value={userQuery}
                             onChange={(e) => handleQueryChange(e.target.value)}
                             className="bg-bgray-50 dark:bg-darkblack-500 dark:text-white pl-11 pr-4 p-4 rounded-lg h-14 w-full border-0 focus:ring-2 focus:ring-success-300"
-                            placeholder={t('reservations.searchByNamePhoneEmail')}
+                            placeholder={t(
+                              "reservations.searchByNamePhoneEmail"
+                            )}
                           />
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -683,8 +743,12 @@ function Reserve() {
                                 className="w-full text-left px-4 py-2 hover:bg-success-50 dark:hover:bg-darkblack-500 flex justify-between items-center text-bgray-900 dark:text-white"
                               >
                                 <span className="text-sm">
-                                  <span className="font-medium">{u.full_name}</span>{" "}
-                                  <span className="text-bgray-400 dark:text-bgray-300">• {u.email}</span>
+                                  <span className="font-medium">
+                                    {u.full_name}
+                                  </span>{" "}
+                                  <span className="text-bgray-400 dark:text-bgray-300">
+                                    • {u.email}
+                                  </span>
                                 </span>
                                 <span className="text-xs text-bgray-400 dark:text-bgray-300">
                                   {u.phone}
@@ -698,19 +762,21 @@ function Reserve() {
                                 className="w-full text-center text-sm py-2 bg-bgray-50 dark:bg-darkblack-500 hover:bg-bgray-100 dark:hover:bg-darkblack-400 text-bgray-700 dark:text-bgray-200"
                                 disabled={isLoading}
                               >
-                                {isLoading ? t('reservations.loading') : t('reservations.loadMore')}
+                                {isLoading
+                                  ? t("reservations.loading")
+                                  : t("reservations.loadMore")}
                               </button>
                             )}
                           </div>
                         )}
                         {isLoading && userResults.length === 0 && (
                           <p className="text-sm text-bgray-500">
-                            {t('reservations.searchingUsers')}
+                            {t("reservations.searchingUsers")}
                           </p>
                         )}
                         {userQuery.length <= 2 && (
                           <p className="text-xs text-bgray-400">
-                            {t('reservations.typeAtLeast3Chars')}
+                            {t("reservations.typeAtLeast3Chars")}
                           </p>
                         )}
                       </>
@@ -736,14 +802,14 @@ function Reserve() {
                             onClick={clearSelectedUser}
                             className="text-xs text-red-500 hover:underline"
                           >
-                            {t('reservations.remove')}
+                            {t("reservations.remove")}
                           </button>
                           <button
                             type="button"
                             onClick={() => switchMode("create")}
                             className="text-xs text-success-600 hover:underline"
                           >
-                            {t('reservations.new')}
+                            {t("reservations.new")}
                           </button>
                         </div>
                       </div>
@@ -756,7 +822,7 @@ function Reserve() {
                   <div className="space-y-5">
                     <div className="flex items-center justify-between">
                       <p className="text-sm text-bgray-600 dark:text-bgray-300">
-                        {t('reservations.completeNewClientData')}
+                        {t("reservations.completeNewClientData")}
                       </p>
                       {selectedUser && (
                         <button
@@ -764,7 +830,7 @@ function Reserve() {
                           onClick={clearSelectedUser}
                           className="text-xs text-red-500 hover:underline"
                         >
-                          {t('reservations.clear')}
+                          {t("reservations.clear")}
                         </button>
                       )}
                     </div>
@@ -772,7 +838,7 @@ function Reserve() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="flex flex-col gap-2">
                         <label className="text-sm font-medium text-bgray-600 dark:text-bgray-50">
-                          {t('reservations.fullName')}
+                          {t("reservations.fullName")}
                         </label>
                         <input
                           type="text"
@@ -784,7 +850,7 @@ function Reserve() {
                       </div>
                       <div className="flex flex-col gap-2">
                         <label className="text-sm font-medium text-bgray-600 dark:text-bgray-50">
-                          {t('reservations.phone')}
+                          {t("reservations.phone")}
                         </label>
                         <input
                           type="text"
@@ -796,7 +862,7 @@ function Reserve() {
                       </div>
                       <div className="flex flex-col gap-2">
                         <label className="text-sm font-medium text-bgray-600 dark:text-bgray-50">
-                          {t('reservations.identity')}
+                          {t("reservations.identity")}
                         </label>
                         <input
                           type="text"
@@ -808,7 +874,7 @@ function Reserve() {
                       </div>
                       <div className="flex flex-col gap-2">
                         <label className="text-sm font-medium text-bgray-600 dark:text-bgray-50">
-                          {t('reservations.rtn')}
+                          {t("reservations.rtn")}
                         </label>
                         <input
                           type="text"
@@ -820,7 +886,7 @@ function Reserve() {
                       </div>
                       <div className="flex flex-col gap-2 md:col-span-2">
                         <label className="text-sm font-medium text-bgray-600 dark:text-bgray-50">
-                          {t('reservations.email')}
+                          {t("reservations.email")}
                         </label>
                         <input
                           type="email"
@@ -832,7 +898,7 @@ function Reserve() {
                       </div>
                       <div className="flex flex-col gap-2 md:col-span-2">
                         <label className="text-sm font-medium text-bgray-600 dark:text-bgray-50">
-                          {t('reservations.documents')}
+                          {t("reservations.documents")}
                         </label>
                         <input
                           type="file"
@@ -849,15 +915,13 @@ function Reserve() {
                         onClick={() => switchMode("search")}
                         className="text-sm text-bgray-600 dark:text-bgray-300 hover:underline"
                       >
-                        {t('reservations.searchExisting')}
+                        {t("reservations.searchExisting")}
                       </button>
                     </div>
                   </div>
                 )}
 
-                {error && (
-                  <p className="text-red-500 text-sm pt-2">{error}</p>
-                )}
+                {error && <p className="text-red-500 text-sm pt-2">{error}</p>}
               </div>
               {/* ------------ END CUSTOMER COLUMN ------------- */}
             </div>
@@ -869,7 +933,7 @@ function Reserve() {
                 onClick={() => navigate(-1)}
                 className="bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white mt-10 py-3.5 px-4 rounded-lg"
               >
-                {t('common.back')}
+                {t("common.back")}
               </button>
               <button
                 type="submit"
@@ -878,7 +942,9 @@ function Reserve() {
                 }`}
                 disabled={formSubmitting}
               >
-                {formSubmitting ? t('reservations.creating') : t('reservations.createRequest')}
+                {formSubmitting
+                  ? t("reservations.creating")
+                  : t("reservations.createRequest")}
               </button>
             </div>
           </form>

@@ -661,7 +661,18 @@
     "financingTypes": {
       "direct": "Direct",
       "bank": "Bank"
-    }
+    },
+    "approve": "Approve",
+    "reject": "Reject",
+    "cancel": "Cancel",
+    "viewDetails": "View Details",
+    "price": "Price",
+    "reserve": "Reserve",
+    "downPayment": "Down Payment",
+    "financed": "Financed",
+    "months": "Months",
+    "estimatedInstallment": "Est. Installment",
+    "financingType": "Financing Type"
   },
   "contractNotes": {
     "generalNotes": "General Notes",
@@ -758,6 +769,7 @@
     "reserveAmount": "Reserve Amount",
     "downPayment": "Down Payment",
     "monthlyPayment": "Monthly Payment",
+    "financedAmount": "Financed Amount",
     "contractStatus": "Contract Status",
     "status": "Status",
     "contractId": "Contract ID",

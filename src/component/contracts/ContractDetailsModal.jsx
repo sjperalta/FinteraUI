@@ -162,7 +162,7 @@ const ContractDetailsModal = ({
             {isAdmin && !isEditMode && (
               <button
                 onClick={() => setIsEditMode(true)}
-                className="px-4 py-2 text-sm font-semibold rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white border border-indigo-500 hover:border-indigo-600 transition-all duration-200 flex items-center space-x-2"
+                className="px-4 py-2 text-sm font-semibold rounded-lg bg-white/20 hover:bg-white/30 text-white border border-white/30 hover:border-white/40 transition-all duration-200 flex items-center space-x-2"
               >
                 <span>✏️</span>
                 <span>{t("contractDetailsModal.edit")}</span>

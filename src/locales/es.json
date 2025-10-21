@@ -327,6 +327,7 @@
     "admin": "Administrador",
     "user": "Usuario",
     "createdBy": "Creado por",
+    "creditScore": "Puntuación de Crédito",
     "passwordRequirements": "Requisitos de Contraseña",
     "minChars": "Al menos 8 caracteres",
     "uppercase": "Una letra mayúscula (A-Z)",
@@ -704,7 +705,12 @@
     "excellent": "★★★ EXCELENTE",
     "good": "★★ BUENO",
     "needsImprovement": "★ NECESITA MEJORA",
-    "outOf100": "de 100%"
+    "outOf100": "de 100%",
+    "excellentDesc": "Excelente",
+    "goodDesc": "Bueno",
+    "fairDesc": "Regular",
+    "poorDesc": "Deficiente",
+    "unknownDesc": "Desconocido"
   },
   "contractInfo": {
     "contract": "Contrato",

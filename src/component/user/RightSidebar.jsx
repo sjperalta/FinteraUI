@@ -6,6 +6,18 @@ import { useToast } from "../../contexts/ToastContext";
 import { useLocale } from "../../contexts/LocaleContext";
 import { getInitials, getAvatarColor } from "../../utils/avatarUtils";
 
+// Helper to determine descriptor and color for credit score (0-100 percent)
+const creditScoreInfo = (score, t) => {
+  const s = Number(score);
+  if (Number.isNaN(s) || score === null || score === undefined) return { scoreLabel: "N/A", descriptor: t ? t('creditScore.unknownDesc') : "Unknown", color: "gray" };
+  // normalize to 0-100 and clamp
+  const pct = Math.max(0, Math.min(100, Math.round(s)));
+  if (pct >= 90) return { scoreLabel: `${pct}%`, descriptor: t ? t('creditScore.excellentDesc') : "Excellent", color: "green" };
+  if (pct >= 75) return { scoreLabel: `${pct}%`, descriptor: t ? t('creditScore.goodDesc') : "Good", color: "emerald" };
+  if (pct >= 50) return { scoreLabel: `${pct}%`, descriptor: t ? t('creditScore.fairDesc') : "Fair", color: "yellow" };
+  return { scoreLabel: `${pct}%`, descriptor: t ? t('creditScore.poorDesc') : "Poor", color: "red" };
+};
+
 function RightSidebar({ user, onClose, currentUser }) {
   const { t } = useLocale();
   const { showToast } = useToast();
@@ -13,6 +25,23 @@ function RightSidebar({ user, onClose, currentUser }) {
   const [summaryError, setSummaryError] = useState("");
   const { token, user: loggedUser } = useContext(AuthContext);
   const viewer = currentUser || loggedUser;
+
+  // Prepare credit score info for rendering in Contact Information
+  const creditInfo = creditScoreInfo(user?.credit_score, t);
+  const contactColorBg = {
+    green: "bg-green-50 dark:bg-green-900/10",
+    emerald: "bg-emerald-50 dark:bg-emerald-900/10",
+    yellow: "bg-yellow-50 dark:bg-yellow-900/10",
+    red: "bg-red-50 dark:bg-red-900/10",
+    gray: "bg-gray-50 dark:bg-gray-800/10",
+  }[creditInfo.color] || "bg-gray-50";
+  const contactTextColor = {
+    green: "text-green-800 dark:text-green-300",
+    emerald: "text-emerald-800 dark:text-emerald-300",
+    yellow: "text-yellow-800 dark:text-yellow-300",
+    red: "text-red-800 dark:text-red-300",
+    gray: "text-gray-700 dark:text-gray-300",
+  }[creditInfo.color] || "text-gray-700";
 
   // Minimal guard: don't attempt to render sidebar when no user provided
   if (!user) return null;
@@ -143,6 +172,7 @@ function RightSidebar({ user, onClose, currentUser }) {
           <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1">
             {summary?.contractList || t('contracts.noContracts')}
           </p>
+          {/* Credit Score moved to Contact Information section */}
         </div>
 
         {/* Address with icon */}
@@ -174,6 +204,21 @@ function RightSidebar({ user, onClose, currentUser }) {
             <p className="text-sm font-semibold text-bgray-900 dark:text-white truncate">{user.email}</p>
           </div>
         </div>
+
+        {/* Credit Score Row */}
+        {user?.role === "user" && (
+          <div className="flex items-start gap-3 group">
+            <div className={`w-9 h-9 rounded-lg ${contactColorBg} flex items-center justify-center flex-shrink-0`}> 
+              <svg className={`w-4 h-4 ${contactTextColor}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2" />
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">{t('users.creditScore') || 'Credit Score'}</p>
+              <p className={`text-sm font-semibold ${contactTextColor}`}>{creditInfo.scoreLabel} <span className="text-sm text-gray-500 dark:text-gray-400">{creditInfo.descriptor}</span></p>
+            </div>
+          </div>
+        )}
 
         <div className="flex items-start gap-3 group">
           <div className="w-9 h-9 rounded-lg bg-green-100 dark:bg-green-900/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">

@@ -62,6 +62,14 @@ function GenericList({
   };
 
   const stableCustomParams = useMemo(() => customParams || {}, [customParams]);
+  // Create a stable, serialised signature for filters so we can reliably
+  // detect changes (object identity can cause unnecessary or out-of-order fetches).
+  const filtersSignature = useMemo(() => {
+    if (!filters) return "";
+    const keys = Object.keys(filters).sort();
+    return keys.map((k) => `${k}=${String(filters[k] ?? "")}`).join("&");
+  }, [filters]);
+
   const sortParam = useMemo(() => {
     if (sortField) {
       return `${sortField}-${sortDirection}`;
@@ -100,6 +108,11 @@ function GenericList({
     [sortField, sortDirection, onSortChange]
   );
 
+  // Reset to page 1 if filters change (use signature to ensure stable detection)
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filtersSignature]);
+
   useEffect(() => {
     const fetchItems = async () => {
       setLoading(true);
@@ -108,9 +121,9 @@ function GenericList({
       // Build query params
       const params = new URLSearchParams();
       
-      // Add filters
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value) {
+      // Add filters (only append keys that have a value)
+      Object.entries(filters || {}).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== "") {
           params.append(key, value);
         }
       });
@@ -169,7 +182,7 @@ function GenericList({
     };
 
     fetchItems();
-  }, [token, filters, sortParam, currentPage, itemsPerPage, endpoint, entityName, stableCustomParams, refreshTrigger]);
+  }, [token, filtersSignature, sortParam, currentPage, itemsPerPage, endpoint, entityName, stableCustomParams, refreshTrigger]);
 
   // Handle going to next or previous pages
   const handleNextPage = () => {
@@ -185,9 +198,8 @@ function GenericList({
   };
 
   // Reset to page 1 if filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filters]);
+  // Note: page reset is handled by `filtersSignature` effect above. Removing
+  // duplicate effect on raw `filters` prevents object-identity races.
 
   // Loading state
   if (loading) {

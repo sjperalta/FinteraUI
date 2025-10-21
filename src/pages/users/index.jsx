@@ -67,6 +67,7 @@ function Users() {
         identity: location.state.selectedUserId,
         full_name: location.state.selectedUserName,
         phone: location.state.selectedUserPhone,
+        credit_score: location.state.selectedUserCreditScore,
         // Add other default values for the sidebar
         email: "", // We don't have this from contract data
         role: "", // We don't have this from contract data

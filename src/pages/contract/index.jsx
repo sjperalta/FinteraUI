@@ -66,16 +66,7 @@ function Contract() {
     ],
     [t]
   );
-
-  // Filters for GenericList
-  const filters = useMemo(
-    () => ({
-      search_term: searchTerm,
-      status: statusFilter.toLowerCase(),
-    }),
-    [searchTerm, statusFilter]
-  );
-
+  
   // Refresh function
   const refreshContracts = useCallback(() => {
     setRefreshTrigger((prev) => prev + 1);
@@ -97,6 +88,18 @@ function Contract() {
     [user?.role, refreshContracts]
   );
 
+  // Build filters object - only include non-empty values
+  const filters = useMemo(() => {
+    const result = {};
+    if (searchTerm.trim()) {
+      result.search_term = searchTerm.trim();
+    }
+    if (statusFilter) {
+      result.status = statusFilter;
+    }
+    return result;
+  }, [searchTerm, statusFilter]);
+
   return (
     <main className="w-full xl:px-[48px] px-6 pb-6 xl:pb-[48px] sm:pt-[156px] pt-[100px] dark:bg-darkblack-700">
       <div className="flex 2xl:flex-row 2xl:space-x-11 flex-col space-y-10">
@@ -108,8 +111,8 @@ function Contract() {
             filterOptions={statusOptions}
             onSearchChange={setSearchTerm}
             onFilterChange={setStatusFilter}
-            searchPlaceholder={t('contracts.searchPlaceholder')}
-            filterPlaceholder={t('contracts.filterByStatus')}
+            searchPlaceholder={t("contracts.searchPlaceholder")}
+            filterPlaceholder={t("contracts.filterByStatus")}
             showFilter={true}
           />
 
@@ -121,8 +124,8 @@ function Contract() {
             columns={columns}
             sortBy="contracts.created_at-desc"
             itemsPerPage={20}
-            emptyMessage={t('contracts.noContractsFound')}
-            loadingMessage={t('contracts.loadingContracts')}
+            emptyMessage={t("contracts.noContractsFound")}
+            loadingMessage={t("contracts.loadingContracts")}
             entityName="contracts"
             showMobileCards={true}
             showDesktopTable={true}

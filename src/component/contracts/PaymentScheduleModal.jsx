@@ -38,9 +38,15 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
     try {
       const price = Number(c.amount || 0);
       const reserve = Number(c.reserve_amount || 0);
-      const prima = Number(c.down_payment || 0);
+      const financingType = c.financing_type?.toLowerCase();
+      
+      // For cash and bank financing, down payment is not applicable
+      const downPayment = (financingType === 'cash' || financingType === 'bank') 
+        ? 0 
+        : Number(c.down_payment || 0);
+      
       const term = Number(c.payment_term || 0);
-      const financed = Math.max(price - (reserve + prima), 0);
+      const financed = Math.max(price - (reserve + downPayment), 0);
       
       const schedule = [];
       let idCounter = 1;
@@ -64,14 +70,14 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
     }
 
     // Add down payment if exists - due 30 days after contract
-    if (prima > 0) {
+    if (downPayment > 0) {
       const downPaymentDate = new Date(startDate);
       downPaymentDate.setDate(downPaymentDate.getDate() + 30);
       schedule.push({
         id: idCounter++,
         number: schedule.length + 1,
         due_date: downPaymentDate.toISOString().split('T')[0],
-        amount: prima,
+        amount: downPayment,
         interest_amount: 0,
         moratory_days: 0,
         status: "pending",
@@ -229,11 +235,17 @@ function PaymentScheduleModal({ contract, open, onClose, onPaymentSuccess }) {
     if (!currentContract) return null;
     const price = Number(currentContract.amount || 0);
     const reserve = Number(currentContract.reserve_amount || 0);
-    const prima = Number(currentContract.down_payment || 0);
+    const financingType = currentContract.financing_type?.toLowerCase();
+    
+    // For cash and bank financing, down payment is not applicable
+    const downPayment = (financingType === 'cash' || financingType === 'bank') 
+      ? 0 
+      : Number(currentContract.down_payment || 0);
+    
     const term = Number(currentContract.payment_term || 0);
-    const financed = Math.max(price - (reserve + prima), 0);
+    const financed = Math.max(price - (reserve + downPayment), 0);
     const monthly = term ? financed / term : 0;
-    return { price, reserve, prima, financed, term, monthly };
+    return { price, reserve, downPayment, financed, term, monthly };
   }, [currentContract]);
 
   // Check if contract is closed (read-only mode)

@@ -267,7 +267,7 @@ function ContractItem({
         <div className="grid grid-cols-2 gap-3">
           <div>
             <p className="text-xs text-bgray-500 dark:text-bgray-400 mb-1">
-              Financiamiento
+              {t("contracts.financing")}
             </p>
             <span
               className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${financingTypeClass(
@@ -279,7 +279,7 @@ function ContractItem({
           </div>
           <div>
             <p className="text-xs text-bgray-500 dark:text-bgray-400 mb-1">
-              Estado
+              {t("contracts.status")}
             </p>
             <span
               className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${statusClass(
@@ -291,7 +291,7 @@ function ContractItem({
           </div>
           <div>
             <p className="text-xs text-bgray-500 dark:text-bgray-400 mb-1">
-              Creado
+              {t("contracts.created")}
             </p>
             <p className="text-sm font-medium text-bgray-900 dark:text-white">
               {formatDate(contract.created_at)}
@@ -299,7 +299,7 @@ function ContractItem({
           </div>
           <div>
             <p className="text-xs text-bgray-500 dark:text-bgray-400 mb-1">
-              Creado Por
+              {t("contracts.createdBy")}
             </p>
             <p className="text-sm font-medium text-bgray-900 dark:text-white">
               {contract.created_by || "N/A"}
@@ -312,7 +312,7 @@ function ContractItem({
           contract.rejection_reason && (
             <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-2">
               <p className="text-xs font-medium text-red-800 dark:text-red-200 mb-1">
-                Razón del rechazo:
+                {t("contracts.rejectionReason")}:
               </p>
               <p className="text-xs text-red-700 dark:text-red-300">
                 {contract.rejection_reason}
@@ -331,7 +331,7 @@ function ContractItem({
                 disabled={actionLoading}
                 className="flex-1 px-3 py-2 text-xs font-semibold text-white bg-green-500 hover:bg-green-600 rounded-lg disabled:opacity-50"
               >
-                ✅ Aprobar
+                ✅ {t("contracts.approve")}
               </button>
             )}
 
@@ -346,7 +346,7 @@ function ContractItem({
                 disabled={actionLoading}
                 className="flex-1 px-3 py-2 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-lg disabled:opacity-50"
               >
-                ❌ Rechazar
+                ❌ {t("contracts.reject")}
               </button>
             )}
 
@@ -359,7 +359,7 @@ function ContractItem({
                 disabled={actionLoading}
                 className="flex-1 px-3 py-2 text-xs font-semibold text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg disabled:opacity-50"
               >
-                🚫 Cancelar
+                🚫 {t("contracts.cancel")}
               </button>
             )}
 
@@ -373,7 +373,7 @@ function ContractItem({
                 }}
                 className="flex-1 px-3 py-2 text-xs font-semibold text-white bg-blue-500 hover:bg-blue-600 rounded-lg"
               >
-                📅 Plan de Pagos
+                📅 {t("contracts.paymentSchedule")}
               </button>
             )}
 
@@ -396,7 +396,7 @@ function ContractItem({
                 }}
                 className="flex-1 px-3 py-2 text-xs font-semibold text-white bg-indigo-500 hover:bg-indigo-600 rounded-lg"
               >
-                📋 Ver Detalles
+                📋 {t("contracts.viewDetails")}
               </button>
             )}
         </div>
@@ -536,7 +536,7 @@ function ContractItem({
             contract.rejection_reason && (
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-2">
                 <p className="text-xs font-medium text-red-800 dark:text-red-200 mb-1">
-                  Razón del rechazo:
+                  {t("contracts.rejectionReason")}:
                 </p>
                 <p className="text-xs text-red-700 dark:text-red-300">
                   {contract.rejection_reason}
@@ -582,7 +582,7 @@ function ContractItem({
                 className="group relative inline-flex items-center px-3 py-2 text-xs font-semibold text-white bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:transform-none"
               >
                 <span className="mr-1">✅</span>
-                {actionLoading ? "..." : "Aprobar"}
+                {actionLoading ? "..." : t("contracts.approve")}
               </button>
             )}
 
@@ -598,7 +598,7 @@ function ContractItem({
                 className="group relative inline-flex items-center px-3 py-2 text-xs font-semibold text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:transform-none"
               >
                 <span className="mr-1">❌</span>
-                {actionLoading ? "..." : "Rechazar"}
+                {actionLoading ? "..." : t("contracts.reject")}
               </button>
             )}
 
@@ -609,10 +609,10 @@ function ContractItem({
               <button
                 onClick={handleCancel}
                 disabled={actionLoading}
-                className="group relative inline-flex items-center px-3 py-2 text-xs font-semibold text-white bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:transform-none"
+                className="group relative inline-flex items-center px-3 py-2 text-xs font-semibold text-white bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:transform-none"
               >
                 <span className="mr-1">🚫</span>
-                {actionLoading ? "..." : "Cancelar"}
+                {actionLoading ? "..." : t("contracts.cancel")}
               </button>
             )}
 
@@ -628,7 +628,7 @@ function ContractItem({
                 className="group relative inline-flex items-center px-3 py-2 text-xs font-semibold text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
               >
                 <span className="mr-1">📅</span>
-                Plan de Pagos
+                {t("contracts.paymentSchedule")}
               </button>
             )}
 
@@ -653,7 +653,7 @@ function ContractItem({
                 className="group relative inline-flex items-center px-3 py-2 text-xs font-semibold text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
               >
                 <span className="mr-1">📋</span>
-                Ver Detalles
+                {t("contracts.viewDetails")}
               </button>
             )}
         </div>

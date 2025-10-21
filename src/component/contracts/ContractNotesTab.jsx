@@ -4,12 +4,14 @@ import { API_URL } from '../../../config';
 import { getToken } from '../../../auth';
 import MessageEditor from '../editor/MessageEditor';
 import { useToast } from '../../contexts/ToastContext';
+import { useLocale } from '../../contexts/LocaleContext';
 
 export default function ContractNotesTab({ currentContract, onContractUpdate }) {
   const [editingNotes, setEditingNotes] = useState(false);
   const [editedNotes, setEditedNotes] = useState('');
   const [saving, setSaving] = useState(false);
   const { showToast } = useToast();
+  const { t } = useLocale();
   const token = getToken();
 
   const handleEditNotes = () => {
@@ -20,7 +22,7 @@ export default function ContractNotesTab({ currentContract, onContractUpdate }) 
 
   const handleSaveNotes = async () => {
     if (!currentContract?.id || !currentContract?.project_id || !currentContract?.lot_id) {
-      showToast('Información del contrato incompleta para actualizar notas.', 'error');
+      showToast(t('contractNotes.incompleteContract'), 'error');
       return;
     }
 
@@ -56,10 +58,10 @@ export default function ContractNotesTab({ currentContract, onContractUpdate }) 
       }
 
       setEditingNotes(false);
-      showToast('Notas actualizadas exitosamente.', 'success');
+      showToast(t('contractNotes.notesUpdated'), 'success');
     } catch (error) {
       console.error('Error updating contract notes:', error);
-      showToast(`Error al actualizar notas: ${error.message}`, 'error');
+      showToast(`${t('contractNotes.updateError')}: ${error.message}`, 'error');
     } finally {
       setSaving(false);
     }
@@ -73,32 +75,32 @@ export default function ContractNotesTab({ currentContract, onContractUpdate }) 
   const notes = [
     {
       type: 'general',
-      title: 'Notas Generales',
-      content: currentContract?.notes || currentContract?.general_notes || 'No hay notas generales registradas.',
+      title: t('contractNotes.generalNotes'),
+      content: currentContract?.notes || currentContract?.general_notes || t('contractNotes.noGeneralNotes'),
       icon: '📝',
       color: 'blue',
       editable: true
     },
     {
       type: 'rejection',
-      title: 'Razón de Rechazo',
-      content: currentContract?.rejection_reason || 'No aplica',
+      title: t('contractNotes.rejectionReason'),
+      content: currentContract?.rejection_reason || t('contractNotes.notApplicable'),
       icon: '❌',
       color: 'red',
       show: !!currentContract?.rejection_reason
     },
     {
       type: 'cancellation',
-      title: 'Notas de Cancelación',
-      content: currentContract?.cancellation_notes || 'No aplica',
+      title: t('contractNotes.cancellationNotes'),
+      content: currentContract?.cancellation_notes || t('contractNotes.notApplicable'),
       icon: '🚫',
       color: 'yellow',
       show: !!currentContract?.cancellation_notes
     },
     {
       type: 'special_conditions',
-      title: 'Condiciones Especiales',
-      content: currentContract?.special_conditions || currentContract?.conditions || 'No hay condiciones especiales.',
+      title: t('contractNotes.specialConditions'),
+      content: currentContract?.special_conditions || currentContract?.conditions || t('contractNotes.noSpecialConditions'),
       icon: '⚠️',
       color: 'orange'
     }
@@ -140,21 +142,21 @@ export default function ContractNotesTab({ currentContract, onContractUpdate }) 
                       disabled={saving}
                       className="px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-200 hover:bg-gray-300 dark:bg-darkblack-500 dark:hover:bg-darkblack-400 text-gray-800 dark:text-gray-100 disabled:opacity-50"
                     >
-                      Cancelar
+                      {t('contractNotes.cancel')}
                     </button>
                     <button
                       onClick={handleSaveNotes}
                       disabled={saving || editedNotes.trim() === (currentContract?.notes || currentContract?.general_notes || '')}
                       className="px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-500 hover:bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {saving ? 'Guardando...' : 'Guardar'}
+                      {saving ? t('contractNotes.saving') : t('contractNotes.save')}
                     </button>
                   </div>
                 </div>
               ) : (
                 <>
                   <div className="text-sm text-bgray-700 dark:text-bgray-300">
-                    {note.content === 'No hay notas generales registradas.' || note.content === 'No aplica' ? (
+                    {note.content === t('contractNotes.noGeneralNotes') || note.content === t('contractNotes.notApplicable') ? (
                       <span className="whitespace-pre-wrap">{note.content}</span>
                     ) : (
                       <div dangerouslySetInnerHTML={{ __html: note.content }} />
@@ -169,15 +171,15 @@ export default function ContractNotesTab({ currentContract, onContractUpdate }) 
                         <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
-                        Editar
+                        {t('contractNotes.edit')}
                       </button>
                     </div>
                   )}
-                  {note.content === 'No hay notas generales registradas.' ||
-                   note.content === 'No hay condiciones especiales.' ||
-                   note.content === 'No aplica' ? (
+                  {note.content === t('contractNotes.noGeneralNotes') ||
+                   note.content === t('contractNotes.noSpecialConditions') ||
+                   note.content === t('contractNotes.notApplicable') ? (
                     <div className="mt-3 text-xs text-gray-500 dark:text-gray-400 italic">
-                      Esta sección no contiene información adicional.
+                      {t('contractNotes.sectionNoInfo')}
                     </div>
                   ) : null}
                 </>
@@ -197,11 +199,10 @@ export default function ContractNotesTab({ currentContract, onContractUpdate }) 
           </div>
           <div className="ml-3">
             <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-1">
-              Información Adicional
+              {t('contractNotes.additionalInfo')}
             </h4>
             <p className="text-sm text-blue-700 dark:text-blue-300">
-              Esta sección contiene todas las notas y observaciones importantes relacionadas con el contrato.
-              Puede editar las notas generales directamente desde aquí.
+              {t('contractNotes.contractNotesDescription')}
             </p>
           </div>
         </div>

@@ -69,7 +69,7 @@ function GenericList({
     const keys = Object.keys(filters).sort();
     return keys.map((k) => `${k}=${String(filters[k] ?? "")}`).join("&");
   }, [filters]);
-
+  
   const sortParam = useMemo(() => {
     if (sortField) {
       return `${sortField}-${sortDirection}`;
@@ -198,8 +198,9 @@ function GenericList({
   };
 
   // Reset to page 1 if filters change
-  // Note: page reset is handled by `filtersSignature` effect above. Removing
-  // duplicate effect on raw `filters` prevents object-identity races.
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
 
   // Loading state
   if (loading) {

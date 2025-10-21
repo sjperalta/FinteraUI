@@ -23,13 +23,34 @@ export default function ContractInfoCard({ currentContract }) {
 
       {/* Contract Details */}
       <div className="flex-1 min-w-0">
-        <div className="flex items-center space-x-2 mb-1">
+        <div className="flex items-center flex-wrap gap-2 mb-1">
           <h4 className="text-xl font-bold text-gray-900 dark:text-white">
             {t('contractInfo.contract')} #{currentContract?.id}
           </h4>
           <div className="px-2 py-1 bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-xs font-semibold rounded-full shadow-sm">
             {formatStatus(currentContract?.status, t) || t('contractInfo.active')}
           </div>
+          {currentContract?.financing_type && (
+            <div className={`px-3 py-1 text-xs font-semibold rounded-full shadow-sm flex items-center space-x-1 ${
+              currentContract.financing_type.toLowerCase() === 'direct' || currentContract.financing_type.toLowerCase() === 'directo'
+                ? 'bg-gradient-to-r from-emerald-500 to-green-600 text-white'
+                : 'bg-gradient-to-r from-purple-500 to-pink-600 text-white'
+            }`}>
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {currentContract.financing_type.toLowerCase() === 'direct' || currentContract.financing_type.toLowerCase() === 'directo' ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                )}
+              </svg>
+              <span>
+                {currentContract.financing_type.toLowerCase() === 'direct' || currentContract.financing_type.toLowerCase() === 'directo'
+                  ? t('contracts.financingTypes.direct')
+                  : t('contracts.financingTypes.bank')
+                }
+              </span>
+            </div>
+          )}
         </div>
         <p className="text-base text-gray-700 dark:text-gray-200 font-medium mb-1">
           {currentContract?.applicant_name || t('contractInfo.client')}

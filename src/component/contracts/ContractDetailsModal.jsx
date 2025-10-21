@@ -1,6 +1,6 @@
 // src/component/contracts/ContractDetailsModal.jsx
 import { createPortal } from "react-dom";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { formatStatus } from "../../utils/formatStatus";
 import { useLocale } from "../../contexts/LocaleContext";
 import { useToast } from "../../contexts/ToastContext";
@@ -36,20 +36,34 @@ const ContractDetailsModal = ({
   const { showToast } = useToast();
 
   // Editable fields
-  const [paymentTerm, setPaymentTerm] = useState(contract?.payment_term || "");
+  const [paymentTerm, setPaymentTerm] = useState(contract?.payment_term ?? "");
   const [reserveAmount, setReserveAmount] = useState(
-    contract?.reserve_amount || ""
+    contract?.reserve_amount ?? ""
   );
-  const [downPayment, setDownPayment] = useState(contract?.down_payment || "");
+  const [downPayment, setDownPayment] = useState(contract?.down_payment ?? "");
+
+  // Update local state when contract changes (after save)
+  useEffect(() => {
+    if (contract) {
+      setPaymentTerm(contract.payment_term ?? "");
+      setReserveAmount(contract.reserve_amount ?? "");
+      setDownPayment(contract.down_payment ?? "");
+    }
+  }, [
+    contract?.id,
+    contract?.payment_term,
+    contract?.reserve_amount,
+    contract?.down_payment,
+  ]);
 
   if (!isOpen || !contract) return null;
 
   // Calculate monthly payment with current values
   const calculateCurrentMonthlyPayment = () => {
     const amount = Number(contract.amount);
-    const term = Number(isEditMode ? paymentTerm : contract.payment_term);
-    const down = Number(isEditMode ? downPayment : contract.down_payment || 0);
-    const reserve = Number(isEditMode ? reserveAmount : contract.reserve_amount || 0);
+    const term = Number(paymentTerm || 0);
+    const down = Number(downPayment || 0);
+    const reserve = Number(reserveAmount || 0);
 
     if (!amount || !term || term <= 0) return "N/A";
 
@@ -87,7 +101,9 @@ const ContractDetailsModal = ({
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(
-          errorData.error || errorData.errors?.join(", ") || t("contractDetailsModal.errorSaving")
+          errorData.error ||
+            errorData.errors?.join(", ") ||
+            t("contractDetailsModal.errorSaving")
         );
       }
 
@@ -112,9 +128,9 @@ const ContractDetailsModal = ({
 
   // Handle cancel edit
   const handleCancelEdit = () => {
-    setPaymentTerm(contract.payment_term || "");
-    setReserveAmount(contract.reserve_amount || "");
-    setDownPayment(contract.down_payment || "");
+    setPaymentTerm(contract.payment_term ?? "");
+    setReserveAmount(contract.reserve_amount ?? "");
+    setDownPayment(contract.down_payment ?? "");
     setIsEditMode(false);
   };
 
@@ -146,7 +162,7 @@ const ContractDetailsModal = ({
             {isAdmin && !isEditMode && (
               <button
                 onClick={() => setIsEditMode(true)}
-                className="px-4 py-2 text-sm font-semibold rounded-lg bg-white/20 hover:bg-white/30 text-white border border-white/30 hover:border-white/50 transition-all duration-200 flex items-center space-x-2"
+                className="px-4 py-2 text-sm font-semibold rounded-lg bg-white/90 hover:bg-white/30 text-white border border-white/30 hover:border-white/40 transition-all duration-200 flex items-center space-x-2"
               >
                 <span>✏️</span>
                 <span>{t("contractDetailsModal.edit")}</span>
@@ -332,13 +348,74 @@ const ContractDetailsModal = ({
                     <span className="text-purple-600 dark:text-purple-400 mt-0.5">
                       📊
                     </span>
-                    <div>
-                      <p className="text-sm font-medium text-purple-800 dark:text-purple-200">
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-purple-800 dark:text-purple-200 mb-2">
                         {t("contractDetailsModal.creditScore")}
                       </p>
-                      <p className="text-sm text-purple-700 dark:text-purple-300 font-semibold">
-                        {contract.applicant_credit_score}
-                      </p>
+                      <div className="flex items-center space-x-3">
+                        {/* Circular Progress */}
+                        <div className="relative w-12 h-12 flex-shrink-0">
+                          <svg
+                            className="w-12 h-12 transform -rotate-90"
+                            viewBox="0 0 100 100"
+                          >
+                            <circle
+                              cx="50"
+                              cy="50"
+                              r="40"
+                              stroke="currentColor"
+                              strokeWidth="8"
+                              fill="none"
+                              className="text-purple-200 dark:text-purple-900"
+                            />
+                            <circle
+                              cx="50"
+                              cy="50"
+                              r="40"
+                              stroke="currentColor"
+                              strokeWidth="8"
+                              fill="none"
+                              strokeLinecap="round"
+                              strokeDasharray={`${
+                                (contract.applicant_credit_score / 100) * 251.2
+                              } 251.2`}
+                              className={`transition-all duration-500 ${
+                                contract.applicant_credit_score >= 80
+                                  ? "text-green-500 dark:text-green-400"
+                                  : contract.applicant_credit_score >= 60
+                                  ? "text-yellow-500 dark:text-yellow-400"
+                                  : "text-red-500 dark:text-red-400"
+                              }`}
+                            />
+                          </svg>
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="text-xs font-bold text-purple-800 dark:text-purple-200">
+                              {Math.round(contract.applicant_credit_score)}%
+                            </span>
+                          </div>
+                        </div>
+                        {/* Score Label */}
+                        <div className="flex-1">
+                          <div
+                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${
+                              contract.applicant_credit_score >= 80
+                                ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                                : contract.applicant_credit_score >= 60
+                                ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                                : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                            }`}
+                          >
+                            {contract.applicant_credit_score >= 80
+                              ? t("creditScore.excellent")
+                              : contract.applicant_credit_score >= 60
+                              ? t("creditScore.good")
+                              : t("creditScore.needsImprovement")}
+                          </div>
+                          <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">
+                            {t("creditScore.description")}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -433,35 +510,38 @@ const ContractDetailsModal = ({
                   </p>
                 </div>
               </div>
-              <div className="flex items-start space-x-2">
-                <span className="text-emerald-600 dark:text-emerald-400 mt-0.5">
-                  📅
-                </span>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200 mb-1">
-                    {t("contractDetailsModal.paymentTerm")}
-                  </p>
-                  {isEditMode ? (
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="number"
-                        value={paymentTerm}
-                        onChange={(e) => setPaymentTerm(e.target.value)}
-                        className="w-24 px-3 py-1.5 text-sm border border-emerald-300 dark:border-emerald-600 rounded-lg bg-white dark:bg-darkblack-600 text-emerald-800 dark:text-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                        min="1"
-                      />
-                      <span className="text-sm text-emerald-700 dark:text-emerald-300">
-                        {t("contractDetailsModal.months")}
-                      </span>
-                    </div>
-                  ) : (
-                    <p className="text-sm text-emerald-700 dark:text-emerald-300">
-                      {contract.payment_term || "N/A"}{" "}
-                      {t("contractDetailsModal.months")}
+              {contract.financing_type?.toLowerCase() === "direct" && (
+                <div className="flex items-start space-x-2">
+                  <span className="text-emerald-600 dark:text-emerald-400 mt-0.5">
+                    📅
+                  </span>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200 mb-1">
+                      {t("contractDetailsModal.paymentTerm")}
                     </p>
-                  )}
+                    {isEditMode ? (
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="number"
+                          value={paymentTerm}
+                          onChange={(e) => setPaymentTerm(e.target.value)}
+                          className="w-24 px-3 py-1.5 text-sm border border-emerald-300 dark:border-emerald-600 rounded-lg bg-white dark:bg-darkblack-600 text-emerald-800 dark:text-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                          min="1"
+                        />
+                        <span className="text-sm text-emerald-700 dark:text-emerald-300">
+                          {t("contractDetailsModal.months")}
+                        </span>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-emerald-700 dark:text-emerald-300">
+                        {paymentTerm !== ""
+                          ? `${paymentTerm} ${t("contractDetailsModal.months")}`
+                          : "N/A"}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
               <div className="flex items-start space-x-2">
                 <span className="text-emerald-600 dark:text-emerald-400 mt-0.5">
                   💰
@@ -481,55 +561,65 @@ const ContractDetailsModal = ({
                     />
                   ) : (
                     <p className="text-sm text-emerald-700 dark:text-emerald-300">
-                      {contract.reserve_amount
-                        ? formatCurrency(contract.reserve_amount)
+                      {reserveAmount !== ""
+                        ? formatCurrency(Number(reserveAmount))
                         : "N/A"}
                     </p>
                   )}
                 </div>
               </div>
-              <div className="flex items-start space-x-2">
-                <span className="text-emerald-600 dark:text-emerald-400 mt-0.5">
-                  💵
-                </span>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200 mb-1">
-                    {t("contractDetailsModal.downPayment")}
-                  </p>
-                  {isEditMode ? (
-                    <input
-                      type="number"
-                      value={downPayment}
-                      onChange={(e) => setDownPayment(e.target.value)}
-                      className="w-full px-3 py-1.5 text-sm border border-emerald-300 dark:border-emerald-600 rounded-lg bg-white dark:bg-darkblack-600 text-emerald-800 dark:text-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                      min="0"
-                      step="0.01"
-                    />
-                  ) : (
-                    <p className="text-sm text-emerald-700 dark:text-emerald-300">
-                      {contract.down_payment
-                        ? formatCurrency(contract.down_payment)
-                        : "N/A"}
+              {contract.financing_type?.toLowerCase() === "direct" && (
+                <div className="flex items-start space-x-2">
+                  <span className="text-emerald-600 dark:text-emerald-400 mt-0.5">
+                    💵
+                  </span>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200 mb-1">
+                      {t("contractDetailsModal.downPayment")}
                     </p>
-                  )}
+                    {isEditMode ? (
+                      <input
+                        type="number"
+                        value={downPayment}
+                        onChange={(e) => setDownPayment(e.target.value)}
+                        className="w-full px-3 py-1.5 text-sm border border-emerald-300 dark:border-emerald-600 rounded-lg bg-white dark:bg-darkblack-600 text-emerald-800 dark:text-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        min="0"
+                        step="0.01"
+                      />
+                    ) : (
+                      <p className="text-sm text-emerald-700 dark:text-emerald-300">
+                        {downPayment !== ""
+                          ? formatCurrency(Number(downPayment))
+                          : "N/A"}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
               <div className="flex items-start space-x-2">
                 <span className="text-emerald-600 dark:text-emerald-400 mt-0.5">
-                  📅
+                  💳
                 </span>
                 <div className="flex-1">
                   <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200 mb-1">
-                    {t("contractDetailsModal.monthlyPayment")}
+                    {t("contractDetailsModal.financedAmount")}
                   </p>
                   <p
-                    className={`text-sm font-semibold ${
+                    className={`text-lg font-bold ${
                       isEditMode
                         ? "text-emerald-900 dark:text-emerald-100 bg-emerald-200 dark:bg-emerald-800/50 px-2 py-1 rounded"
                         : "text-emerald-700 dark:text-emerald-300"
                     }`}
                   >
-                    {calculateCurrentMonthlyPayment()}
+                    {contract.amount
+                      ? formatCurrency(
+                          Number(contract.amount) -
+                            Number(reserveAmount || 0) -
+                            (contract.financing_type?.toLowerCase() === "direct"
+                              ? Number(downPayment || 0)
+                              : 0)
+                        )
+                      : "N/A"}
                   </p>
                   {isEditMode && (
                     <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">
@@ -538,6 +628,32 @@ const ContractDetailsModal = ({
                   )}
                 </div>
               </div>
+              {contract.financing_type?.toLowerCase() === "direct" && (
+                <div className="flex items-start space-x-2">
+                  <span className="text-emerald-600 dark:text-emerald-400 mt-0.5">
+                    📅
+                  </span>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200 mb-1">
+                      {t("contractDetailsModal.monthlyPayment")}
+                    </p>
+                    <p
+                      className={`text-sm font-semibold ${
+                        isEditMode
+                          ? "text-emerald-900 dark:text-emerald-100 bg-emerald-200 dark:bg-emerald-800/50 px-2 py-1 rounded"
+                          : "text-emerald-700 dark:text-emerald-300"
+                      }`}
+                    >
+                      {calculateCurrentMonthlyPayment()}
+                    </p>
+                    {isEditMode && (
+                      <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">
+                        {t("contractDetailsModal.autoCalculated")}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

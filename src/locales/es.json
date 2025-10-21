@@ -477,8 +477,8 @@
     "commission": "Comisión",
     "financingDescription": "Selecciona el método de financiamiento para esta reserva",
     "direct": "Directo",
-    "bank": "Banco",
-    "cash": "Efectivo",
+    "bank": "Bancario",
+    "cash": "Contado",
     "requiredForDirect": "Requerido para financiamiento directo",
     "optionalDefaultZero": "Opcional (por defecto 0)",
     "clientInformation": "Información del Cliente",
@@ -672,7 +672,18 @@
     "financingTypes": {
       "direct": "Directo",
       "bank": "Bancario"
-    }
+    },
+    "approve": "Aprobar",
+    "reject": "Rechazar",
+    "cancel": "Cancelar",
+    "viewDetails": "Ver Detalles",
+    "price": "Precio",
+    "reserve": "Reserva",
+    "downPayment": "Prima",
+    "financed": "Financiado",
+    "months": "Meses",
+    "estimatedInstallment": "Cuota Est.",
+    "financingType": "Financiamiento"
   },
   "contractNotes": {
     "generalNotes": "Notas Generales",
@@ -769,6 +780,7 @@
     "reserveAmount": "Monto de Reserva",
     "downPayment": "Pago Inicial",
     "monthlyPayment": "Pago Mensual",
+    "financedAmount": "Monto Financiado",
     "contractStatus": "Estado del Contrato",
     "status": "Estado",
     "contractId": "ID del Contrato",

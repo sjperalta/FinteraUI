@@ -357,7 +357,7 @@ function ContractItem({
               <button
                 onClick={handleCancel}
                 disabled={actionLoading}
-                className="flex-1 px-3 py-2 text-xs font-semibold text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg disabled:opacity-50"
+                className="flex-1 px-3 py-2 text-xs font-semibold text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg disabled:opacity-50"
               >
                 🚫 {t("contracts.cancel")}
               </button>

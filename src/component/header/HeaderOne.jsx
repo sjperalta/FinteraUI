@@ -137,7 +137,7 @@ function HeaderOne({ handleSidebar }) {
               <div
                 onClick={() => setPopup(false)}
                 id="noti-outside"
-                className={`fixed left-0 top-0 h-full w-full z-10 ${popup ? "block" : "hidden"}`}
+                className={`fixed left-0 top-0 h-full w-full z-[15] ${popup?.notification ? "block" : "hidden"}`}
               ></div>
 
               <ModeToggler />

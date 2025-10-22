@@ -457,6 +457,7 @@
     "searchMinChars": "Escribe al menos 3 caracteres para buscar.",
     "searching": "Buscando usuarios...",
     "completeClientInfo": "Complete los datos del nuevo cliente.",
+    "completeNewClientData": "Complete los datos del nuevo cliente.",
     "errorFetchingLot": "Error al cargar detalles del lote",
     "errorFetchingProject": "Error al cargar detalles del proyecto",
     "reserveAmountRequired": "El monto de reserva es requerido",

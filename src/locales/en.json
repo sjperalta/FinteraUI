@@ -446,6 +446,7 @@
     "searchMinChars": "Type at least 3 characters to search.",
     "searching": "Searching users...",
     "completeClientInfo": "Complete the new client data.",
+    "completeNewClientData": "Complete the new client data.",
     "errorFetchingLot": "Error fetching lot details",
     "errorFetchingProject": "Error fetching project details",
     "reserveAmountRequired": "Reservation amount is required",

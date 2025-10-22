@@ -250,7 +250,7 @@ function Reserve() {
     formData.append("contract[reserve_amount]", reserveAmount);
     formData.append("contract[down_payment]", downPayment || "0");
     formData.append("contract[note]", contractNotes);
-    formData.append("contract[applicant_user_id]", selectedUser?.id || 0); // Use 0 if creating a new user
+    formData.append("contract[applicant_user_id]", selectedUser?.id || ""); // Send empty string if creating a new user
     formData.append("user[full_name]", fullName);
     formData.append("user[phone]", phone);
     formData.append("user[identity]", identity);

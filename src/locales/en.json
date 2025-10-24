@@ -492,6 +492,7 @@
   "header": {
     "administrator": "Administrator",
     "admin": "Admin",
+    "user": "User",
     "welcomeMessages": {
       "1": "Let's review your progress today!",
       "2": "Welcome back! We hope you have a productive day.",
@@ -659,6 +660,7 @@
       "cancelled": "Cancelled",
       "closed": "Closed"
     },
+    "statusLabel": "Status",
     "financingTypes": {
       "direct": "Direct",
       "bank": "Bank"
@@ -691,7 +693,8 @@
     "saving": "Saving...",
     "notesUpdated": "Notes updated successfully.",
     "updateError": "Error updating notes",
-    "incompleteContract": "Contract information incomplete for updating notes."
+    "incompleteContract": "Contract information incomplete for updating notes.",
+    "edit": "Edit"
   },
   "projectLotCards": {
     "project": "Project",

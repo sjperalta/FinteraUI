@@ -2,9 +2,11 @@ import ProtoTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import AuthContext from "../../context/AuthContext";
+import { useLocale } from "../../contexts/LocaleContext";
 
 function ResProfilePopup({ isActive }) {
   const { user } = useContext(AuthContext);
+  const { t } = useLocale();
   const userId = user?.id;
 
   return (
@@ -57,7 +59,7 @@ function ResProfilePopup({ isActive }) {
                     </span>
                   </div>
                   <div className="flex-1">
-                    <span className="text-sm font-semibold">My Profile</span>
+                    <span className="text-sm font-semibold">{t("profile.myProfile")}</span>
                   </div>
                 </div>
               </Link>
@@ -70,14 +72,7 @@ function ResProfilePopup({ isActive }) {
             <li className="w-full">
               <Link to={userId ? `/settings/user/${userId}` : "#"} onClick={(e) => !userId && e.preventDefault()}>
                 <div className="rounded-lg p-[14px] text-bgray-600 hover:bg-bgray-100 hover:text-bgray-900 dark:text-bgray-50 dark:hover:bg-darkblack-500">
-                  <span className="text-sm font-semibold">Settings</span>
-                </div>
-              </Link>
-            </li>
-            <li className="w-full">
-              <Link to="/users">
-                <div className="rounded-lg p-[14px] text-bgray-600 hover:bg-bgray-100 hover:text-bgray-900 dark:text-bgray-50 dark:hover:bg-darkblack-500">
-                  <span className="text-sm font-semibold">Users</span>
+                  <span className="text-sm font-semibold">{t("profile.settings")}</span>
                 </div>
               </Link>
             </li>

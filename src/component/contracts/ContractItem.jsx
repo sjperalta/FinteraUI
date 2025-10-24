@@ -279,7 +279,7 @@ function ContractItem({
           </div>
           <div>
             <p className="text-xs text-bgray-500 dark:text-bgray-400 mb-1">
-              {t("contracts.status")}
+              {t("contracts.statusLabel")}
             </p>
             <span
               className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${statusClass(

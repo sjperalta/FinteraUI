@@ -22,27 +22,37 @@ function Sidebar({ handleActive, user, handleLogout }) {
       {/* Header */}
       <div className="sidebar-header relative z-30 flex h-[80px] sm:h-[108px] w-full items-center border-b border-r border-b-[#F7F7F7] border-r-[#F7F7F7] pl-[30px] sm:pl-[50px] dark:border-darkblack-400">
         <Link to="/" className="flex items-center">
-          <img src={logo} className="block dark:hidden h-8 sm:h-auto" alt="logo" />
-          <img src={logoW} className="hidden dark:block h-8 sm:h-auto" alt="logo" />
+          <img
+            src={logo}
+            className="block dark:hidden h-8 sm:h-auto"
+            alt="logo"
+          />
+          <img
+            src={logoW}
+            className="hidden dark:block h-8 sm:h-auto"
+            alt="logo"
+          />
         </Link>
         <button
-          aria-label="none"
+          aria-label="Toggle sidebar"
           type="button"
           onClick={handleActive}
-          className="drawer-btn absolute right-0 top-auto"
-          title="Ctrl+b"
+          className="group drawer-btn absolute right-0 top-auto transition-all duration-300 ease-in-out hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-success-300 focus:ring-offset-2 dark:focus:ring-offset-darkblack-600"
+          title="Toggle sidebar (Ctrl+b)"
         >
-          <span>
+          <span className="block transition-all duration-300 group-hover:drop-shadow-lg">
             <svg
-              width="16"
+              width="20"
               height="40"
-              viewBox="0 0 16 40"
+              viewBox="0 0 20 40"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
+              className="transition-all duration-300 group-hover:brightness-110"
             >
               <path
                 d="M0 10C0 4.47715 4.47715 0 10 0H16V40H10C4.47715 40 0 35.5228 0 30V10Z"
                 fill="#22C55E"
+                className="transition-colors duration-300 group-hover:fill-success-400"
               />
               <path
                 d="M10 15L6 20.0049L10 25.0098"
@@ -50,6 +60,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                 strokeWidth="1.2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                className="transition-all duration-300 group-hover:stroke-white group-hover:-translate-x-0.5"
               />
             </svg>
           </span>
@@ -62,7 +73,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
           {/* Menu */}
           <div className="item-wrapper mb-5">
             <h4 className="border-b border-bgray-200 text-xs sm:text-sm font-medium leading-7 text-bgray-700 dark:border-darkblack-400 dark:text-bgray-50">
-              {t('dashboard.menu')}
+              {t("dashboard.menu")}
             </h4>
             <ul className="mt-2 sm:mt-2.5">
               {/* Dashboard: Only Admin */}
@@ -92,7 +103,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                         />
                       </svg>
                       <span className="item-text text-sm sm:text-base lg:text-lg font-medium leading-none min-w-0 truncate">
-                        {t('dashboard.dashboard')}
+                        {t("dashboard.dashboard")}
                       </span>
                     </div>
                   </Link>
@@ -100,7 +111,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
               )}
 
               {/* Balance: All roles */}
-              {(isUser) && (
+              {isUser && (
                 <li
                   className={`item py-[9px] sm:py-[11px] text-bgray-900 dark:text-white ${
                     location.includes("/financing/user") ? "nav-active" : ""
@@ -121,7 +132,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                         />
                       </svg>
                       <span className="item-text text-sm sm:text-base lg:text-lg font-medium leading-none min-w-0 truncate">
-                        {t('dashboard.financing')}
+                        {t("dashboard.financing")}
                       </span>
                     </div>
                   </Link>
@@ -155,7 +166,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                         />
                       </svg>
                       <span className="item-text text-sm sm:text-base lg:text-lg font-medium leading-none min-w-0 truncate">
-                        {t('sidebar.paymentHistory')}
+                        {t("sidebar.paymentHistory")}
                       </span>
                     </div>
                   </Link>
@@ -172,15 +183,56 @@ function Sidebar({ handleActive, user, handleLogout }) {
                   <Link to="/payments">
                     <div className="flex items-center space-x-2 sm:space-x-2.5">
                       <span className="item-ico w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0">
-                        <svg width="22" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true" className="w-full h-full">
-                          <rect x="1" y="4" width="20" height="12" rx="2.5" fill="#22C55E" stroke="#1A202C" strokeWidth="1.2" />
-                          <path d="M2 7C4 5 8 5 11 7C14 9 18 9 20 7" stroke="#1A202C" strokeWidth="1.1" strokeLinecap="round" fill="none"/>
-                          <circle cx="11" cy="10" r="2.2" fill="#fff" stroke="#1A202C" strokeWidth="1" />
-                          <text x="11" y="12" textAnchor="middle" fontSize="10" fontFamily="Inter, Arial, sans-serif" fontWeight="700" fill="#22C55E">$</text>
+                        <svg
+                          width="22"
+                          height="20"
+                          viewBox="0 0 22 20"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          role="img"
+                          aria-hidden="true"
+                          className="w-full h-full"
+                        >
+                          <rect
+                            x="1"
+                            y="4"
+                            width="20"
+                            height="12"
+                            rx="2.5"
+                            fill="#22C55E"
+                            stroke="#1A202C"
+                            strokeWidth="1.2"
+                          />
+                          <path
+                            d="M2 7C4 5 8 5 11 7C14 9 18 9 20 7"
+                            stroke="#1A202C"
+                            strokeWidth="1.1"
+                            strokeLinecap="round"
+                            fill="none"
+                          />
+                          <circle
+                            cx="11"
+                            cy="10"
+                            r="2.2"
+                            fill="#fff"
+                            stroke="#1A202C"
+                            strokeWidth="1"
+                          />
+                          <text
+                            x="11"
+                            y="12"
+                            textAnchor="middle"
+                            fontSize="10"
+                            fontFamily="Inter, Arial, sans-serif"
+                            fontWeight="700"
+                            fill="#22C55E"
+                          >
+                            $
+                          </text>
                         </svg>
                       </span>
                       <span className="item-text text-sm sm:text-base lg:text-lg font-medium leading-none min-w-0 truncate">
-                        {t('dashboard.payments')}
+                        {t("dashboard.payments")}
                       </span>
                     </div>
                   </Link>
@@ -220,7 +272,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                         </svg>
                       </span>
                       <span className="item-text text-sm sm:text-base lg:text-lg font-medium leading-none min-w-0 truncate">
-                        {t('dashboard.contracts')}
+                        {t("dashboard.contracts")}
                       </span>
                     </div>
                   </Link>
@@ -268,7 +320,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                         </svg>
                       </span>
                       <span className="item-text text-sm sm:text-base lg:text-lg font-medium leading-none min-w-0 truncate">
-                        {t('dashboard.projects')}
+                        {t("dashboard.projects")}
                       </span>
                     </div>
                   </Link>
@@ -307,7 +359,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                         />
                       </svg>
                       <span className="item-text text-sm sm:text-base lg:text-lg font-medium leading-none min-w-0 truncate">
-                        {t('users.title')}
+                        {t("users.title")}
                       </span>
                     </div>
                   </Link>
@@ -353,7 +405,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                         />
                       </svg>
                       <span className="item-text text-sm sm:text-base lg:text-lg font-medium leading-none min-w-0 truncate">
-                        {t('dashboard.audits')}
+                        {t("dashboard.audits")}
                       </span>
                     </div>
                   </Link>
@@ -397,14 +449,16 @@ function Sidebar({ handleActive, user, handleLogout }) {
                       />
                     </svg>
                     <span className="item-text text-sm sm:text-base lg:text-lg font-medium leading-none min-w-0 truncate">
-                      {t('dashboard.signIn')}
+                      {t("dashboard.signIn")}
                     </span>
                   </div>
                 </Link>
               </li>
 
               {/* Logout */}
-              <li className={`item py-[9px] sm:py-[11px] text-bgray-900 dark:text-white`}>
+              <li
+                className={`item py-[9px] sm:py-[11px] text-bgray-900 dark:text-white`}
+              >
                 <Link to="/#" onClick={handleLogout}>
                   <div className="flex items-center space-x-2 sm:space-x-2.5">
                     <svg
@@ -435,7 +489,7 @@ function Sidebar({ handleActive, user, handleLogout }) {
                       />
                     </svg>
                     <span className="item-text text-sm sm:text-base lg:text-lg font-medium leading-none min-w-0 truncate">
-                      {t('dashboard.logout')}
+                      {t("dashboard.logout")}
                     </span>
                   </div>
                 </Link>
@@ -445,16 +499,18 @@ function Sidebar({ handleActive, user, handleLogout }) {
         </div>
         {/* Footer */}
         <div className="copy-write-text px-3 sm:px-0">
-          <p className="text-xs sm:text-sm text-[#969BA0]">{t('footer.copyright')}</p>
+          <p className="text-xs sm:text-sm text-[#969BA0]">
+            {t("footer.copyright")}
+          </p>
           <p className="text-xs sm:text-sm font-medium text-bgray-700">
-            {t('footer.madeBy')}
+            {t("footer.madeBy")}
             <a
               href="http://www.securexapp.com"
               target="_blank"
               rel="noreferrer"
               className="border-b font-semibold hover:text-blue-600 ml-1"
             >
-              {t('footer.securex')}
+              {t("footer.securex")}
             </a>
           </p>
         </div>

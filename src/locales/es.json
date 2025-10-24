@@ -846,6 +846,8 @@
     "noAuditsFound": "No se encontraron registros de auditoría",
     "searchPlaceholder": "Buscar registros de auditoría...",
     "filterByModel": "Filtrar por Modelo",
+    "showDetails": "Mostrar detalles",
+    "hideDetails": "Ocultar detalles",
     "table": {
       "event": "Evento",
       "model": "Modelo",

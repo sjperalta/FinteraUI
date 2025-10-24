@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { useLocale } from "../../contexts/LocaleContext";
 
-function NotificationPopup({ active, loading, notifications, onMarkAllAsRead }) {
+function NotificationPopup({
+  active,
+  loading,
+  notifications,
+  onMarkAllAsRead,
+  onClose,
+}) {
   const { t } = useLocale();
 
   return (
@@ -23,24 +28,25 @@ function NotificationPopup({ active, loading, notifications, onMarkAllAsRead }) 
             <h3 className="text-xl font-bold text-bgray-900 dark:text-white">
               {t("notifications.title")}
             </h3>
-            {/* Optional: an icon or close button */}
-            <span>
+            {/* Close button */}
+            <button
+              type="button"
+              onClick={onClose}
+              className="group flex items-center justify-center w-8 h-8 rounded-full bg-transparent hover:bg-red-50 dark:hover:bg-red-900/20 border border-transparent hover:border-red-200 dark:hover:border-red-800/30 transition-all duration-200 ease-in-out hover:scale-105 active:scale-95"
+              aria-label="Close notifications"
+            >
               <svg
-                className="stroke-darkblack-300"
-                width="24"
-                height="24"
+                className="w-4 h-4 stroke-bgray-400 dark:stroke-bgray-400 group-hover:stroke-red-500 dark:group-hover:stroke-red-400 transition-colors duration-200"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
-                <path
-                  d="M6 6L18 18M6 18L18 6L6 18Z"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+                <path d="M18 6L6 18M6 6L18 18" />
               </svg>
-            </span>
+            </button>
           </div>
 
           {/* Tab section */}
@@ -89,7 +95,9 @@ function NotificationPopup({ active, loading, notifications, onMarkAllAsRead }) 
                         {n.message}
                       </p>
                       <span className="text-xs font-medium text-bgray-500">
-                        {n.created_at ? new Date(n.created_at).toLocaleString() : ""}
+                        {n.created_at
+                          ? new Date(n.created_at).toLocaleString()
+                          : ""}
                       </span>
                     </div>
                   </Link>
@@ -143,6 +151,7 @@ NotificationPopup.propTypes = {
   loading: PropTypes.bool,
   notifications: PropTypes.array,
   onMarkAllAsRead: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
 
 export default NotificationPopup;

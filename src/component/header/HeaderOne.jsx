@@ -34,10 +34,13 @@ function HeaderOne({ handleSidebar }) {
     }
   }, [user]);
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = async (status = "unread") => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/v1/notifications`, {
+      const url = new URL(`${API_URL}/api/v1/notifications`);
+      url.searchParams.append("status", status);
+
+      const res = await fetch(url.toString(), {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${getToken()}`, // if needed
@@ -60,18 +63,21 @@ function HeaderOne({ handleSidebar }) {
 
   const handleMarkAllAsRead = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/v1/notifications/mark_all_as_read`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const res = await fetch(
+        `${API_URL}/api/v1/notifications/mark_all_as_read`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       if (!res.ok) {
         throw new Error("Failed to mark all as read");
       }
       // After success, re-fetch the notifications to update the UI
-      fetchNotifications();
+      fetchNotifications("unread");
     } catch (err) {
       console.error("Error marking all as read:", err);
     }
@@ -80,6 +86,13 @@ function HeaderOne({ handleSidebar }) {
   const handlePopup = (name) => {
     setPopup((prevPopup) => ({
       [name]: !prevPopup?.[name],
+    }));
+  };
+
+  const handleCloseNotification = () => {
+    setPopup((prevPopup) => ({
+      ...prevPopup,
+      notification: false,
     }));
   };
 
@@ -93,27 +106,33 @@ function HeaderOne({ handleSidebar }) {
       <div className="relative flex h-[108px] w-full items-center justify-between bg-white px-10 dark:bg-darkblack-600 2xl:px-[76px]">
         {/* Sidebar Toggle Button */}
         <button
-          aria-label="none"
+          aria-label="Toggle sidebar"
           onClick={handleSidebar}
-          title="Ctrl+b"
+          title="Toggle sidebar (Ctrl+b)"
           type="button"
-          className="drawer-btn absolute left-0 top-auto rotate-180 transform"
+          className="group drawer-btn absolute left-0 top-auto rotate-180 transform transition-all duration-300 ease-in-out hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-success-300 focus:ring-offset-2 dark:focus:ring-offset-darkblack-600"
         >
-          <span>
+          <span className="block transition-all duration-300 group-hover:drop-shadow-lg">
             <svg
               width="16"
               height="40"
               viewBox="0 0 16 40"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
+              className="transition-all duration-300 group-hover:brightness-110"
             >
-              <path d="M0 10C0 4.47715 4.47715 0 10 0H16V40H10C4.47715 40 0 35.5228 0 30V10Z" fill="#22C55E" />
+              <path
+                d="M0 10C0 4.47715 4.47715 0 10 0H16V40H10C4.47715 40 0 35.5228 0 30V10Z"
+                fill="#22C55E"
+                className="transition-colors duration-300 group-hover:fill-success-400"
+              />
               <path
                 d="M10 15L6 20.0049L10 25.0098"
                 stroke="#ffffff"
                 strokeWidth="1.2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                className="transition-all duration-300 group-hover:stroke-white group-hover:translate-x-0.5"
               />
             </svg>
           </span>
@@ -137,29 +156,44 @@ function HeaderOne({ handleSidebar }) {
               <div
                 onClick={() => setPopup(false)}
                 id="noti-outside"
-                className={`fixed left-0 top-0 h-full w-full z-[15] ${popup?.notification ? "block" : "hidden"}`}
+                className={`fixed left-0 top-0 h-full w-full z-[15] ${
+                  popup?.notification ? "block" : "hidden"
+                }`}
               ></div>
 
               <ModeToggler />
 
               {/* Notification Toggle Button */}
-              <ToggleBtn
-                name="notification"
-                clickHandler={handlePopup}
-                active={notifications?.length > 0}
-                icon={
-                  <svg className="stroke-bgray-900 dark:stroke-white" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M2 12V7C2 4.79086 3.79086 3 6 3H18C20.2091 3 22 4.79086 22 7V17C22 19.2091 20.2091 21 18 21H8M6 8L9.7812 10.5208C11.1248 11.4165 12.8752 11.4165 14.2188 10.5208L18 8M2 15H8M2 18H8" strokeWidth="1.5" strokeLinecap="round"></path>
-                  </svg>
-                }
-              >
+              <div className="relative">
+                <ToggleBtn
+                  name="notification"
+                  clickHandler={handlePopup}
+                  active={notifications?.length > 0}
+                  icon={
+                    <svg
+                      className="stroke-bgray-900 dark:stroke-white"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M2 12V7C2 4.79086 3.79086 3 6 3H18C20.2091 3 22 4.79086 22 7V17C22 19.2091 20.2091 21 18 21H8M6 8L9.7812 10.5208C11.1248 11.4165 12.8752 11.4165 14.2188 10.5208L18 8M2 15H8M2 18H8"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                      ></path>
+                    </svg>
+                  }
+                />
                 <NotificationPopup
                   loading={loading}
                   active={popup?.notification}
                   notifications={notifications}
                   onMarkAllAsRead={handleMarkAllAsRead}
+                  onClose={handleCloseNotification}
                 />
-              </ToggleBtn>
+              </div>
             </div>
 
             {/* Vertical Divider */}
@@ -169,7 +203,9 @@ function HeaderOne({ handleSidebar }) {
             {user ? (
               <Author showProfile={handlePopup} user={user} />
             ) : (
-              <div className="text-sm text-bgray-600 dark:text-bgray-300">Por favor inicia sesión</div>
+              <div className="text-sm text-bgray-600 dark:text-bgray-300">
+                Por favor inicia sesión
+              </div>
             )}
           </div>
 

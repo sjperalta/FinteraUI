@@ -835,6 +835,8 @@
     "noAuditsFound": "No audit logs found",
     "searchPlaceholder": "Search audit logs...",
     "filterByModel": "Filter by Model",
+    "showDetails": "Show details",
+    "hideDetails": "Hide details",
     "table": {
       "event": "Event",
       "model": "Model",

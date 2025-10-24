@@ -202,7 +202,7 @@ function ContractItem({
       setActionLoading(false);
     }
   };
-  
+
   // Mobile Card View
   if (isMobileCard) {
     return (
@@ -213,7 +213,7 @@ function ContractItem({
           className="cursor-pointer hover:bg-blue-50 dark:hover:bg-darkblack-500 rounded-lg p-3 -m-3 transition-colors"
         >
           <div className="flex items-center space-x-3 mb-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0">
+            <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
               <span className="text-white text-lg">🏠</span>
             </div>
             <div className="flex-1 min-w-0">
@@ -240,7 +240,7 @@ function ContractItem({
           className="cursor-pointer hover:bg-blue-50 dark:hover:bg-darkblack-500 rounded-lg p-3 -m-3 transition-colors"
         >
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+            <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
               <span className="text-white text-sm font-semibold">
                 {contract.applicant_name?.charAt(0)?.toUpperCase() || "?"}
               </span>
@@ -376,14 +376,18 @@ function ContractItem({
                 📅 {t("contracts.paymentSchedule")}
               </button>
             )}
-
-          <div className="flex-shrink-0">
-            <DocumentSelect
-              contract_id={contract.id}
-              financing_type={contract.financing_type}
-              status={contract.status}
-            />
-          </div>
+          {(userRole === "admin" || userRole === "seller") &&
+            (contract.status?.toLowerCase() === "approved" ||
+              contract.status?.toLowerCase() === "closed" ||
+              contract.status?.toLowerCase() === "cancelled") && (
+              <div className="flex-shrink-0">
+                <DocumentSelect
+                  contract_id={contract.id}
+                  financing_type={contract.financing_type}
+                  status={contract.status}
+                />
+              </div>
+            )}
 
           {/* View Details Button - For submitted contracts, rejected contracts, for seller, admin users */}
           {(userRole === "admin" || userRole === "seller") &&
@@ -439,7 +443,7 @@ function ContractItem({
         >
           <div className="flex items-center space-x-2">
             <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
                 <span className="text-white text-xs">🏠</span>
               </div>
             </div>
@@ -470,7 +474,7 @@ function ContractItem({
         >
           <div className="flex items-center space-x-2">
             <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
                 <span className="text-white text-sm font-semibold">
                   {contract.applicant_name?.charAt(0)?.toUpperCase() || "?"}
                 </span>
@@ -559,7 +563,7 @@ function ContractItem({
       <td className="px-6 py-5">
         <div className="flex items-center justify-center">
           <div className="flex items-center space-x-2">
-            <div className="w-6 h-6 bg-gradient-to-br from-gray-400 to-gray-600 rounded-full flex items-center justify-center">
+            <div className="w-6 h-6 bg-gray-500 rounded-full flex items-center justify-center">
               <span className="text-white text-xs">👤</span>
             </div>
             <p className="text-sm font-semibold text-bgray-900 dark:text-white">
@@ -579,7 +583,7 @@ function ContractItem({
               <button
                 onClick={handleApprove}
                 disabled={actionLoading}
-                className="group relative inline-flex items-center px-3 py-2 text-xs font-semibold text-white bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:transform-none"
+                className="group relative inline-flex items-center px-3 py-2 text-xs font-semibold text-white bg-green-500 hover:bg-green-600 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:transform-none"
               >
                 <span className="mr-1">✅</span>
                 {actionLoading ? "..." : t("contracts.approve")}
@@ -595,7 +599,7 @@ function ContractItem({
                   setShowRejectionModal(true);
                 }}
                 disabled={actionLoading}
-                className="group relative inline-flex items-center px-3 py-2 text-xs font-semibold text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:transform-none"
+                className="group relative inline-flex items-center px-3 py-2 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:transform-none"
               >
                 <span className="mr-1">❌</span>
                 {actionLoading ? "..." : t("contracts.reject")}
@@ -609,7 +613,7 @@ function ContractItem({
               <button
                 onClick={handleCancel}
                 disabled={actionLoading}
-                className="group relative inline-flex items-center px-3 py-2 text-xs font-semibold text-white bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:transform-none"
+                className="group relative inline-flex items-center px-3 py-2 text-xs font-semibold text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:transform-none"
               >
                 <span className="mr-1">🚫</span>
                 {actionLoading ? "..." : t("contracts.cancel")}
@@ -625,21 +629,24 @@ function ContractItem({
                   e.stopPropagation();
                   setShowSchedule(true);
                 }}
-                className="group relative inline-flex items-center px-3 py-2 text-xs font-semibold text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+                className="group relative inline-flex items-center px-3 py-2 text-xs font-semibold text-white bg-blue-500 hover:bg-blue-600 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
               >
                 <span className="mr-1">📅</span>
                 {t("contracts.paymentSchedule")}
               </button>
             )}
-
-          <div className="flex items-center">
-            <DocumentSelect
-              contract_id={contract.id}
-              financing_type={contract.financing_type}
-              status={contract.status}
-            />
-          </div>
-
+          {(userRole === "admin" || userRole === "seller") &&
+            (contract.status?.toLowerCase() === "approved" ||
+              contract.status?.toLowerCase() === "closed" ||
+              contract.status?.toLowerCase() === "cancelled") && (
+              <div className="flex items-center">
+                <DocumentSelect
+                  contract_id={contract.id}
+                  financing_type={contract.financing_type}
+                  status={contract.status}
+                />
+              </div>
+            )}
           {(userRole === "admin" || userRole === "seller") &&
             (contract.status?.toLowerCase() === "pending" ||
               contract.status?.toLowerCase() === "submitted" ||
@@ -650,7 +657,7 @@ function ContractItem({
                   e.stopPropagation();
                   setShowDetailsModal(true);
                 }}
-                className="group relative inline-flex items-center px-3 py-2 text-xs font-semibold text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+                className="group relative inline-flex items-center px-3 py-2 text-xs font-semibold text-white bg-indigo-500 hover:bg-indigo-600 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
               >
                 <span className="mr-1">📋</span>
                 {t("contracts.viewDetails")}
@@ -682,7 +689,6 @@ function ContractItem({
         onClose={() => setShowDetailsModal(false)}
         contract={contract}
       />
-
     </>
   );
 }

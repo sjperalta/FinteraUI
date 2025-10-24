@@ -142,7 +142,7 @@ const ContractDetailsModal = ({
       />
       <div className="relative w-full max-w-5xl bg-white dark:bg-darkblack-600 rounded-2xl shadow-2xl mx-4 max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-8 py-6 border-b border-bgray-200 dark:border-darkblack-400 bg-gradient-to-r from-indigo-500 to-purple-600">
+        <div className="flex items-center justify-between px-8 py-6 border-b border-bgray-200 dark:border-darkblack-400 bg-indigo-500">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
               <span className="text-white text-xl">📋</span>
@@ -183,7 +183,7 @@ const ContractDetailsModal = ({
           {/* Main Information Grid - 3 columns */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             {/* Project Information */}
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 border border-blue-200 dark:border-blue-700 rounded-xl p-6 shadow-sm">
+            <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-xl p-6 shadow-sm">
               <div className="flex items-center space-x-2 mb-4">
                 <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
                   <span className="text-white text-sm">🏢</span>
@@ -236,7 +236,7 @@ const ContractDetailsModal = ({
             </div>
 
             {/* Lot Information */}
-            <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 border border-green-200 dark:border-green-700 rounded-xl p-6 shadow-sm">
+            <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-xl p-6 shadow-sm">
               <div className="flex items-center space-x-2 mb-4">
                 <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
                   <span className="text-white text-sm">🏡</span>
@@ -289,7 +289,7 @@ const ContractDetailsModal = ({
             </div>
 
             {/* Applicant Information */}
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/30 dark:to-purple-800/30 border border-purple-200 dark:border-purple-700 rounded-xl p-6 shadow-sm">
+            <div className="bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-700 rounded-xl p-6 shadow-sm">
               <div className="flex items-center space-x-2 mb-4">
                 <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
                   <span className="text-white text-sm">👤</span>
@@ -424,7 +424,7 @@ const ContractDetailsModal = ({
           </div>
 
           {/* Financial Information - Full Width */}
-          <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/30 dark:to-emerald-800/30 border border-emerald-200 dark:border-emerald-700 rounded-xl p-6 shadow-sm mb-8">
+          <div className="bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-700 rounded-xl p-6 shadow-sm mb-8">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
@@ -660,7 +660,7 @@ const ContractDetailsModal = ({
           {/* Contract Status and Additional Info - 2 columns */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             {/* Contract Status */}
-            <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/30 dark:to-gray-800/30 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+            <div className="bg-gray-50 dark:bg-gray-900/30 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
               <div className="flex items-center space-x-2 mb-4">
                 <div className="w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center">
                   <span className="text-white text-sm">📊</span>
@@ -731,7 +731,7 @@ const ContractDetailsModal = ({
             </div>
 
             {/* Additional Contract Information */}
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/30 dark:to-orange-800/30 border border-orange-200 dark:border-orange-700 rounded-xl p-6 shadow-sm">
+            <div className="bg-orange-50 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-700 rounded-xl p-6 shadow-sm">
               <div className="flex items-center space-x-2 mb-4">
                 <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
                   <span className="text-white text-sm">📝</span>
@@ -769,7 +769,7 @@ const ContractDetailsModal = ({
 
           {/* Contract Notes - Full Width */}
           {contract.note && (
-            <div className="bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 border border-yellow-200 dark:border-yellow-700 rounded-xl p-6 shadow-sm">
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-xl p-6 shadow-sm">
               <div className="flex items-center space-x-2 mb-4">
                 <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
                   <span className="text-white text-sm">📝</span>

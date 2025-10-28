@@ -825,9 +825,11 @@
     "north": "North",
     "east": "East",
     "west": "West",
+    "south": "South",
     "northBoundary": "North boundary description",
     "eastBoundary": "East boundary description",
-    "westBoundary": "West boundary description"
+    "westBoundary": "West boundary description",
+    "southBoundary": "South boundary description"
   },
   "audits": {
     "viewSystemActivity": "View system activity history",

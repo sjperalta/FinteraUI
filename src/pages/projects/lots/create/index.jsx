@@ -26,6 +26,7 @@ function CreateLot() {
   const [north, setNorth] = useState("");
   const [east, setEast] = useState("");
   const [west, setWest] = useState("");
+  const [south, setSouth] = useState("");
 
   const [projectPricePerUnit, setProjectPricePerUnit] = useState(0);
   const [projectName, setProjectName] = useState("");
@@ -130,6 +131,7 @@ function CreateLot() {
             north: north || "",
             east: east || "",
             west: west || "",
+            south: south || "",
           },
         }),
       });
@@ -345,7 +347,7 @@ function CreateLot() {
           {/* Boundary Descriptions */}
           <div className="mb-6">
             <h3 className="text-lg font-semibold text-bgray-900 dark:text-white mb-4">{t("lots.boundaryDescriptions")}</h3>
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">{t("lots.north")}</label>
                 <input
@@ -354,6 +356,16 @@ function CreateLot() {
                   onChange={(e) => setNorth(e.target.value)}
                   className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
                   placeholder={t("lots.northBoundary")}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">{t("lots.south")}</label>
+                <input
+                  type="text"
+                  value={south}
+                  onChange={(e) => setSouth(e.target.value)}
+                  className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
+                  placeholder={t("lots.southBoundary")}
                 />
               </div>
               <div>

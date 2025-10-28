@@ -836,9 +836,11 @@
     "north": "Norte",
     "east": "Este",
     "west": "Oeste",
+    "south": "Sur",
     "northBoundary": "Descripción del lindero norte",
     "eastBoundary": "Descripción del lindero este",
-    "westBoundary": "Descripción del lindero oeste"
+    "westBoundary": "Descripción del lindero oeste",
+    "southBoundary": "Descripción del lindero sur"
   },
   "audits": {
     "viewSystemActivity": "Ver historial de actividad del sistema",

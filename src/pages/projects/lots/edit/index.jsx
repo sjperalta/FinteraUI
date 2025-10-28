@@ -35,6 +35,7 @@ function EditLot() {
   const [north, setNorth] = useState("");
   const [east, setEast] = useState("");
   const [west, setWest] = useState("");
+  const [south, setSouth] = useState("");
   // Whether user wants to override price (local UI toggle)
   const [overridePrice, setOverridePrice] = useState(false);
   // Manual override value bound to backend field override_price
@@ -78,6 +79,7 @@ function EditLot() {
         setNorth(data.north || "");
         setEast(data.east || "");
         setWest(data.west || "");
+        setSouth(data.south || "");
         if (data.price != null) setServerPrice(data.price); // backend-calculated price
         if (data.area != null) setServerArea(data.area); // backend-calculated area
         if (data.override_price != null) {
@@ -197,7 +199,8 @@ function EditLot() {
             note: note || "",
             north: north || "",
             east: east || "",
-            west: west || ""
+            west: west || "",
+            south: south || ""
             // Note: We don't send 'price' or 'area' fields - let backend calculate them from dimensions
           }
         }),
@@ -477,7 +480,7 @@ function EditLot() {
           {/* Boundary Descriptions */}
           <div className="mb-6">
             <h3 className="text-lg font-semibold text-bgray-900 dark:text-white mb-4">{t("lots.boundaryDescriptions")}</h3>
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">{t("lots.north")}</label>
                 <input
@@ -486,6 +489,16 @@ function EditLot() {
                   onChange={(e) => setNorth(e.target.value)}
                   className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
                   placeholder={t("lots.northBoundary")}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-bgray-900 dark:text-white mb-2">{t("lots.south")}</label>
+                <input
+                  type="text"
+                  value={south}
+                  onChange={(e) => setSouth(e.target.value)}
+                  className="w-full h-12 px-4 py-3 border border-bgray-300 dark:border-darkblack-400 rounded-lg dark:bg-darkblack-500 dark:text-white"
+                  placeholder={t("lots.southBoundary")}
                 />
               </div>
               <div>
